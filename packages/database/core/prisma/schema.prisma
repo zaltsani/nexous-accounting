@@ -20,6 +20,11 @@ model Account {
   code String
   name String
 
+  // Inverse Relations
+  Children Account[] @relation("AccountChildren")
+  Parent Account? @relation("AccountChildren", fields: [parentId], references: [id])
+  Entries Entry[]
+
   @@map("accounts")
 }
 
@@ -27,6 +32,10 @@ model Journal {
   id String @id @default(uuid())
   code String
   name String
+
+  // Inverse Relations
+  Transactions Transaction[]
+  Entries Entry[]
 
   @@map("journals")
 }
@@ -36,6 +45,12 @@ model Transaction {
   journalId String @map("journal_id")
   description String?
 
+  createdAt DateTime @map("created_at")
+
+  // Relations
+  journal Journal @relation(fields: [journalId], references: [id])
+  entries Entry[]
+
   @@map("transactions")
 }
 
@@ -43,12 +58,15 @@ model Entry {
   id String @id @default(uuid())
   transactionId String @map("transaction_id")
   accountId String @map("account_id")
+  journalId String @map("journal_id")
   amount Decimal
 
-  createdAt Datetime @map("created_at")
+  createdAt DateTime @map("created_at")
 
   // Relations
-  
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+  account Account @relation(fields: [accountId], references: [id])
+  journal Journal @relation(fields: [journalId], references: [id])
 
-  @@maps("entries")
+  @@map("entries")
 }
