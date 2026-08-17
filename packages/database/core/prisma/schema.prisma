@@ -1,0 +1,54 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+  moduleFormat = "esm"
+}
+
+generator clientCjs {
+  provider     = "prisma-client-js"
+  output       = "../src/generated/prisma-cjs"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Account {
+  id String @id @default(uuid())
+  parentId String? @map("parent_id")
+  code String
+  name String
+
+  @@map("accounts")
+}
+
+model Journal {
+  id String @id @default(uuid())
+  code String
+  name String
+
+  @@map("journals")
+}
+
+model Transaction {
+  id String @id @default(uuid())
+  journalId String @map("journal_id")
+  description String?
+
+  @@map("transactions")
+}
+
+model Entry {
+  id String @id @default(uuid())
+  transactionId String @map("transaction_id")
+  accountId String @map("account_id")
+  amount Decimal
+
+  createdAt Datetime @map("created_at")
+
+  // Relations
+  
+
+  @@maps("entries")
+}
