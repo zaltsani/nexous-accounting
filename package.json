@@ -1,0 +1,27 @@
+{
+  "name": "nexous-accounting",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "packages/*",
+    "libs/*/*"
+  ],
+  "scripts": {
+    "build": "nx run-many -t build",
+    "start": "nx run-many -t start",
+    "dev": "nx run-many -t dev",
+    "test": "nx run-many -t test",
+    "test:e2e": "nx run-many -t test:e2e",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check"
+  },
+  "devDependencies": {
+    "nx": "23.1.1",
+    "oxfmt": "^0.62.0",
+    "oxlint": "^1.77.0"
+  }
+}

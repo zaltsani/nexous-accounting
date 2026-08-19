@@ -1,0 +1,9 @@
+{
+  "installation": {
+    "version": "23.1.1"
+  },
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "analytics": false,
+  "nxCloudId": "6a830bde2c98df52ba2c7759",
+  "parallel": 8
+}
