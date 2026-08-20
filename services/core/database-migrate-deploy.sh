@@ -7,7 +7,7 @@ ROOT_DIR="$(pwd)"
 echo "==> Executing Prisma database migrations..."
 
 # Change working directory to packages/database
-cd packages/database
+cd packages/database/core
 
 # Run migrate deploy
 npx prisma migrate deploy

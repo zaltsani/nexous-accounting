@@ -42,12 +42,14 @@ ENV NODE_ENV=production
 
 COPY --from=base /app/package.json /app/package-lock.json ./
 COPY --from=base /app/packages/types/package.json ./packages/types/
+COPY --from=base /app/packages/database/core/package.json ./packages/database/core/
 COPY --from=base /app/libs/nodejs/common/package.json ./libs/nodejs/common/
 COPY --from=base /app/apps/api-gateway/package.json ./apps/api-gateway/
 
 RUN npm ci --omit=dev
 
 COPY --from=base /app/packages/types/dist/ ./packages/types/dist/
+COPY --from=base /app/packages/database/core/dist/ ./packages/database/core/dist/
 COPY --from=base /app/libs/nodejs/common/dist/ ./libs/nodejs/common/dist/
 COPY --from=base /app/apps/api-gateway/dist/ ./apps/api-gateway/dist/
 
