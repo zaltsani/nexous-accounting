@@ -6,7 +6,7 @@ COPY package.json package-lock.json ./
 
 # Copy shared package definitions
 COPY packages/types/package.json  ./packages/types/
-COPY libs/nodejs/common/package.json  ./libs/nodejs/common
+COPY libs/nodejs/common/package.json  ./libs/nodejs/common/
 
 # Copy app package definition
 COPY apps/api-gateway/package.json ./apps/api-gateway/
