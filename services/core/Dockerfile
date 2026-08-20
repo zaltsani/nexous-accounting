@@ -24,7 +24,7 @@ COPY libs/nodejs/common/ ./libs/nodejs/common/
 COPY services/core/ ./services/core/
 
 # Dummy DATABASE_URL for Prisma Client code generation
-ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder"
+ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder?schema=core"
 
 # Generate Prisma client before building TypeScript
 RUN npm run db:generate --workspace=@nexous-accounting/database-core
