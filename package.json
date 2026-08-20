@@ -6,6 +6,7 @@
     "apps/*",
     "services/*",
     "packages/*",
+    "packages/*/*",
     "libs/*/*"
   ],
   "scripts": {

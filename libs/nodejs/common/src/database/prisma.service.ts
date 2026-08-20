@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { PrismaClient } from "@nexous-accounting/database";
+import { PrismaClient } from "@nexous-accounting/database-core";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 @Injectable()

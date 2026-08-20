@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "@nexous-accounting/common";
-import { AccountRepository } from "@nexous-accounting/database";
+import { AccountRepository } from "@nexous-accounting/database-core";
 import { CreateAccountDto } from "@nexous-accounting/types";
 
 @Injectable()

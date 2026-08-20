@@ -19,7 +19,7 @@
   "dependencies": {
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
-    "@nexous-accounting/database": "*",
+    "@nexous-accounting/database-core": "*",
     "@nexous-accounting/types": "*",
     "@prisma/adapter-pg": "^7.9.1",
     "class-transformer": "^0.5.1",

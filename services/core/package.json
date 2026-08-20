@@ -26,7 +26,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.4.7",
     "@nexous-accounting/common": "*",
-    "@nexous-accounting/database": "*",
+    "@nexous-accounting/database-core": "*",
     "@nexous-accounting/types": "*",
     "nats": "^2.29.3",
     "nestjs-zod": "^5.5.0",
