@@ -1,6 +1,6 @@
+import { createZodDto } from "nestjs-zod";
 import z from "zod";
 import { baseEntrySchema } from "./entry.js";
-import { createZodDto } from "nestjs-zod";
 
 export const baseTransactionSchema = z.object({
   journalId: z.string(),
@@ -10,6 +10,7 @@ export const baseTransactionSchema = z.object({
 
 export const transactionSchema = baseTransactionSchema.extend({
   id: z.string(),
+  entries: baseEntrySchema.array().min(2),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 });
@@ -19,12 +20,10 @@ export const createEntrySchema = baseEntrySchema.omit({
 });
 
 export const createTransactionSchema = baseTransactionSchema.extend({
-  entries: createEntrySchema.array(),
+  entries: createEntrySchema.array().min(2),
 });
 
-export const updateTransactionSchema = createTransactionSchema.partial().extend({
-  entries: createEntrySchema.array(),
-});
+export const updateTransactionSchema = createTransactionSchema.partial();
 
 export type IBaseTransaction = z.infer<typeof baseTransactionSchema>;
 export type ITransaction = z.infer<typeof transactionSchema>;
