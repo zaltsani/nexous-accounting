@@ -7,6 +7,7 @@
   "author": "",
   "scripts": {
     "build": "nest build",
+    "docker:build": "docker build -f apps/api-gateway/Dockerfile -t api-gateway .",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "dev": "nest start --watch",

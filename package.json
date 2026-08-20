@@ -18,7 +18,10 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "fmt": "oxfmt",
-    "fmt:check": "oxfmt --check"
+    "fmt:check": "oxfmt --check",
+    "docker:build": "nx run-many -t docker:build",
+    "docker:build:api-gateway": "docker build -f apps/api-gateway/Dockerfile -t api-gateway .",
+    "docker:build:services-core": "docker build -f services/core/Dockerfile -t services-core ."
   },
   "devDependencies": {
     "nx": "23.1.1",
