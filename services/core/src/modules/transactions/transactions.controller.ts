@@ -1,48 +1,38 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { Controller } from "@nestjs/common";
+import { MessagePattern, Payload } from "@nestjs/microservices";
+import {
+  TRANSACTION_MESSAGE_PATTERNS,
+  CreateTransactionDto,
+  UpdateTransactionDto,
+} from "@nexous-accounting/types";
 import { TransactionsService } from "./transactions.service";
-import { EventPattern, Payload } from "@nestjs/microservices";
-import { CreateTransactionDto } from "@nexous-accounting/types";
 
 @Controller("transactions")
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
-  @Post()
-  async create(@Body() data: CreateTransactionDto) {
-    return this.transactionsService.create(data);
+  @MessagePattern(TRANSACTION_MESSAGE_PATTERNS.CREATE_TRANSACTION)
+  createTransaction(@Payload() dto: CreateTransactionDto) {
+    return this.transactionsService.create(dto);
   }
 
-  @Get("id")
-  findById(@Param("id") id: string) {
-    return this.transactionsService.findById(id);
+  @MessagePattern(TRANSACTION_MESSAGE_PATTERNS.UPDATE_TRANSACTION)
+  updateTransaction(@Payload() payload: { id: string; data: UpdateTransactionDto }) {
+    return this.transactionsService.updateTransaction(payload.id, payload.data);
   }
 
-  @EventPattern("pos.sale.completed")
-  async handlePosSale(@Payload() event: any) {
-    console.log({ event });
+  @MessagePattern(TRANSACTION_MESSAGE_PATTERNS.LIST_TRANSACTION)
+  listTransaction() {
+    return this.transactionsService.listTransaction();
+  }
 
-    // 1. Resolve Account Codes based on Payment Method
-    // const paymentAccountCode = event.paymentMethod === 'CASH' ? '1011' : '1020';
+  @MessagePattern(TRANSACTION_MESSAGE_PATTERNS.GET_TRANSACTION)
+  getTransaction(@Payload() id: string) {
+    return this.transactionsService.getTransaction(id);
+  }
 
-    // // 2. Build Double-Entry Items
-    // const entries = [
-    //   // Revenue Leg
-    //   { accountCode: paymentAccountCode, amount: event.totals.grossSales },       // +Debit Cash/Card
-    //   { accountCode: '4010', amount: -event.totals.grossSales },                   // -Credit Sales Revenue
-
-    //   // COGS / Inventory Leg
-    //   { accountCode: '5010', amount: event.totals.costOfGoods },                   // +Debit COGS
-    //   { accountCode: '1030', amount: -event.totals.costOfGoods },                  // -Credit Inventory Asset
-    // ];
-
-    // console.log({ entries });
-
-    // 3. Post to General Ledger
-    // await this.transactionsService.createFromExternalEvent({
-    //   journalCode: 'SJ', // Sales Journal
-    //   date: new Date(event.timestamp),
-    //   description: `POS Checkout Order #${event.orderId}`,
-    //   entries,
-    // });
+  @MessagePattern(TRANSACTION_MESSAGE_PATTERNS.DELETE_TRANSACTION)
+  deleteTransaction(@Payload() id: string) {
+    return this.transactionsService.deleteTransaction(id);
   }
 }
