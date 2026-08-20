@@ -31,8 +31,3 @@ export type IUpdateAccount = z.infer<typeof updateAccountSchema>;
 export class AccountDto extends createZodDto(accountSchema) {}
 export class CreateAccountDto extends createZodDto(createAccountSchema) {}
 export class UpdateAccountDto extends createZodDto(updateAccountSchema) {}
-
-export const ACCOUNTING_PATTERNS = {
-  CREATE_ACCOUNT: { cmd: "accounting.account.create" },
-  CREATE_JOURNAL: { cmd: "accounting.journal.create" },
-} as const;
