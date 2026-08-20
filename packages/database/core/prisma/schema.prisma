@@ -1,0 +1,99 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
+}
+
+generator clientCjs {
+  provider     = "prisma-client-js"
+  output       = "../src/generated/prisma-cjs"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum NormalBalance {
+  DEBIT
+  CREDIT
+}
+
+enum AccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  REVENUE
+  EXPENSE
+}
+
+model Account {
+  id            String        @id @default(uuid())
+  parentId      String?       @map("parent_id")
+  code          String        @unique
+  name          String
+  type          AccountType
+  normalBalance NormalBalance @map("normal_balance")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  parent Account? @relation("AccountToParent", fields: [parentId], references: [id], onDelete: Restrict)
+
+  // Inverse Relations
+  children Account[] @relation("AccountToParent")
+  entries  Entry[]
+
+  @@index([parentId])
+  @@map("accounts")
+}
+
+model Journal {
+  id   String @id @default(uuid())
+  code String @unique
+  name String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Inverse Relations
+  transactions Transaction[]
+
+  @@map("journals")
+}
+
+model Transaction {
+  id          String   @id @default(uuid())
+  journalId   String   @map("journal_id")
+  date        DateTime
+  description String?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  journal Journal @relation(fields: [journalId], references: [id])
+
+  // Inverse Relations
+  entries Entry[]
+
+  @@index([journalId, date])
+  @@map("transactions")
+}
+
+model Entry {
+  id String @id @default(uuid())
+  transactionId String  @map("transaction_id")
+  accountId String  @map("account_id")
+  amount Decimal @db.Decimal(18, 4)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  transaction Transaction @relation(fields: [transactionId], references: [id])
+  account Account @relation(fields: [accountId], references: [id])
+
+  @@map("entries")
+}

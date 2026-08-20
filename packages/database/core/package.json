@@ -1,5 +1,5 @@
 {
-  "name": "@nexous-accounting/database",
+  "name": "@nexous-accounting/database-core",
   "version": "0.0.0",
   "private": true,
   "type": "module",
