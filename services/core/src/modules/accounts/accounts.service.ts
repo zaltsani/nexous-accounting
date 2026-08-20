@@ -1,14 +1,10 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { PrismaService } from "@nexous-accounting/common";
-import { AccountRepository } from "@nexous-accounting/database-core";
-import { CreateAccountDto } from "@nexous-accounting/types";
+import { CreateAccountDto, UpdateAccountDto } from "@nexous-accounting/types";
 
 @Injectable()
 export class AccountsService {
-  constructor(
-    private readonly db: PrismaService,
-    private readonly accountRepository: AccountRepository,
-  ) {}
+  constructor(private readonly db: PrismaService) {}
 
   async create(data: CreateAccountDto) {
     return this.db.account.create({
@@ -16,13 +12,32 @@ export class AccountsService {
     });
   }
 
+  async listAccount() {
+    return this.db.account.findMany();
+  }
+
   async getAccountById(id: string) {
-    const account = await this.accountRepository.findById(id);
+    return this.db.account.findUniqueOrThrow({
+      where: { id },
+    });
+  }
 
-    if (!account) {
-      throw new NotFoundException(`Account with ID "${id}" not found`);
-    }
+  async getAccountByCode(code: string) {
+    return this.db.account.findUniqueOrThrow({
+      where: { code },
+    });
+  }
 
-    return account;
+  async updateAccount(id: string, data: UpdateAccountDto) {
+    return this.db.account.update({
+      where: { id },
+      data,
+    });
+  }
+
+  async deleteAccount(id: string) {
+    return this.db.account.delete({
+      where: { id },
+    });
   }
 }
