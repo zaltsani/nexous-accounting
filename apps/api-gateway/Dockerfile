@@ -6,6 +6,7 @@ COPY package.json package-lock.json ./
 
 # Copy shared package definitions
 COPY packages/types/package.json  ./packages/types/
+COPY packages/database/core/package.json  ./packages/database/core/
 COPY libs/nodejs/common/package.json  ./libs/nodejs/common/
 
 # Copy app package definition
@@ -16,6 +17,7 @@ RUN npm ci
 
 # Copy shared package source code
 COPY packages/types/ ./packages/types/
+COPY packages/database/core ./packages/database/core/
 COPY libs/nodejs/common/ ./libs/nodejs/common/
 
 # Copy app source code
@@ -23,6 +25,7 @@ COPY apps/api-gateway/ ./apps/api-gateway/
 
 # Build shared packages first, then the app
 RUN npm run build --workspace=@nexous-accounting/types && \
+    npm run build --workspace=@nexous-accounting/database-core && \
     npm run build --workspace=@nexous-accounting/common && \
     npm run build --workspace=apps/api-gateway
 
