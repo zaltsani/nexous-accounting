@@ -7,7 +7,7 @@ import { CreatePosSaleDto, ICreateTransaction } from "@nexous-accounting/types";
 export class SalesService {
   constructor(
     private readonly db: PrismaService,
-    @Inject("CORE_ACCOUNTING_SERVICE") private readonly natsClient: ClientProxy,
+    @Inject("NATS_SERVICE") private readonly natsClient: ClientProxy,
   ) {}
 
   async checkout(dto: CreatePosSaleDto) {
