@@ -23,6 +23,12 @@ COPY libs/nodejs/common/ ./libs/nodejs/common/
 # Copy app source code
 COPY apps/api-gateway/ ./apps/api-gateway/
 
+# Dummy DATABASE_URL for Prisma Client code generation
+ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder"
+
+# Generate Prisma client before building TypeScript
+RUN npm run db:generate --workspace=@nexous-accounting/database-core
+
 # Build shared packages first, then the app
 RUN npm run build --workspace=@nexous-accounting/types && \
     npm run build --workspace=@nexous-accounting/database-core && \
