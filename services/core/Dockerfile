@@ -64,4 +64,4 @@ RUN chmod +x /usr/local/bin/database-migrate-deploy.sh
 EXPOSE 3000
 
 ENTRYPOINT ["database-migrate-deploy.sh"]
-CMD ["node", "apps/api/dist/main"]
+CMD ["node", "services/core/dist/main"]
