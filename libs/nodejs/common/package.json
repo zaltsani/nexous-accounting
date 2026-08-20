@@ -17,8 +17,8 @@
     "dev": "tsc --watch --preserveWatchOutput"
   },
   "dependencies": {
-    "@nestjs/common": "^10.0.0",
-    "@nestjs/core": "^10.0.0",
+    "@nestjs/common": "^11.0.1",
+    "@nestjs/core": "^11.0.1",
     "@nestjs/microservices": "^11.2.1",
     "@nexous-accounting/database-core": "*",
     "@nexous-accounting/types": "*",
