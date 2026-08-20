@@ -6,14 +6,7 @@ import { ClientsModule, Transport } from "@nestjs/microservices";
   imports: [
     ClientsModule.register([
       {
-        name: "CORE_ACCOUNTING_SERVICE",
-        transport: Transport.NATS,
-        options: {
-          servers: ["nats://localhost:4222"],
-        },
-      },
-      {
-        name: "POS_SERVICE",
+        name: "NATS_SERVICE",
         transport: Transport.NATS,
         options: {
           servers: ["nats://localhost:4222"],
@@ -24,14 +17,7 @@ import { ClientsModule, Transport } from "@nestjs/microservices";
   exports: [
     ClientsModule.register([
       {
-        name: "CORE_ACCOUNTING_SERVICE",
-        transport: Transport.NATS,
-        options: {
-          servers: ["nats://localhost:4222"],
-        },
-      },
-      {
-        name: "POS_SERVICE",
+        name: "NATS_SERVICE",
         transport: Transport.NATS,
         options: {
           servers: ["nats://localhost:4222"],
