@@ -11,9 +11,19 @@ export const SYSTEM_JOURNALS = [
 
 export const DEFAULT_ROOT_ACCOUNTS = [
   { code: "1000", name: "Aset", type: AccountType.ASSET, normalBalance: NormalBalance.DEBIT },
-  { code: "2000", name: "Liabilitas", type: AccountType.LIABILITY, normalBalance: NormalBalance.CREDIT },
+  {
+    code: "2000",
+    name: "Liabilitas",
+    type: AccountType.LIABILITY,
+    normalBalance: NormalBalance.CREDIT,
+  },
   { code: "3000", name: "Ekuitas", type: AccountType.EQUITY, normalBalance: NormalBalance.CREDIT },
-  { code: "4000", name: "Pendapatan", type: AccountType.REVENUE, normalBalance: NormalBalance.CREDIT },
+  {
+    code: "4000",
+    name: "Pendapatan",
+    type: AccountType.REVENUE,
+    normalBalance: NormalBalance.CREDIT,
+  },
   { code: "5000", name: "Beban", type: AccountType.EXPENSE, normalBalance: NormalBalance.DEBIT },
 ] as const;
 
