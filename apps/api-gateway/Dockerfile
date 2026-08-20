@@ -2,7 +2,7 @@ FROM node:24-alpine AS base
 WORKDIR /app
 
 # Copy root package files for workspace resolution
-COPY package.json package-lock.json ./
+COPY package.json package-lock.json tsconfig*.json ./
 
 # Copy shared package definitions
 COPY packages/types/package.json  ./packages/types/
