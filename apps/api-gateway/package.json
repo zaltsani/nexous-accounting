@@ -28,6 +28,7 @@
     "@nestjs/swagger": "^11.4.7",
     "@nexous-accounting/common": "*",
     "@nexous-accounting/types": "*",
+    "nestjs-zod": "^5.5.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
