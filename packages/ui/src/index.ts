@@ -1,7 +1,7 @@
 import "./styles/global.css";
 
 // Utils / Core
-export * from "./libs/utils";
+export * from "./libs";
 
 // UI Components
 export * from "./ui/avatar";
