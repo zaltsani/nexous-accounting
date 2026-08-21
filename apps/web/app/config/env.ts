@@ -18,8 +18,7 @@ export const ENV = {
     import.meta.env.VITE_PUBLIC_BACKEND_URL ||
     "http://localhost",
   MAINTENANCE_MODE:
-    (runtimeEnv?.VITE_MAINTENANCE_MODE ||
-      import.meta.env.VITE_MAINTENANCE_MODE ||
-      "false") === "true",
+    (runtimeEnv?.VITE_MAINTENANCE_MODE || import.meta.env.VITE_MAINTENANCE_MODE || "false") ===
+    "true",
   SITE_DOMAIN: runtimeEnv?.VITE_SITE_DOMAIN || import.meta.env.VITE_SITE_DOMAIN || "",
 };

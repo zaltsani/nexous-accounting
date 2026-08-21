@@ -5,12 +5,10 @@ import { ResponseInterceptor } from "@nexous-accounting/common";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
   const _reflector = app.get(Reflector);
 
-  app.useGlobalInterceptors(
-    new ResponseInterceptor(),
-  );
+  app.useGlobalInterceptors(new ResponseInterceptor());
 
   const config = new DocumentBuilder()
     .setTitle("Nexous Accounting")

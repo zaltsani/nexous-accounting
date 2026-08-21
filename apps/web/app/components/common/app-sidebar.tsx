@@ -15,7 +15,15 @@ import {
   useIsMobile,
   useSidebar,
 } from "@nexous/ui";
-import { BellIcon, BoxesIcon, PlusIcon, SearchIcon, SquareArrowLeftIcon, SquareArrowRightIcon, XIcon } from "lucide-react";
+import {
+  BellIcon,
+  BoxesIcon,
+  PlusIcon,
+  SearchIcon,
+  SquareArrowLeftIcon,
+  SquareArrowRightIcon,
+  XIcon,
+} from "lucide-react";
 import * as React from "react";
 import { Link, useLocation } from "react-router";
 import { SidebarData } from "~/libs/constants/sidebar";
@@ -24,7 +32,7 @@ import { SidebarData } from "~/libs/constants/sidebar";
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { pathname } = useLocation();
   const { state, toggleSidebar, setOpenMobile } = useSidebar();
-  const isCollapsed = state === "collapsed"
+  const isCollapsed = state === "collapsed";
   const isMobile = useIsMobile();
 
   const [search, setSearch] = React.useState<string>("");
@@ -70,17 +78,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </button>
           ) : (
             <div className="flex items-center gap-3">
-              <Button
-                size="icon"
-                variant="outline"
-              >
+              <Button size="icon" variant="outline">
                 <BellIcon />
               </Button>
-              <Button
-                size="icon"
-                variant="outline"
-                onClick={toggleSidebar}
-              >
+              <Button size="icon" variant="outline" onClick={toggleSidebar}>
                 <XIcon />
               </Button>
             </div>
@@ -104,7 +105,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       placeholder="Cari Fitur"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
-                      className='pl-10'
+                      className="pl-10"
                     />
                   </div>
                 )}
@@ -138,7 +139,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         tooltip={item.title}
                         onClick={() => setOpenMobile(false)}
                       >
-                        {item.icon && <item.icon className="size-4 transition-transform duration-200" />}
+                        {item.icon && (
+                          <item.icon className="size-4 transition-transform duration-200" />
+                        )}
                         <span>{item.title}</span>
                       </SidebarMenuButton>
 
@@ -150,11 +153,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           className={cn(
                             "absolute right-2 top-1/2 -translate-y-1/2 z-10 active:not-aria-[haspopup]:-translate-y-1/2",
                             "text-primary hover:text-primary transition-all",
-                            isChildActive ? "border-none" : "group-hover/btn:border-none"
+                            isChildActive ? "border-none" : "group-hover/btn:border-none",
                           )}
                           onClick={(e) => {
                             e.stopPropagation();
-                            setOpenMobile(false)
+                            setOpenMobile(false);
                           }}
                         >
                           <PlusIcon className="size-4" />
@@ -162,7 +165,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         </Button>
                       )}
                     </SidebarMenuItem>
-                  )
+                  );
                 })}
               </SidebarMenu>
             </SidebarGroupContent>
@@ -176,5 +179,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         )} */}
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }

@@ -14,12 +14,7 @@ export default defineConfig({
     },
     cssCodeSplit: false,
     rollupOptions: {
-      external: [
-        "react",
-        "react-dom",
-        "react-router",
-        "react/jsx-runtime",
-      ],
+      external: ["react", "react-dom", "react-router", "react/jsx-runtime"],
     },
   },
 });

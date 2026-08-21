@@ -13,11 +13,9 @@ export default function AppLayout() {
       <SidebarInset>
         <AppHeader />
         <div className="flex flex-col flex-1 p-4 md:p-6 space-y-4 md:space-y-6">
-          {isLoading
-            ? <LoadingState />
-            : <Outlet />}
+          {isLoading ? <LoadingState /> : <Outlet />}
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

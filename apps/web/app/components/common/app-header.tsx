@@ -23,18 +23,13 @@ export function AppHeader() {
       {isMobile ? (
         <div className="flex w-full items-center justify-between gap-2 px-4">
           <div className="flex items-center gap-2">
-            <Button
-              size="icon"
-            >
+            <Button size="icon">
               <BoxesIcon size={20} className="size-5" />
             </Button>
             <h1 className="font-semibold">Nexous</h1>
           </div>
           <div className="flex items-center gap-3">
-            <Button
-              size="icon"
-              variant="outline"
-            >
+            <Button size="icon" variant="outline">
               <BellIcon />
             </Button>
             <SidebarTrigger />
@@ -47,11 +42,7 @@ export function AppHeader() {
             <h2 className="text-xs">{description}</h2>
           </div>
           <div className="flex items-center gap-3">
-            <Button
-              size="icon"
-              variant="outline"
-              className="rounded-full"
-            >
+            <Button size="icon" variant="outline" className="rounded-full">
               <BellIcon />
             </Button>
             <Separator orientation="vertical" className="h-8 my-auto" />
@@ -60,5 +51,5 @@ export function AppHeader() {
         </div>
       )}
     </header>
-  )
+  );
 }

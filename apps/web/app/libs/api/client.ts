@@ -1,4 +1,4 @@
-import * as http from './http';
+import * as http from "./http";
 
 export const apiClient = {
   get: http.get,

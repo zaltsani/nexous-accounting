@@ -1,24 +1,17 @@
-import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
-import { cva, type VariantProps } from "class-variance-authority"
+import { Tabs as TabsPrimitive } from "@base-ui/react/tabs";
+import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "../libs/utils"
+import { cn } from "../libs/utils";
 
-function Tabs({
-  className,
-  orientation = "horizontal",
-  ...props
-}: TabsPrimitive.Root.Props) {
+function Tabs({ className, orientation = "horizontal", ...props }: TabsPrimitive.Root.Props) {
   return (
     <TabsPrimitive.Root
       data-slot="tabs"
       data-orientation={orientation}
-      className={cn(
-        "group/tabs flex gap-4 data-horizontal:flex-col",
-        className
-      )}
+      className={cn("group/tabs flex gap-4 data-horizontal:flex-col", className)}
       {...props}
     />
-  )
+  );
 }
 
 const tabsListVariants = cva(
@@ -33,8 +26,8 @@ const tabsListVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
-)
+  },
+);
 
 function TabsList({
   className,
@@ -48,7 +41,7 @@ function TabsList({
       className={cn(tabsListVariants({ variant }), className)}
       {...props}
     />
-  )
+  );
 }
 
 function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
@@ -59,11 +52,11 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
         "relative inline-flex h-full items-center justify-center gap-1.5 px-4 py-2 text-sm font-medium whitespace-nowrap text-muted-foreground transition-all border-b-2 border-transparent bg-transparent hover:text-foreground focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         "data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-primary data-[state=active]:shadow-none",
         "data-active:bg-transparent data-active:text-primary data-active:border-primary data-active:shadow-none", // Keeping data-active if your Radix variant uses it
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
@@ -73,7 +66,7 @@ function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
       className={cn("flex-1 text-sm outline-none", className)}
       {...props}
     />
-  )
+  );
 }
 
-export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants }
+export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants };

@@ -9,8 +9,8 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
-    "@nexous-accounting/types": "*",
     "@nexous-accounting/common": "*",
+    "@nexous-accounting/types": "*",
     "@nexous/ui": "*",
     "@react-router/node": "^8",
     "@react-router/serve": "^8",

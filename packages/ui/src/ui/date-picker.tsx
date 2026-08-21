@@ -9,24 +9,16 @@ type DatePickerProps = {
   date: Date | undefined;
   setDate: (date: Date | undefined) => void;
   placeholder?: string;
-}
+};
 
-export function DatePicker({
-  date,
-  setDate,
-  placeholder,
-}: DatePickerProps) {
-  const [open, setOpen] = React.useState(false)
+export function DatePicker({ date, setDate, placeholder }: DatePickerProps) {
+  const [open, setOpen] = React.useState(false);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger>
-        <Button
-          variant="outline"
-          id="date"
-          className="w-full justify-between font-normal"
-        >
-          {date ? date.toLocaleDateString() : placeholder ?? "Select date"}
+        <Button variant="outline" id="date" className="w-full justify-between font-normal">
+          {date ? date.toLocaleDateString() : (placeholder ?? "Select date")}
           <CalendarIcon />
         </Button>
       </PopoverTrigger>
@@ -36,11 +28,11 @@ export function DatePicker({
           selected={date}
           captionLayout="dropdown"
           onSelect={(date) => {
-            setDate(date)
-            setOpen(false)
+            setDate(date);
+            setOpen(false);
           }}
         />
       </PopoverContent>
     </Popover>
-  )
+  );
 }

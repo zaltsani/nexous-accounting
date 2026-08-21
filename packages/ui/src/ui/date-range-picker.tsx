@@ -1,21 +1,17 @@
-import type { ButtonProps } from "@base-ui/react"
-import { endOfDay, format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
-import { type DateRange } from "react-day-picker"
+import type { ButtonProps } from "@base-ui/react";
+import { endOfDay, format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { type DateRange } from "react-day-picker";
 
-import { Button } from "./button"
-import { Calendar } from "./calendar"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "./popover"
+import { Button } from "./button";
+import { Calendar } from "./calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
 export type DateRangePickerProps = Omit<ButtonProps, "value" | "onChange"> & {
-  value: DateRange | undefined
-  onChange: (date: DateRange | undefined) => void
-  placeholder?: string
-}
+  value: DateRange | undefined;
+  onChange: (date: DateRange | undefined) => void;
+  placeholder?: string;
+};
 
 export function DateRangePicker({
   value,
@@ -26,15 +22,15 @@ export function DateRangePicker({
 }: DateRangePickerProps) {
   const handleSelect = (range: DateRange | undefined) => {
     if (!range) {
-      onChange(undefined)
-      return
+      onChange(undefined);
+      return;
     }
 
     onChange({
       from: range.from,
       to: range.to ? endOfDay(range.to) : undefined,
-    })
-  }
+    });
+  };
 
   return (
     <Popover>
@@ -48,8 +44,7 @@ export function DateRangePicker({
           {value?.from ? (
             value.to ? (
               <>
-                {format(value.from, "LLL dd, y")} -{" "}
-                {format(value.to, "LLL dd, y")}
+                {format(value.from, "LLL dd, y")} - {format(value.to, "LLL dd, y")}
               </>
             ) : (
               format(value.from, "LLL dd, y")
@@ -69,5 +64,5 @@ export function DateRangePicker({
         />
       </PopoverContent>
     </Popover>
-  )
+  );
 }

@@ -1,6 +1,6 @@
-import type { AxiosRequestConfig, AxiosResponse } from 'axios';
-import type { ZodType } from 'zod';
-import { api } from './axios';
+import type { AxiosRequestConfig, AxiosResponse } from "axios";
+import type { ZodType } from "zod";
+import { api } from "./axios";
 
 type RequestOptions<T> = {
   url: string;
@@ -21,26 +21,16 @@ export async function get<T>({ url, schema }: RequestOptions<T>): Promise<T> {
     }
   }
   return res.data as T;
-};
+}
 
-export async function post<T>({
-  url,
-  data,
-  schema,
-  config,
-}: RequestOptions<T>): Promise<T> {
+export async function post<T>({ url, data, schema, config }: RequestOptions<T>): Promise<T> {
   const res = await api.post(url, data, config);
 
   if (schema) return schema.parse(res.data);
   return res.data as T;
-};
+}
 
-export async function put<T>({
-  url,
-  data,
-  schema,
-  config,
-}: RequestOptions<T>): Promise<T> {
+export async function put<T>({ url, data, schema, config }: RequestOptions<T>): Promise<T> {
   const res = await api.put(url, data, config);
 
   if (schema) {
@@ -53,14 +43,9 @@ export async function put<T>({
   }
 
   return res.data as T;
-};
+}
 
-export async function patch<T>({
-  url,
-  data,
-  schema,
-  config,
-}: RequestOptions<T>): Promise<T> {
+export async function patch<T>({ url, data, schema, config }: RequestOptions<T>): Promise<T> {
   const res = await api.patch(url, data, config);
 
   if (schema) {
@@ -73,13 +58,9 @@ export async function patch<T>({
   }
 
   return res.data as T;
-};
+}
 
-export async function del<T>({
-  url,
-  schema,
-  config,
-}: RequestOptions<T>): Promise<T> {
+export async function del<T>({ url, schema, config }: RequestOptions<T>): Promise<T> {
   const res = await api.delete(url, config);
 
   if (schema) {
@@ -92,11 +73,17 @@ export async function del<T>({
   }
 
   return res.data as T;
-};
+}
 
-export async function getFile({ url, config }: { url: string; config?: AxiosRequestConfig }): Promise<AxiosResponse<Blob>> {
+export async function getFile({
+  url,
+  config,
+}: {
+  url: string;
+  config?: AxiosRequestConfig;
+}): Promise<AxiosResponse<Blob>> {
   return api.get(url, {
     ...config,
-    responseType: 'blob',
+    responseType: "blob",
   });
 }
