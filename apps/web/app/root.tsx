@@ -7,8 +7,11 @@ import {
   ScrollRestoration,
 } from "react-router";
 
+import { setupInterceptors } from "~/libs/api/interceptors";
 import type { Route } from "./+types/root";
 import "./app.css";
+
+setupInterceptors();
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -31,6 +34,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        <script src="/env-config.js"></script>
       </head>
       <body>
         {children}
