@@ -14,7 +14,9 @@
     "paths": {
       "@nexous-accounting/types": ["./packages/types/dist/index.d.ts"],
       "@nexous-accounting/database-core": ["./packages/database/core/dist/index.d.ts"],
-      "@nexous-accounting/common": ["./libs/nodejs/common/dist/index.d.ts"]
+      "@nexous-accounting/common": ["./libs/nodejs/common/dist/index.d.ts"],
+      "@nexous/ui": ["./packages/ui/src/index.ts"],
+      "@nexous/ui/*": ["./packages/ui/src/*"]
     }
   }
 }
