@@ -1,9 +1,16 @@
-import { NestFactory } from "@nestjs/core";
+import { NestFactory, Reflector } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import { ResponseInterceptor } from "@nexous-accounting/common";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  
+  const _reflector = app.get(Reflector);
+
+  app.useGlobalInterceptors(
+    new ResponseInterceptor(),
+  );
 
   const config = new DocumentBuilder()
     .setTitle("Nexous Accounting")
