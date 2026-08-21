@@ -20,6 +20,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - name: web
+            dockerfile: apps/web/Dockerfile
+            image_suffix: web
           - name: api-gateway
             dockerfile: apps/api-gateway/Dockerfile
             image_suffix: api_gateway

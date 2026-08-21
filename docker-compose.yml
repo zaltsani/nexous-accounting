@@ -18,6 +18,26 @@ services:
         condition: service_started
     networks:
       - nexous-network
+  
+
+
+  web:
+    image: ${WEB_IMAGE:-ghcr.io/zaltsani/nexous-accounting/web:latest}
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: web
+    restart: always
+    ports:
+      - "${WEB_PORT:-8000}:80"
+    environment:
+      - VITE_PUBLIC_BACKEND_URL=${VITE_PUBLIC_BACKEND_URL:-http://localhost:${API_PORT:-3000}}
+      - VITE_MAINTENANCE_MODE=${VITE_MAINTENANCE_MODE:-false}
+      - VITE_SITE_DOMAIN=${VITE_SITE_DOMAIN:-}
+    depends_on:
+      - api
+    networks:
+      - nexous-network
 
   service-core:
     image: ${SERVICES_CORE_IMAGE:-ghcr.io/zaltsani/nexous-accounting/services_core:latest}
