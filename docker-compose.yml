@@ -1,43 +1,55 @@
 name: ${COMPOSE_PROJECT_NAME:-nexous-accounting}
 
 services:
+  api-gateway:
+    image: ${API_GATEWAY_IMAGE:-ghcr.io/zaltsani/nexous-accounting/api_gateway:latest}
+    build:
+      context: .
+      dockerfile: apps/api-gateway/Dockerfile
+    container_name: api-gateway
+    restart: always
+    ports:
+      - "${API_PORT:-3000}:3000"
+    environment:
+      - NATS_URL=nats://nats:4222
+      - PORT=3000
+    depends_on:
+      nats:
+        condition: service_started
+    networks:
+      - nexous-network
+
+  service-core:
+    image: ${SERVICES_CORE_IMAGE:-ghcr.io/zaltsani/nexous-accounting/services_core:latest}
+    build:
+      context: .
+      dockerfile: services/core/Dockerfile
+    container_name: services-core
+    restart: always
+    environment:
+      - NATS_URL=nats://nats:4222
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-nexous_accounting}?schema=core
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+      nats:
+        condition: service_started
+    networks:
+      - nexous-network
+
   nats:
     image: nats
+    container_name: nats
+    restart: always
     ports:
       - "${NATS_PORT:-4222}:4222"
       - "${NATS_MONITORING_PORT:-8222}:8222"
     command: ["-m", "8222"]
-
-  # core-service:
-  #   build:
-  #     context: .
-  #     dockerfile: docker/Dockerfile.dev
-  #   container_name: api-service
-  #   command: npx nx serve api-service --watch --host=0.0.0.0
-  #   environment:
-  #     - PORT=3000
-  #     - NATS_URL=nats://nats:4222
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - .:/app
-  #     - /app/node_modules
-  #   depends_on:
-  #     - nats
-
-  # pos-service:
-  #   build:
-  #     context: .
-  #     dockerfile: docker/Dockerfile.dev
-  #   container_name: order-service
-  #   command: npx nx serve order-service --watch --host=0.0.0.0
-  #   environment:
-  #     - NATS_URL=nats://nats:4222
-  #   volumes:
-  #     - .:/app
-  #     - /app/node_modules
-  #   depends_on:
-  #     - nats
+    networks:
+      - nexous-network
 
   db:
     image: postgres:15-alpine
