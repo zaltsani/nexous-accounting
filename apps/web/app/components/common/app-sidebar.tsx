@@ -1,7 +1,8 @@
-import { BellIcon, BoxesIcon, PlusIcon, SearchIcon, SquareArrowLeftIcon, SquareArrowRightIcon, XIcon } from "lucide-react";
-import * as React from "react";
-import { Link, useLocation } from "react-router";
 import {
+  Button,
+  cn,
+  Input,
+  Separator,
   Sidebar,
   SidebarContent,
   SidebarGroup,
@@ -11,17 +12,14 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useIsMobile,
   useSidebar,
-} from "~/components/ui/sidebar";
-import { useIsMobile } from "~/hooks/use-mobile";
-import { cn } from "~/lib/utils";
-import { hasPermission } from "~/lib/utils/permissions";
-import { SidebarData } from "~/navigation/sidebar";
-import { usePermissions } from "~/providers/permission-provider";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Separator } from "./ui/separator";
-import { UserMobileMenu } from "./user-mobile-menu";
+} from "@nexous/ui";
+import { BellIcon, BoxesIcon, PlusIcon, SearchIcon, SquareArrowLeftIcon, SquareArrowRightIcon, XIcon } from "lucide-react";
+import * as React from "react";
+import { Link, useLocation } from "react-router";
+import { SidebarData } from "~/libs/constants/sidebar";
+// import { UserMobileMenu } from "./user-mobile-menu";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { pathname } = useLocation();
@@ -29,15 +27,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const isCollapsed = state === "collapsed"
   const isMobile = useIsMobile();
 
-  const { permissions } = usePermissions();
   const [search, setSearch] = React.useState<string>("");
 
   const data = React.useMemo(() => {
     return SidebarData.map((group) => {
       const filteredItems = group.items.filter((item) => {
-        const hasAccess = !item.requiredPermission || hasPermission(permissions || [], item.requiredPermission);
-        if (!hasAccess) return false;
-
         const matchesSearch = item.title.toLowerCase().includes(search.toLowerCase());
 
         return matchesSearch;
@@ -48,7 +42,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         items: filteredItems,
       };
     }).filter((group) => group.items.length > 0);
-  }, [permissions, search]);
+  }, [search]);
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -63,7 +57,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SquareArrowRightIcon className="absolute size-4 opacity-0 transition-opacity group-hover/icon-box:group-data-[collapsible=icon]:opacity-100 text-primary-foreground" />
             </div>
             <span className="text-base truncate transition-all duration-300 ease-in-out opacity-100 max-w-[150px] group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:max-w-0 font-semibold">
-              SmartWMS
+              Nexous
             </span>
           </div>
 
@@ -129,8 +123,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarGroupContent>
               <SidebarMenu>
                 {item.items?.map((item, index) => {
-                  const canCreate = !item.createPermission || hasPermission(permissions, item.createPermission);
-                  const showCreateAction = item.createUrl && !isCollapsed && canCreate;
+                  const showCreateAction = item.createUrl && !isCollapsed;
                   const isChildActive = pathname.startsWith(item.url);
 
                   return (
@@ -176,11 +169,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroup>
         ))}
 
-        {isMobile && (
+        {/* {isMobile && (
           <div className="mt-auto">
             <UserMobileMenu />
           </div>
-        )}
+        )} */}
       </SidebarContent>
     </Sidebar>
   )

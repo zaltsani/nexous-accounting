@@ -1,10 +1,7 @@
+import { Button, Separator, SidebarTrigger, useIsMobile } from "@nexous/ui";
 import { BellIcon, BoxesIcon } from "lucide-react";
 import { useMatches } from "react-router";
-import { useIsMobile } from "~/hooks/use-mobile";
-import { Button } from "./ui/button";
-import { Separator } from "./ui/separator";
-import { SidebarTrigger } from "./ui/sidebar";
-import { UserDropdownMenu } from "./user-dropdown-menu";
+// import { UserDropdownMenu } from "./user-dropdown-menu";
 
 interface RouteHandleProps {
   title?: string;
@@ -31,7 +28,7 @@ export function AppHeader() {
             >
               <BoxesIcon size={20} className="size-5" />
             </Button>
-            <h1 className="font-semibold">SmartWMS</h1>
+            <h1 className="font-semibold">Nexous</h1>
           </div>
           <div className="flex items-center gap-3">
             <Button
@@ -58,7 +55,7 @@ export function AppHeader() {
               <BellIcon />
             </Button>
             <Separator orientation="vertical" className="h-8 my-auto" />
-            <UserDropdownMenu />
+            {/* <UserDropdownMenu /> */}
           </div>
         </div>
       )}
