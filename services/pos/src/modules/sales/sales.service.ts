@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
-import { PrismaService } from "@nexous-accounting/common";
 import { CreatePosSaleDto, ICreateTransaction } from "@nexous-accounting/types";
+import { PrismaService } from "src/database/prisma.service";
 
 @Injectable()
 export class SalesService {

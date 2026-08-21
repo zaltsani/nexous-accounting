@@ -20,7 +20,6 @@
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
     "@nestjs/microservices": "^11.2.1",
-    "@nexous-accounting/database-core": "*",
     "@nexous-accounting/types": "*",
     "@prisma/adapter-pg": "^7.9.1",
     "class-transformer": "^0.5.1",

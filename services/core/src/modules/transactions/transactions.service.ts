@@ -1,10 +1,10 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { PrismaService } from "@nexous-accounting/common";
 import {
   CreateTransactionDto,
   IEntriesWithoutTransactionId,
   UpdateTransactionDto,
 } from "@nexous-accounting/types";
+import { PrismaService } from "src/database/prisma.service";
 import { TRANSACTION_INCLUDE } from "./transactions.mapper";
 
 @Injectable()
