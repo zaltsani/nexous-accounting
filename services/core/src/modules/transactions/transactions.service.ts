@@ -13,14 +13,26 @@ export class TransactionsService {
 
     await this.validateEntries(entries);
 
-    return this.db.transaction.create({
-      data: {
-        ...transaction,
-        entries: {
-          create: entries,
+    return this.db.$transaction(async (tx) => {
+      // Update Account Balance
+      await Promise.all(
+        entries.map((entry) =>
+          tx.account.update({
+            where: { id: entry.accountId },
+            data: { balance: { increment: entry.amount } },
+          }),
+        ),
+      );
+
+      return tx.transaction.create({
+        data: {
+          ...transaction,
+          entries: {
+            create: entries,
+          },
         },
-      },
-      include: TRANSACTION_INCLUDE,
+        include: TRANSACTION_INCLUDE,
+      });
     });
   }
 
@@ -40,18 +52,42 @@ export class TransactionsService {
   async updateTransaction(id: string, data: UpdateTransactionDto) {
     const { entries, ...transaction } = data;
 
-    await this.db.transaction.findFirstOrThrow({
+    const existingTransaction = await this.db.transaction.findUniqueOrThrow({
       where: { id },
+      include: { entries: true },
     });
 
     return this.db.$transaction(async (tx) => {
       if (entries && entries.length > 0) {
         await this.validateEntries(entries);
+
+        // Revert previous balances by decrementing existing entry amounts
+        await Promise.all(
+          existingTransaction.entries.map((entry) =>
+            tx.account.update({
+              where: { id: entry.accountId },
+              data: { balance: { decrement: entry.amount } },
+            }),
+          ),
+        );
+
+        // Delete existing entries
         await tx.entry.deleteMany({
           where: { transactionId: id },
         });
+
+        // Apply new balances by incrementing new entry amounts
+        await Promise.all(
+          entries.map((entry) =>
+            tx.account.update({
+              where: { id: entry.accountId },
+              data: { balance: { increment: entry.amount } },
+            }),
+          ),
+        );
       }
 
+      // Update the transaction record and recreate entries
       return tx.transaction.update({
         where: { id },
         data: {
@@ -66,9 +102,27 @@ export class TransactionsService {
   }
 
   async deleteTransaction(id: string) {
-    return this.db.transaction.delete({
+    const existingTransaction = await this.db.transaction.findUniqueOrThrow({
       where: { id },
-      include: TRANSACTION_INCLUDE,
+      include: { entries: true },
+    });
+
+    return this.db.$transaction(async (tx) => {
+      // Revert all account balance updates
+      await Promise.all(
+        existingTransaction.entries.map((entry) =>
+          tx.account.update({
+            where: { id: entry.accountId },
+            data: { balance: { decrement: entry.amount } },
+          }),
+        ),
+      );
+
+      // Delete the main transaction (Cascade with entries)
+      return tx.transaction.delete({
+        where: { id },
+        include: TRANSACTION_INCLUDE,
+      });
     });
   }
 
