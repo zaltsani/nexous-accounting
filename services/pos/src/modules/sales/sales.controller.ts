@@ -1,12 +1,11 @@
 import { Body, Controller, Param } from "@nestjs/common";
-import { CreatePosSaleDto } from "@nexous-accounting/types";
 import { SalesService } from "./sales.service";
 
 @Controller("sales")
 export class SalesController {
   constructor(private readonly salesService: SalesService) {}
 
-  async checkout(@Body() dto: CreatePosSaleDto) {
+  async checkout(@Body() dto: any) {
     return this.salesService.checkout(dto);
   }
 

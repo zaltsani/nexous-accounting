@@ -8,6 +8,8 @@ async function bootstrap() {
 
   const _reflector = app.get(Reflector);
 
+  app.setGlobalPrefix("/api");
+  app.enableCors();
   app.useGlobalInterceptors(new ResponseInterceptor());
 
   const config = new DocumentBuilder()

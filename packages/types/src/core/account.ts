@@ -1,4 +1,3 @@
-import { createZodDto } from "nestjs-zod";
 import z from "zod";
 
 export const normalBalanceSchema = z.enum(["DEBIT", "CREDIT"]);
@@ -27,7 +26,3 @@ export type IBaseAccountSchema = z.infer<typeof baseAccountSchema>;
 export type IAccount = z.infer<typeof accountSchema>;
 export type ICreateAccount = z.infer<typeof createAccountSchema>;
 export type IUpdateAccount = z.infer<typeof updateAccountSchema>;
-
-export class AccountDto extends createZodDto(accountSchema) {}
-export class CreateAccountDto extends createZodDto(createAccountSchema) {}
-export class UpdateAccountDto extends createZodDto(updateAccountSchema) {}

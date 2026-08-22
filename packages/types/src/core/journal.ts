@@ -1,4 +1,3 @@
-import { createZodDto } from "nestjs-zod";
 import z from "zod";
 
 export const baseJournalSchema = z.object({
@@ -14,7 +13,3 @@ export type IBaseJournal = z.infer<typeof baseJournalSchema>;
 export type IJournal = z.infer<typeof journalSchema>;
 export type ICreateJournal = z.infer<typeof createJournalSchema>;
 export type IUpdateJournal = z.infer<typeof updateJournalSchema>;
-
-export class JournalDto extends createZodDto(journalSchema) {}
-export class CreateJournalDto extends createZodDto(createJournalSchema) {}
-export class UpdateJournalDto extends createZodDto(updateJournalSchema) {}

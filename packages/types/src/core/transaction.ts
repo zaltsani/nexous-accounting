@@ -1,4 +1,3 @@
-import { createZodDto } from "nestjs-zod";
 import z from "zod";
 import { baseEntrySchema } from "./entry.js";
 
@@ -30,7 +29,3 @@ export type ITransaction = z.infer<typeof transactionSchema>;
 export type ICreateEntry = z.infer<typeof createEntrySchema>;
 export type ICreateTransaction = z.infer<typeof createTransactionSchema>;
 export type IUpdateTransaction = z.infer<typeof updateTransactionSchema>;
-
-export class BaseTransactionDto extends createZodDto(baseTransactionSchema) {}
-export class CreateTransactionDto extends createZodDto(createTransactionSchema) {}
-export class UpdateTransactionDto extends createZodDto(updateTransactionSchema) {}

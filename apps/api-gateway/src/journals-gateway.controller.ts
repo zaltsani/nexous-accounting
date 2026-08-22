@@ -10,11 +10,8 @@ import {
   UsePipes,
 } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
-import {
-  CreateJournalDto,
-  JOURNAL_MESSAGE_PATTERNS,
-  UpdateJournalDto,
-} from "@nexous-accounting/types";
+import { CreateJournalDto, UpdateJournalDto } from "@nexous-accounting/common";
+import { JOURNAL_MESSAGE_PATTERNS } from "@nexous-accounting/types";
 import { ZodValidationPipe } from "nestjs-zod";
 
 @Controller("journals")

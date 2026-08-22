@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
-import { CreatePosSaleDto, ICreateTransaction } from "@nexous-accounting/types";
+import { ICreateTransaction } from "@nexous-accounting/types";
 import { PrismaService } from "src/database/prisma.service";
 
 @Injectable()
@@ -10,7 +10,7 @@ export class SalesService {
     @Inject("NATS_SERVICE") private readonly natsClient: ClientProxy,
   ) {}
 
-  async checkout(dto: CreatePosSaleDto) {
+  async checkout(dto: any) {
     // Calculate Financial Totals
     const grossSales = dto.items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0);
     // const costOfGoods = dto.items.reduce(

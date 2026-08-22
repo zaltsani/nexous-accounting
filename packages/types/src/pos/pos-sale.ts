@@ -1,4 +1,4 @@
-import { createZodDto } from "nestjs-zod";
+// import { createZodDto } from "nestjs-zod";
 import { z } from "zod";
 
 export const paymentMethodSchema = z.enum(["CASH", "QRIS"]);
@@ -23,5 +23,5 @@ export type IPaymentMethod = z.infer<typeof paymentMethodSchema>;
 export type ICartItem = z.infer<typeof cartItemSchema>;
 export type ICreatePosSaleInput = z.infer<typeof createPosSaleSchema>;
 
-export class CartItemDto extends createZodDto(cartItemSchema) {}
-export class CreatePosSaleDto extends createZodDto(createPosSaleSchema) {}
+// export class CartItemDto extends createZodDto(cartItemSchema) {}
+// export class CreatePosSaleDto extends createZodDto(createPosSaleSchema) {}

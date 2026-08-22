@@ -10,11 +10,8 @@ import {
   UsePipes,
 } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
-import {
-  ACCOUNT_MESSAGE_PATTERNS,
-  CreateAccountDto,
-  UpdateAccountDto,
-} from "@nexous-accounting/types";
+import { ACCOUNT_MESSAGE_PATTERNS } from "@nexous-accounting/types";
+import { CreateAccountDto, UpdateAccountDto } from "@nexous-accounting/common";
 import { ZodValidationPipe } from "nestjs-zod";
 
 @Controller("accounts")
