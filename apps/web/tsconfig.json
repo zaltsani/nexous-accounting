@@ -9,7 +9,10 @@
     "jsx": "react-jsx",
     "rootDirs": [".", "./.react-router/types"],
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": ["./app/*"],
+      "@nexous-accounting/types": ["../../packages/types/src/index.ts"],
+      "@nexous-accounting/common": ["../../libs/nodejs/common/src/index.ts"],
+      "@nexous-accounting/ui": ["../../packages/ui/src/index.ts"]
     },
     "esModuleInterop": true,
     "verbatimModuleSyntax": true,
