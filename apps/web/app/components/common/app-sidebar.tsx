@@ -49,7 +49,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   //     };
   //   }).filter((group) => group.items.length > 0);
   // }, [search]);
-  
+
   const data = SidebarData;
 
   return (
@@ -125,7 +125,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SidebarMenu>
                 {item.items?.map((item, index) => {
                   const showCreateAction = item.createUrl && !isCollapsed;
-                  const isChildActive = pathname.startsWith(item.url);
+                  const isChildActive = pathname !== "/"
+                    ? pathname.startsWith(item.url) && item.url !== "/"
+                    : item.url === "/";
 
                   return (
                     <SidebarMenuItem key={index} className="relative group/btn">
