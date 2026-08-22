@@ -6,7 +6,7 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "~/libs/api/client";
 
-export function useGetAccountList(params: any) {
+export function useGetAccountList(params?: any) {
   return useQuery({
     queryKey: ["account", params],
     queryFn: () =>
@@ -14,7 +14,7 @@ export function useGetAccountList(params: any) {
         url: `/api/accounts`,
         schema: createApiResponseSchema(createApiPaginationResponseSchema(accountSchema)),
       }),
-    select: (res) => res.data,
+    select: (res) => res?.data,
     placeholderData: (previousData) => previousData,
     staleTime: 1000 * 60 * 5,
   });

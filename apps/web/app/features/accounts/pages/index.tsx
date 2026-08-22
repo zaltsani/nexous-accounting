@@ -5,14 +5,8 @@ import { accountColumns } from "../components/account-columns";
 import { useGetAccountList } from "../data/use-get-account-list";
 
 export default function () {
-  const {
-    setSearch,
-    debouncedSearch,
-    pagination,
-    sorting,
-    setPagination,
-    setSorting,
-  } = useTableState();
+  const { setSearch, debouncedSearch, pagination, sorting, setPagination, setSorting } =
+    useTableState();
 
   const { data } = useGetAccountList();
 
@@ -30,9 +24,7 @@ export default function () {
 
   return (
     <>
-      <DataTable
-        table={table}
-      />
+      <DataTable table={table} />
     </>
   );
 }

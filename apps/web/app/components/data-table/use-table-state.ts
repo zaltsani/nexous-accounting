@@ -1,6 +1,6 @@
-import type { PaginationState, SortingState } from '@tanstack/react-table';
-import { useCallback, useEffect, useState } from 'react';
-import type { ITableQueryParams } from '~/types/table';
+import type { PaginationState, SortingState } from "@tanstack/react-table";
+import { useCallback, useEffect, useState } from "react";
+import type { ITableQueryParams } from "~/types/table";
 
 interface UseTableStateOptions {
   initialPageIndex?: number;
@@ -19,9 +19,9 @@ export function useTableState(options: UseTableStateOptions = {}) {
   });
 
   const [sorting, setSorting] = useState<SortingState>(options.initialSorting ?? []);
-  
-  const [search, setSearch] = useState<string>(options.initialSearch ?? '');
-  const [debouncedSearch, setDebouncedSearch] = useState<string>(options.initialSearch ?? '');
+
+  const [search, setSearch] = useState<string>(options.initialSearch ?? "");
+  const [debouncedSearch, setDebouncedSearch] = useState<string>(options.initialSearch ?? "");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -36,23 +36,26 @@ export function useTableState(options: UseTableStateOptions = {}) {
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
   }, [debouncedSearch]);
 
-  const handleSortingChange = useCallback((updaterOrValue: SortingState | ((old: SortingState) => SortingState)) => {
-    setSorting(updaterOrValue);
-    setPagination((prev) => ({ ...prev, pageIndex: 0 })); // Reset to first page on sort change
-  }, []);
+  const handleSortingChange = useCallback(
+    (updaterOrValue: SortingState | ((old: SortingState) => SortingState)) => {
+      setSorting(updaterOrValue);
+      setPagination((prev) => ({ ...prev, pageIndex: 0 })); // Reset to first page on sort change
+    },
+    [],
+  );
 
   const apiParams: ITableQueryParams = {
     search: debouncedSearch,
     limit: pagination.pageSize,
     page: pagination.pageIndex + 1,
     sortBy: sorting[0]?.id || undefined,
-    sortOrder: sorting[0] ? (sorting[0].desc ? 'desc' : 'asc') : undefined,
+    sortOrder: sorting[0] ? (sorting[0].desc ? "desc" : "asc") : undefined,
   };
 
   return {
-    search, 
+    search,
     setSearch,
-    debouncedSearch, 
+    debouncedSearch,
     pagination,
     sorting,
     setPagination,

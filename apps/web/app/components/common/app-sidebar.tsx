@@ -12,7 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useIsMobile,
-  useSidebar
+  useSidebar,
 } from "@nexous/ui";
 import {
   BellIcon,
@@ -20,7 +20,7 @@ import {
   PlusIcon,
   SquareArrowLeftIcon,
   SquareArrowRightIcon,
-  XIcon
+  XIcon,
 } from "lucide-react";
 import * as React from "react";
 import { Link, useLocation } from "react-router";
@@ -125,9 +125,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SidebarMenu>
                 {item.items?.map((item, index) => {
                   const showCreateAction = item.createUrl && !isCollapsed;
-                  const isChildActive = pathname !== "/"
-                    ? pathname.startsWith(item.url) && item.url !== "/"
-                    : item.url === "/";
+                  const isChildActive =
+                    pathname !== "/"
+                      ? pathname.startsWith(item.url) && item.url !== "/"
+                      : item.url === "/";
 
                   return (
                     <SidebarMenuItem key={index} className="relative group/btn">

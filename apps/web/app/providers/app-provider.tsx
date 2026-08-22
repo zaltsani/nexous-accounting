@@ -7,19 +7,19 @@ export default function AppProvider() {
 
   useEffect(() => {
     const handleLogout = () => {
-      navigate('/login', { replace: true });
+      navigate("/login", { replace: true });
     };
 
-    window.addEventListener('auth:logout', handleLogout);
+    window.addEventListener("auth:logout", handleLogout);
 
     return () => {
-      window.removeEventListener('auth:logout', handleLogout);
+      window.removeEventListener("auth:logout", handleLogout);
     };
-  }, [navigate])
+  }, [navigate]);
 
   return (
     <QueryProvider>
       <Outlet />
     </QueryProvider>
-  )
+  );
 }

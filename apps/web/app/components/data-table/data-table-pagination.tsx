@@ -1,7 +1,7 @@
-import { type Table } from '@tanstack/react-table';
-import { ChevronFirstIcon, ChevronLastIcon, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@nexous/ui';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@nexous/ui';
+import { type Table } from "@tanstack/react-table";
+import { ChevronFirstIcon, ChevronLastIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@nexous/ui";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@nexous/ui";
 
 interface DataTablePaginationProps<TData> {
   table: Table<TData>;
@@ -56,7 +56,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
         >
           <ChevronLeft />
         </Button>
-        <div className='space-x-4 sm:space-x-2'>
+        <div className="space-x-4 sm:space-x-2">
           {(() => {
             const maxButtons = 3;
             let startPage = Math.max(0, pageIndex - Math.floor(maxButtons / 2));
@@ -66,7 +66,7 @@ export function DataTablePagination<TData>({ table }: DataTablePaginationProps<T
             }
             const visiblePages = Array.from(
               { length: endPage - startPage + 1 },
-              (_, i) => startPage + i
+              (_, i) => startPage + i,
             );
             return visiblePages.map((index) => (
               <Button

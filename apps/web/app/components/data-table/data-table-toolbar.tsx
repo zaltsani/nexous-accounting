@@ -1,7 +1,7 @@
-import { type Table } from '@tanstack/react-table';
-import { Input } from '@nexous/ui';
-import { useEffect, useState } from 'react';
-import { SearchIcon } from 'lucide-react';
+import { type Table } from "@tanstack/react-table";
+import { Input } from "@nexous/ui";
+import { useEffect, useState } from "react";
+import { SearchIcon } from "lucide-react";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -18,7 +18,7 @@ export function DataTableToolbar<TData>({
   rightActions,
   bottomActions,
 }: DataTableToolbarProps<TData>) {
-  const globalFilterValue = (table.getState().globalFilter as string) ?? '';
+  const globalFilterValue = (table.getState().globalFilter as string) ?? "";
 
   const [inputValue, setInputValue] = useState(globalFilterValue);
 
@@ -33,7 +33,7 @@ export function DataTableToolbar<TData>({
   };
 
   return (
-    <div className='flex flex-col gap-2'>
+    <div className="flex flex-col gap-2">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 py-2">
         {leftActions}
         <div className="flex flex-1 items-center space-x-2">
@@ -43,7 +43,7 @@ export function DataTableToolbar<TData>({
               placeholder={placeholder}
               value={inputValue}
               onChange={handleInputChange}
-              className='pr-10'
+              className="pr-10"
             />
           </div>
         </div>
