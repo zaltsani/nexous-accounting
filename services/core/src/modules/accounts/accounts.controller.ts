@@ -1,10 +1,7 @@
 import { Controller } from "@nestjs/common";
 import { MessagePattern, Payload } from "@nestjs/microservices";
-import {
-  ACCOUNT_MESSAGE_PATTERNS,
-  CreateAccountDto,
-  UpdateAccountDto,
-} from "@nexous-accounting/types";
+import { CreateAccountDto, UpdateAccountDto } from "@nexous-accounting/common";
+import { ACCOUNT_MESSAGE_PATTERNS } from "@nexous-accounting/types";
 import { AccountsService } from "./accounts.service";
 
 @Controller("accounts")

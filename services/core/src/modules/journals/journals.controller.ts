@@ -1,10 +1,7 @@
 import { Controller } from "@nestjs/common";
 import { MessagePattern, Payload } from "@nestjs/microservices";
-import {
-  JOURNAL_MESSAGE_PATTERNS,
-  CreateJournalDto,
-  UpdateJournalDto,
-} from "@nexous-accounting/types";
+import { CreateJournalDto, UpdateJournalDto } from "@nexous-accounting/common";
+import { JOURNAL_MESSAGE_PATTERNS } from "@nexous-accounting/types";
 import { JournalsService } from "./journals.service";
 
 @Controller("journals")

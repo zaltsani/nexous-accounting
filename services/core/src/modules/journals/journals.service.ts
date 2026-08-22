@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { CreateJournalDto, UpdateJournalDto } from "@nexous-accounting/types";
+import { CreateJournalDto, UpdateJournalDto } from "@nexous-accounting/common";
 import { PrismaService } from "src/database/prisma.service";
 
 @Injectable()

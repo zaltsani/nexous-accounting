@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { CreateAccountDto, UpdateAccountDto } from "@nexous-accounting/types";
+import { CreateAccountDto, UpdateAccountDto } from "@nexous-accounting/common";
 import { PrismaService } from "src/database/prisma.service";
 
 @Injectable()
@@ -13,7 +13,18 @@ export class AccountsService {
   }
 
   async listAccount() {
-    return this.db.account.findMany();
+    const [items, totalCount] = await this.db.$transaction(async (tx) => {
+      const items = await tx.account.findMany();
+      const totalCount = await tx.account.count();
+      return [items, totalCount];
+    });
+
+    return {
+      items,
+      totalCount,
+      page: 1,
+      limit: 10,
+    };
   }
 
   async getAccountById(id: string) {

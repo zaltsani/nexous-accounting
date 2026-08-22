@@ -1,11 +1,8 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import {
-  CreateTransactionDto,
-  IEntriesWithoutTransactionId,
-  UpdateTransactionDto,
-} from "@nexous-accounting/types";
+import { IEntriesWithoutTransactionId } from "@nexous-accounting/types";
 import { PrismaService } from "src/database/prisma.service";
 import { TRANSACTION_INCLUDE } from "./transactions.mapper";
+import { CreateTransactionDto, UpdateTransactionDto } from "@nexous-accounting/common";
 
 @Injectable()
 export class TransactionsService {
@@ -77,7 +74,6 @@ export class TransactionsService {
 
   private async validateEntries(entries: IEntriesWithoutTransactionId) {
     const total = entries.reduce((sum, entry) => sum + entry.amount, 0);
-    console.log({ total });
     if (Math.abs(total) > 0) {
       throw new BadRequestException(
         `Transaction is unbalanced. Sum of entries must be 0, received sum: ${total}`,
