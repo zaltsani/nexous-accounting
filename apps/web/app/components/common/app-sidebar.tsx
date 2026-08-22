@@ -1,7 +1,6 @@
 import {
   Button,
   cn,
-  Input,
   Separator,
   Sidebar,
   SidebarContent,
@@ -13,16 +12,15 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useIsMobile,
-  useSidebar,
+  useSidebar
 } from "@nexous/ui";
 import {
   BellIcon,
   BoxesIcon,
   PlusIcon,
-  SearchIcon,
   SquareArrowLeftIcon,
   SquareArrowRightIcon,
-  XIcon,
+  XIcon
 } from "lucide-react";
 import * as React from "react";
 import { Link, useLocation } from "react-router";
@@ -35,22 +33,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const isCollapsed = state === "collapsed";
   const isMobile = useIsMobile();
 
-  const [search, setSearch] = React.useState<string>("");
+  // const [search, setSearch] = React.useState<string>("");
 
-  const data = React.useMemo(() => {
-    return SidebarData.map((group) => {
-      const filteredItems = group.items.filter((item) => {
-        const matchesSearch = item.title.toLowerCase().includes(search.toLowerCase());
+  // const data = React.useMemo(() => {
+  //   return SidebarData.map((group) => {
+  //     const filteredItems = group.items.filter((item) => {
+  //       const matchesSearch = item.title.toLowerCase().includes(search.toLowerCase());
 
-        return matchesSearch;
-      });
+  //       return matchesSearch;
+  //     });
 
-      return {
-        ...group,
-        items: filteredItems,
-      };
-    }).filter((group) => group.items.length > 0);
-  }, [search]);
+  //     return {
+  //       ...group,
+  //       items: filteredItems,
+  //     };
+  //   }).filter((group) => group.items.length > 0);
+  // }, [search]);
+  
+  const data = SidebarData;
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -89,7 +89,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup className="pt-5">
+        {/* <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -112,7 +112,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
-        </SidebarGroup>
+        </SidebarGroup> */}
         {data.map((item, index) => (
           <SidebarGroup key={index} className="pt-0">
             {item.title && (
