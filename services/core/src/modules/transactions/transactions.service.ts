@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { CreateTransactionDto, UpdateTransactionDto } from "@nexous-accounting/common";
+import { CreateTransactionDto, GetTransactionListQueryDto, UpdateTransactionDto } from "@nexous-accounting/common";
 import { IEntriesWithoutTransactionId } from "@nexous-accounting/types";
 import { PrismaService } from "src/database/prisma.service";
 import { Decimal } from "../../../../../packages/database/core/dist/generated/prisma/internal/prismaNamespace";
@@ -28,7 +28,8 @@ export class TransactionsService {
     });
   }
 
-  async listTransaction() {
+  async listTransaction(query: GetTransactionListQueryDto) {
+    console.log({ query });
     return this.db.transaction.findMany({
       include: TRANSACTION_INCLUDE,
     });
@@ -112,10 +113,10 @@ export class TransactionsService {
     const accountIds = Array.from(new Set(entries.map((e) => e.accountId)));
     const accounts = await tx.account.findMany({
       where: { id: { in: accountIds } },
-      select: { id: true, normal_balance: true },
+      select: { id: true, normalBalance: true },
     });
 
-    const accountMap = new Map(accounts.map((a) => [a.id, a.normal_balance]));
+    const accountMap = new Map(accounts.map((a) => [a.id, a.normalBalance]));
 
     const multiplier = mode === "REVERT" ? -1 : 1;
 
