@@ -4,6 +4,9 @@
   "private": true,
   "style": "./src/styles/global.css",
   "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
   "main": "./src/index.ts",
   "module": "./src/index.ts",
   "types": "./src/index.ts",
@@ -13,7 +16,7 @@
       "import": "./src/index.ts",
       "default": "./src/index.ts"
     },
-    "./styles": "./src/styles/global.css"
+    "./styles/global.css": "./src/styles/global.css"
   },
   "scripts": {
     "build": "vite build && tsc --emitDeclarationOnly",

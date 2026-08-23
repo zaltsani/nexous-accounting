@@ -1,5 +1,7 @@
 @import "tailwindcss";
-@import "@nexous/ui/styles";
+@import "@nexous/ui/styles/global.css";
+@import "../../../packages/ui/src/styles/global.css";
+@source "../../../packages/ui";
 
 @theme {
   --font-sans:
