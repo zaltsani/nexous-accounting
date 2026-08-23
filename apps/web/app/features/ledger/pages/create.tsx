@@ -14,7 +14,7 @@ export default function () {
     resolver: zodResolver(ledgerEditorSchema),
     defaultValues: {
       date: new Date(),
-      entries: Array.from({ length: 1 }).map(() => ({})),
+      entries: Array.from({ length: 5 }).map(() => ({})),
     },
   });
 
@@ -32,7 +32,11 @@ export default function () {
       (err) => {
         console.error(err);
         if (err.entries?.root?.type === "too_small") {
-          toast.add({ description: err.entries.root.message })
+          toast.add({
+            type: "error",
+            description: err.entries.root.message,
+            priority: "high",
+          })
         }
       },
     )();
@@ -40,8 +44,8 @@ export default function () {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Jurnal Umum</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Buat Jurnal Umum</h1>
         <Button onClick={handleCreateSubmit}>Simpan Data</Button>
       </div>
 
