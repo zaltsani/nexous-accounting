@@ -83,10 +83,8 @@ async function main() {
   });
 
   // Seed System Journals
-  const journalMap = new Map<string, string>();
-
   for (const journal of SYSTEM_JOURNALS) {
-    const record = await prisma.journal.upsert({
+    await prisma.journal.upsert({
       where: { code: journal.code },
       update: { name: journal.name },
       create: {
@@ -94,7 +92,6 @@ async function main() {
         name: journal.name,
       },
     });
-    journalMap.set(record.code, record.id);
   }
 
   // Seed Root Accounts
@@ -172,12 +169,9 @@ async function main() {
   ];
 
   for (const tx of TRANSACTIONS) {
-    const journalId = journalMap.get(tx.journalCode);
-    if (!journalId) continue;
-
     const existingTx = await prisma.transaction.findFirst({
       where: {
-        journalId,
+        journalCode: tx.journalCode,
         date: tx.date,
         description: tx.description,
       },
@@ -186,7 +180,7 @@ async function main() {
     if (!existingTx) {
       await prisma.transaction.create({
         data: {
-          journalId,
+          journalCode: tx.journalCode,
           date: tx.date,
           description: tx.description,
           entries: {
@@ -197,6 +191,15 @@ async function main() {
           },
         },
       });
+
+      await Promise.all(
+        tx.entries.map((entry) =>
+          prisma.account.update({
+            where: { code: entry.accountCode },
+            data: { balance: { increment: entry.amount } },
+          }),
+        ),
+      );
     }
   }
 

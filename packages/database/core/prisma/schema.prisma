@@ -51,8 +51,7 @@ model Account {
 }
 
 model Journal {
-  id   String @id @default(uuid())
-  code String @unique
+  code String @id @unique
   name String
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -66,7 +65,7 @@ model Journal {
 
 model Transaction {
   id          String   @id @default(uuid())
-  journalId   String   @map("journal_id")
+  journalCode String   @map("journal_code")
   date        DateTime
   description String?
 
@@ -74,12 +73,12 @@ model Transaction {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // Relations
-  journal Journal @relation(fields: [journalId], references: [id])
+  journal Journal @relation(fields: [journalCode], references: [code])
 
   // Inverse Relations
   entries Entry[]
 
-  @@index([journalId, date])
+  @@index([journalCode, date])
   @@map("transactions")
 }
 

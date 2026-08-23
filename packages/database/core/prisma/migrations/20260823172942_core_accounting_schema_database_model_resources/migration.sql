@@ -12,6 +12,7 @@ CREATE TABLE "accounts" (
     "name" TEXT NOT NULL,
     "type" "AccountType" NOT NULL,
     "normal_balance" "NormalBalance" NOT NULL,
+    "balance" DECIMAL(18,4) NOT NULL DEFAULT 0,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -20,19 +21,18 @@ CREATE TABLE "accounts" (
 
 -- CreateTable
 CREATE TABLE "journals" (
-    "id" TEXT NOT NULL,
     "code" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "journals_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "journals_pkey" PRIMARY KEY ("code")
 );
 
 -- CreateTable
 CREATE TABLE "transactions" (
     "id" TEXT NOT NULL,
-    "journal_id" TEXT NOT NULL,
+    "journal_code" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
     "description" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -63,13 +63,13 @@ CREATE INDEX "accounts_parent_id_idx" ON "accounts"("parent_id");
 CREATE UNIQUE INDEX "journals_code_key" ON "journals"("code");
 
 -- CreateIndex
-CREATE INDEX "transactions_journal_id_date_idx" ON "transactions"("journal_id", "date");
+CREATE INDEX "transactions_journal_code_date_idx" ON "transactions"("journal_code", "date");
 
 -- AddForeignKey
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_parent_id_fkey" FOREIGN KEY ("parent_id") REFERENCES "accounts"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "transactions" ADD CONSTRAINT "transactions_journal_id_fkey" FOREIGN KEY ("journal_id") REFERENCES "journals"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "transactions" ADD CONSTRAINT "transactions_journal_code_fkey" FOREIGN KEY ("journal_code") REFERENCES "journals"("code") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "entries" ADD CONSTRAINT "entries_transaction_id_fkey" FOREIGN KEY ("transaction_id") REFERENCES "transactions"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
