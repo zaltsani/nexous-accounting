@@ -13,6 +13,7 @@ export const baseAccountSchema = z.object({
 
 export const accountSchema = baseAccountSchema.extend({
   id: z.string(),
+  balance: z.coerce.number(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 });
