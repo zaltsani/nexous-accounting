@@ -24,6 +24,7 @@
     "docker:build:services-core": "docker build -f services/core/Dockerfile -t services-core ."
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.9.1",
     "@nexous-accounting/common": "*",
     "@nexous-accounting/database-core": "*",
     "@nexous-accounting/types": "*",
@@ -33,6 +34,7 @@
     "axios": "^1.16.1",
     "date-fns": "^4.4.0",
     "react-hook-form": "^7.72.1",
+    "zod": "^4.4.3",
     "zustand": "^5.0.12"
   },
   "devDependencies": {
