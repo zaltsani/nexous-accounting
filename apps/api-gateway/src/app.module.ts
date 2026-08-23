@@ -1,11 +1,12 @@
 import { Module } from "@nestjs/common";
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
 import {
+  DebugZodSerializerInterceptor,
   HttpExceptionFilter,
   NatsClientModule,
   ZodValidationExceptionFilter,
 } from "@nexous-accounting/common";
-import { ZodSerializerInterceptor, ZodValidationPipe } from "nestjs-zod";
+import { ZodValidationPipe } from "nestjs-zod";
 
 import { AccountsGatewayController } from "./accounts-gateway.controller";
 import { JournalsGatewayController } from "./journals-gateway.controller";
@@ -25,7 +26,7 @@ import { TransactionsGatewayController } from "./transactions-gateway.controller
     },
     {
       provide: APP_INTERCEPTOR,
-      useClass: ZodSerializerInterceptor,
+      useClass: DebugZodSerializerInterceptor,
     },
     {
       provide: APP_FILTER,
