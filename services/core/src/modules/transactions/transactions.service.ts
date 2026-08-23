@@ -1,8 +1,9 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
+import { CreateTransactionDto, UpdateTransactionDto } from "@nexous-accounting/common";
 import { IEntriesWithoutTransactionId } from "@nexous-accounting/types";
 import { PrismaService } from "src/database/prisma.service";
+import { Decimal } from "../../../../../packages/database/core/dist/generated/prisma/internal/prismaNamespace";
 import { TRANSACTION_INCLUDE } from "./transactions.mapper";
-import { CreateTransactionDto, UpdateTransactionDto } from "@nexous-accounting/common";
 
 @Injectable()
 export class TransactionsService {
@@ -14,22 +15,13 @@ export class TransactionsService {
     await this.validateEntries(entries);
 
     return this.db.$transaction(async (tx) => {
-      // Update Account Balance
-      await Promise.all(
-        entries.map((entry) =>
-          tx.account.update({
-            where: { id: entry.accountId },
-            data: { balance: { increment: entry.amount } },
-          }),
-        ),
-      );
+      // Apply new entry balances
+      await this.adjustAccountBalances(tx, entries, "APPLY");
 
       return tx.transaction.create({
         data: {
           ...transaction,
-          entries: {
-            create: entries,
-          },
+          entries: { create: entries },
         },
         include: TRANSACTION_INCLUDE,
       });
@@ -61,40 +53,23 @@ export class TransactionsService {
       if (entries && entries.length > 0) {
         await this.validateEntries(entries);
 
-        // Revert previous balances by decrementing existing entry amounts
-        await Promise.all(
-          existingTransaction.entries.map((entry) =>
-            tx.account.update({
-              where: { id: entry.accountId },
-              data: { balance: { decrement: entry.amount } },
-            }),
-          ),
-        );
+        // Revert old balances
+        await this.adjustAccountBalances(tx, existingTransaction.entries, "REVERT");
 
-        // Delete existing entries
+        // Delete old entries
         await tx.entry.deleteMany({
           where: { transactionId: id },
         });
 
-        // Apply new balances by incrementing new entry amounts
-        await Promise.all(
-          entries.map((entry) =>
-            tx.account.update({
-              where: { id: entry.accountId },
-              data: { balance: { increment: entry.amount } },
-            }),
-          ),
-        );
+        // Apply new balances
+        await this.adjustAccountBalances(tx, entries, "APPLY");
       }
 
-      // Update the transaction record and recreate entries
       return tx.transaction.update({
         where: { id },
         data: {
           ...transaction,
-          entries: {
-            create: entries,
-          },
+          entries: { create: entries },
         },
         include: TRANSACTION_INCLUDE,
       });
@@ -108,17 +83,9 @@ export class TransactionsService {
     });
 
     return this.db.$transaction(async (tx) => {
-      // Revert all account balance updates
-      await Promise.all(
-        existingTransaction.entries.map((entry) =>
-          tx.account.update({
-            where: { id: entry.accountId },
-            data: { balance: { decrement: entry.amount } },
-          }),
-        ),
-      );
+      // Revert existing entry balances
+      await this.adjustAccountBalances(tx, existingTransaction.entries, "REVERT");
 
-      // Delete the main transaction (Cascade with entries)
       return tx.transaction.delete({
         where: { id },
         include: TRANSACTION_INCLUDE,
@@ -133,5 +100,42 @@ export class TransactionsService {
         `Transaction is unbalanced. Sum of entries must be 0, received sum: ${total}`,
       );
     }
+  }
+
+  private async adjustAccountBalances(
+    tx: Parameters<Parameters<typeof this.db.$transaction>[0]>[0],
+    entries: Array<{ accountId: string; amount: number | Decimal }>,
+    mode: "APPLY" | "REVERT" = "APPLY",
+  ) {
+    if (!entries || entries.length === 0) return;
+
+    const accountIds = Array.from(new Set(entries.map((e) => e.accountId)));
+    const accounts = await tx.account.findMany({
+      where: { id: { in: accountIds } },
+      select: { id: true, normal_balance: true },
+    });
+
+    const accountMap = new Map(accounts.map((a) => [a.id, a.normal_balance]));
+
+    const multiplier = mode === "REVERT" ? -1 : 1;
+
+    await Promise.all(
+      entries.map((entry) => {
+        const normalBalance = accountMap.get(entry.accountId);
+
+        // Normalize Decimal or number to a standard JS number
+        const numericAmount =
+          typeof entry.amount === "number" ? entry.amount : entry.amount.toNumber();
+
+        // DEBIT account: +amount increases balance
+        // CREDIT account: -amount increases balance
+        const applyAdjustment = normalBalance === "CREDIT" ? -numericAmount : numericAmount;
+
+        return tx.account.update({
+          where: { id: entry.accountId },
+          data: { balance: { increment: applyAdjustment * multiplier } },
+        });
+      }),
+    );
   }
 }

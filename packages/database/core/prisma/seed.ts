@@ -178,6 +178,18 @@ async function main() {
     });
 
     if (!existingTx) {
+      const accountCodes = tx.entries.map((e) => e.accountCode);
+      const accounts = await prisma.account.findMany({
+        where: { code: { in: accountCodes } },
+        select: { id: true, code: true, normalBalance: true },
+      });
+
+      // Map accountCode
+      const accountDetailsMap = new Map(
+        accounts.map((a) => [a.code, { id: a.id, normalBalance: a.normalBalance }]),
+      );
+
+      // Create Transaction and Journal Entries
       await prisma.transaction.create({
         data: {
           journalCode: tx.journalCode,
@@ -185,20 +197,29 @@ async function main() {
           description: tx.description,
           entries: {
             create: tx.entries.map((e) => ({
-              accountId: accountMap.get(e.accountCode)!,
+              accountId: accountDetailsMap.get(e.accountCode)!.id,
               amount: e.amount,
             })),
           },
         },
       });
 
+      // Update Account Balances (with missing await/return fixed)
       await Promise.all(
-        tx.entries.map((entry) =>
-          prisma.account.update({
+        tx.entries.map((entry) => {
+          const account = accountDetailsMap.get(entry.accountCode);
+          const normalBalance = account?.normalBalance;
+
+          // DEBIT accounts:  +entry.amount increases balance (+100 -> +100)
+          // CREDIT accounts: -entry.amount increases balance (-100 -> +100)
+          const adjustment = normalBalance === "CREDIT" ? -entry.amount : entry.amount;
+
+          // RETURN the promise so Promise.all can await it
+          return prisma.account.update({
             where: { code: entry.accountCode },
-            data: { balance: { increment: entry.amount } },
-          }),
-        ),
+            data: { balance: { increment: adjustment } },
+          });
+        }),
       );
     }
   }
