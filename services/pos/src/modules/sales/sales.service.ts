@@ -47,8 +47,8 @@ export class SalesService {
 
     // Construct NATS Payload
     const eventPayload: ICreateTransaction = {
-      journalId: "",
-      date: new Date().toDateString(),
+      journalCode: "GL",
+      date: new Date(),
       entries: [],
     };
 

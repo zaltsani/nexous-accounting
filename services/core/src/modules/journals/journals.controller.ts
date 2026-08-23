@@ -14,8 +14,8 @@ export class JournalsController {
   }
 
   @MessagePattern(JOURNAL_MESSAGE_PATTERNS.UPDATE_JOURNAL)
-  updateJournal(@Payload() payload: { id: string; data: UpdateJournalDto }) {
-    return this.journalsService.updateJournal(payload.id, payload.data);
+  updateJournal(@Payload() payload: { code: string; data: UpdateJournalDto }) {
+    return this.journalsService.updateJournal(payload.code, payload.data);
   }
 
   @MessagePattern(JOURNAL_MESSAGE_PATTERNS.LIST_JOURNAL)
@@ -24,12 +24,12 @@ export class JournalsController {
   }
 
   @MessagePattern(JOURNAL_MESSAGE_PATTERNS.GET_JOURNAL)
-  getJournalByCode(@Payload() id: string) {
-    return this.journalsService.getJournalById(id);
+  getJournalByCode(@Payload() code: string) {
+    return this.journalsService.getJournalByCode(code);
   }
 
   @MessagePattern(JOURNAL_MESSAGE_PATTERNS.DELETE_JOURNAL)
-  deleteJournal(@Payload() id: string) {
-    return this.journalsService.deleteJournal(id);
+  deleteJournal(@Payload() code: string) {
+    return this.journalsService.deleteJournal(code);
   }
 }

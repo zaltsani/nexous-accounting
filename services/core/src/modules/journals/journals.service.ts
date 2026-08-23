@@ -16,28 +16,22 @@ export class JournalsService {
     return this.db.journal.findMany();
   }
 
-  async getJournalById(id: string) {
-    return this.db.journal.findUniqueOrThrow({
-      where: { id },
-    });
-  }
-
   async getJournalByCode(code: string) {
     return this.db.journal.findUniqueOrThrow({
       where: { code },
     });
   }
 
-  async updateJournal(id: string, data: UpdateJournalDto) {
+  async updateJournal(code: string, data: UpdateJournalDto) {
     return this.db.journal.update({
-      where: { id },
+      where: { code },
       data,
     });
   }
 
-  async deleteJournal(id: string) {
+  async deleteJournal(code: string) {
     return this.db.journal.delete({
-      where: { id },
+      where: { code },
     });
   }
 }

@@ -2,7 +2,7 @@ import z from "zod";
 import { baseEntrySchema } from "./entry.js";
 
 export const baseTransactionSchema = z.object({
-  journalId: z.string(),
+  journalCode: z.string(),
   date: z.string().datetime(),
   description: z.string().nullish(),
 });

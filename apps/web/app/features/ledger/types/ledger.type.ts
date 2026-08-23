@@ -9,7 +9,7 @@ export const ledgerEntrySchema = z.object({
 
 export const ledgerEditorSchema = createTransactionSchema
   .omit({
-    journalId: true,
+    journalCode: true,
   })
   .extend({
     entries: ledgerEntrySchema
