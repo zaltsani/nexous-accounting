@@ -1,27 +1,25 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Inject,
-  Param,
-  Patch,
-  Post,
-  UsePipes,
-} from "@nestjs/common";
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
-import { CreateTransactionDto, UpdateTransactionDto } from "@nexous-accounting/common";
+import {
+  CreateTransactionDto,
+  GetTransactionListQueryDto,
+  TransactionDto,
+  UpdateTransactionDto,
+} from "@nexous-accounting/common";
 import { TRANSACTION_MESSAGE_PATTERNS } from "@nexous-accounting/types";
-import { ZodValidationPipe } from "nestjs-zod";
+import { ZodResponse } from "nestjs-zod";
+import { firstValueFrom } from "rxjs";
 
 @Controller("transactions")
-@UsePipes(ZodValidationPipe)
 export class TransactionsGatewayController {
   constructor(@Inject("NATS_SERVICE") private readonly natsClient: ClientProxy) {}
 
   @Post()
+  // @ZodResponse({ status: 201, type: TransactionDto })
   async create(@Body() dto: CreateTransactionDto) {
-    return this.natsClient.send(TRANSACTION_MESSAGE_PATTERNS.CREATE_TRANSACTION, dto);
+    return await firstValueFrom(
+      this.natsClient.send(TRANSACTION_MESSAGE_PATTERNS.CREATE_TRANSACTION, dto),
+    );
   }
 
   @Patch(":id")
@@ -30,8 +28,8 @@ export class TransactionsGatewayController {
   }
 
   @Get()
-  async list() {
-    return this.natsClient.send(TRANSACTION_MESSAGE_PATTERNS.LIST_TRANSACTION, {});
+  async list(@Query() query: GetTransactionListQueryDto) {
+    return this.natsClient.send(TRANSACTION_MESSAGE_PATTERNS.LIST_TRANSACTION, { query });
   }
 
   @Get(":id")
