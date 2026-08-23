@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, DatePicker, Field, FieldError, FieldLabel, Textarea } from "@nexous-accounting/ui";
 import { Controller, useForm } from "react-hook-form";
 import { href, useNavigate } from "react-router";
+import { toast } from "~/components/ui/toast";
 import { DetailItemEntryForm } from "../components/detail-item-entry.form";
 import { useCreateGeneralLedgerTransaction } from "../hooks/use-create-general-ledger-transaction";
 import { ledgerEditorSchema, type ILedgerEditor } from "../types/ledger.type";
@@ -30,11 +31,9 @@ export default function () {
       },
       (err) => {
         console.error(err);
-        // if (err.items?.root?.type === "too_small") {
-        //   gooeyToast.error("Error", {
-        //     description: "Item tidak boleh kosong."
-        //   });
-        // }
+        if (err.entries?.root?.type === "too_small") {
+          toast.add({ description: err.entries.root.message })
+        }
       },
     )();
   };
