@@ -3,7 +3,7 @@ import z from "zod";
 export const baseEntrySchema = z.object({
   transactionId: z.string(),
   accountId: z.string(),
-  amount: z.number(),
+  amount: z.number().min(0.0001),
 });
 
 export const entrySchema = baseEntrySchema;

@@ -19,10 +19,15 @@ export const createEntrySchema = baseEntrySchema.omit({
 });
 
 export const createTransactionSchema = baseTransactionSchema.extend({
+  date: z.date(),
   entries: createEntrySchema.array().min(2),
 });
 
 export const updateTransactionSchema = createTransactionSchema.partial();
+
+export const createTransactionDtoSchema = createTransactionSchema.extend({
+  date: z.string(),
+})
 
 export type IBaseTransaction = z.infer<typeof baseTransactionSchema>;
 export type ITransaction = z.infer<typeof transactionSchema>;
