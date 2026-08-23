@@ -2,10 +2,12 @@ import type { ICreateTransaction } from "@nexous-accounting/types";
 import type { ILedgerEditor } from "../types/ledger.type";
 
 export const entriesMapperToTransactionData = (data: ILedgerEditor): ICreateTransaction => {
+  const filteredEntries = data.entries.filter((d) => d.accountId && (d.credit || d.debit));
+
   return {
     ...data,
-    journalCode: "GL",
-    entries: data.entries.map((entry) => {
+    journalCode: "JU",
+    entries: filteredEntries.map((entry) => {
       const debit = entry.debit ?? 0;
       const credit = entry.credit ?? 0;
 
