@@ -119,9 +119,7 @@ export function AsyncCombobox<T extends Option>({
 
       <ComboboxContent>
         {!hasOptions && (
-          <ComboboxEmpty>
-            {isFetching ? "Searching..." : "No items found."}
-          </ComboboxEmpty>
+          <ComboboxEmpty>{isFetching ? "Searching..." : "No items found."}</ComboboxEmpty>
         )}
 
         {hasOptions && (
@@ -147,9 +145,7 @@ export function AsyncCombobox<T extends Option>({
         )}
 
         {hasOptions && (isFetchingNextPage || isFetching) && (
-          <div className="p-2 text-center text-xs text-muted-foreground">
-            Loading...
-          </div>
+          <div className="p-2 text-center text-xs text-muted-foreground">Loading...</div>
         )}
       </ComboboxContent>
     </Combobox>

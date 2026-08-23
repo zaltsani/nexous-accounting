@@ -28,9 +28,7 @@ export const formatRupiah = (
 
   const [integerPart, decimalPart] = cleanString.split(".");
 
-  const formattedInteger = integerPart
-    ? integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-    : "0";
+  const formattedInteger = integerPart ? integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "0";
 
   const prefix = isNegative ? "Rp -" : "Rp ";
 

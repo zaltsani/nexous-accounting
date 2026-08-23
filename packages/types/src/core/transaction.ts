@@ -27,7 +27,7 @@ export const updateTransactionSchema = createTransactionSchema.partial();
 
 export const createTransactionDtoSchema = createTransactionSchema.extend({
   date: z.string(),
-})
+});
 
 export type IBaseTransaction = z.infer<typeof baseTransactionSchema>;
 export type ITransaction = z.infer<typeof transactionSchema>;

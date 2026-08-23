@@ -1,8 +1,14 @@
 import { cn, Input } from "@nexous/ui";
 import { useEffect, useState } from "react";
-import { formatCurrencyInputValue, parseCurrencyInputValueToNumber } from "~/libs/utils/input-utils";
+import {
+  formatCurrencyInputValue,
+  parseCurrencyInputValueToNumber,
+} from "~/libs/utils/input-utils";
 
-interface CurrencyInputProps extends Omit<React.ComponentProps<typeof Input>, "value" | "onChange"> {
+interface CurrencyInputProps extends Omit<
+  React.ComponentProps<typeof Input>,
+  "value" | "onChange"
+> {
   value: number | string | null | undefined;
   onChange: (value: number | null) => void;
 }
@@ -37,7 +43,7 @@ export const CurrencyInput = ({ value, onChange, className, ...props }: Currency
       <span
         className={cn(
           "absolute left-3 text-sm pointer-events-none select-none transition-colors",
-          !displayValue && "text-muted-foreground"
+          !displayValue && "text-muted-foreground",
         )}
       >
         Rp

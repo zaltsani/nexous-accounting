@@ -6,14 +6,16 @@ import type { IApiListQueryParams } from "@nexous-accounting/types";
 
 export interface GenericAsyncComboboxProps<
   TData,
-  TExtraParams extends Record<string, unknown> = Record<string, unknown>
+  TExtraParams extends Record<string, unknown> = Record<string, unknown>,
 > {
   value?: string;
   onChange: (value: string | undefined) => void;
   onItemSelect?: (item: TData) => void;
 
   queryKey: string;
-  fetchListFn: (params?: IApiListQueryParams & TExtraParams & { page: number }) => Promise<PaginationResponse<TData>>;
+  fetchListFn: (
+    params?: IApiListQueryParams & TExtraParams & { page: number },
+  ) => Promise<PaginationResponse<TData>>;
   fetchByIdFn?: (id: string) => Promise<{ data: TData }>;
 
   params?: TExtraParams;
@@ -27,7 +29,10 @@ export interface GenericAsyncComboboxProps<
   renderItem?: (item: Option) => React.ReactNode;
 }
 
-export function GenericAsyncCombobox<TData, TExtraParams extends Record<string, unknown> = Record<string, unknown>>({
+export function GenericAsyncCombobox<
+  TData,
+  TExtraParams extends Record<string, unknown> = Record<string, unknown>,
+>({
   value,
   onChange,
   onItemSelect,
@@ -90,7 +95,15 @@ export function GenericAsyncCombobox<TData, TExtraParams extends Record<string, 
     }
 
     return list;
-  }, [listData, isValueInList, singleItemData, value, getOptionValue, getOptionLabel, getOptionCode]);
+  }, [
+    listData,
+    isValueInList,
+    singleItemData,
+    value,
+    getOptionValue,
+    getOptionLabel,
+    getOptionCode,
+  ]);
 
   return (
     <AsyncCombobox

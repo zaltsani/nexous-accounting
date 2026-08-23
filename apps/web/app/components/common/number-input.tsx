@@ -1,9 +1,12 @@
-import { Input } from '@nexous/ui';
-import React, { useEffect, useState } from 'react';
-import { formatInputNumber, formatRawInputString, parseInputNumberToFloat } from '~/libs/utils/input-utils';
+import { Input } from "@nexous/ui";
+import React, { useEffect, useState } from "react";
+import {
+  formatInputNumber,
+  formatRawInputString,
+  parseInputNumberToFloat,
+} from "~/libs/utils/input-utils";
 
-interface NumberInputProps
-  extends Omit<React.ComponentProps<typeof Input>, 'value' | 'onChange'> {
+interface NumberInputProps extends Omit<React.ComponentProps<typeof Input>, "value" | "onChange"> {
   value: number | null | undefined;
   onChange: (value: number | null) => void;
   maxDecimals?: number;
@@ -17,11 +20,11 @@ export const NumberInput = ({
   max,
   ...props
 }: NumberInputProps) => {
-  const [displayValue, setDisplayValue] = useState<string>('');
+  const [displayValue, setDisplayValue] = useState<string>("");
 
   useEffect(() => {
     if (value === null || value === undefined) {
-      setDisplayValue('');
+      setDisplayValue("");
     } else {
       const currentParsed = parseInputNumberToFloat(displayValue, maxDecimals);
       if (currentParsed !== value) {
@@ -46,12 +49,5 @@ export const NumberInput = ({
     onChange(parsedNumber);
   };
 
-  return (
-    <Input
-      {...props}
-      value={displayValue}
-      onChange={handleChange}
-      inputMode="decimal"
-    />
-  );
+  return <Input {...props} value={displayValue} onChange={handleChange} inputMode="decimal" />;
 };

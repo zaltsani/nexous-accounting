@@ -5,7 +5,7 @@ export const apiListQueryParamsSchema = z.object({
   limit: z.number().optional(),
   search: z.string().optional(),
   sortBy: z.string().optional(),
-  sortOrder: z.enum(['asc', 'desc']).optional(),
+  sortOrder: z.enum(["asc", "desc"]).optional(),
 });
 
 export type IApiListQueryParams = z.infer<typeof apiListQueryParamsSchema>;

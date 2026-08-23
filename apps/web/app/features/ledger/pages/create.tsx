@@ -14,21 +14,21 @@ export default function () {
     defaultValues: {
       date: new Date(),
       entries: Array.from({ length: 1 }).map(() => ({})),
-    }
+    },
   });
 
   const createMutation = useCreateGeneralLedgerTransaction();
 
   const handleCreateSubmit = () => {
     form.handleSubmit(
-      values => {
+      (values) => {
         createMutation.mutate(values, {
           onSuccess: () => {
             navigate(href("/ledger"));
           },
-        })
+        });
       },
-      err => {
+      (err) => {
         console.error(err);
         // if (err.items?.root?.type === "too_small") {
         //   gooeyToast.error("Error", {
@@ -37,17 +37,13 @@ export default function () {
         // }
       },
     )();
-  }
+  };
 
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Jurnal Umum</h1>
-        <Button
-          onClick={handleCreateSubmit}
-        >
-          Simpan Data
-        </Button>
+        <Button onClick={handleCreateSubmit}>Simpan Data</Button>
       </div>
 
       <form className="grid gap-3">
@@ -58,13 +54,8 @@ export default function () {
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel required>Tanggal</FieldLabel>
-              <DatePicker
-                date={field.value}
-                setDate={field.onChange}
-              />
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
+              <DatePicker date={field.value} setDate={field.onChange} />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
@@ -74,9 +65,7 @@ export default function () {
           name="description"
           control={form.control}
           render={({ field, fieldState }) => (
-            <Field
-              data-invalid={fieldState.invalid}
-            >
+            <Field data-invalid={fieldState.invalid}>
               <FieldLabel>Deskripsi</FieldLabel>
               <Textarea
                 {...field}
@@ -84,17 +73,13 @@ export default function () {
                 value={field.value ?? ""}
                 onChange={field.onChange}
               />
-              {fieldState.invalid && (
-                <FieldError errors={[fieldState.error]} />
-              )}
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
 
         {/* Entries */}
-        <DetailItemEntryForm
-          form={form}
-        />
+        <DetailItemEntryForm form={form} />
       </form>
     </div>
   );
