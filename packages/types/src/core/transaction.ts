@@ -1,16 +1,11 @@
 import z from "zod";
-import { baseEntrySchema } from "./entry.js";
 import { apiListQueryParamsSchema } from "../common/api-list-query-params.js";
-
-export const baseTransactionSchema = z.object({
-  journalCode: z.string(),
-  date: z.string().datetime(),
-  description: z.string().nullish(),
-});
+import { baseEntrySchema, baseTransactionSchema } from "./base-schemas.js";
+import { entrySchema } from "./entry.js";
 
 export const transactionSchema = baseTransactionSchema.extend({
   id: z.string(),
-  entries: baseEntrySchema.array().min(2),
+  entries: entrySchema.array().min(2),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 });
