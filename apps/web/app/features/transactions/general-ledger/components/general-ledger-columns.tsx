@@ -1,21 +1,21 @@
 import type { ITransaction } from "@nexous-accounting/types";
 import type { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
 
 export const generalLedgerColumns: ColumnDef<ITransaction>[] = [
   {
-    accessorKey: "code",
-    header: "Kode Akun",
+    accessorKey: "date",
+    header: "Tanggal",
+    cell: ({ row }) => format(row.original.date, "dd MMMM yyyy"),
   },
   {
-    accessorKey: "name",
-    header: "Nama Akun",
+    accessorKey: "description",
+    header: "Deskripsi",
   },
   {
-    accessorKey: "type",
-    header: "Tipe Akun",
-  },
-  {
-    accessorKey: "normalBalance",
-    header: "Saldo Normal",
+    id: "totalTransaction",
+    header: "Total Transaksi",
+    cell: ({ row }) =>
+      row.original.entries.filter((d) => d.amount > 0).reduce((acc, curr) => acc + curr.amount, 0),
   },
 ];
