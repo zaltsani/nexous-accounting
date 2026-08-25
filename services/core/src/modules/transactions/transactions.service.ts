@@ -1,9 +1,14 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { CreateTransactionDto, GetTransactionListQueryDto, UpdateTransactionDto } from "@nexous-accounting/common";
+import {
+  CreateTransactionDto,
+  GetTransactionListQueryDto,
+  UpdateTransactionDto,
+} from "@nexous-accounting/common";
 import { IEntriesWithoutTransactionId } from "@nexous-accounting/types";
 import { PrismaService } from "src/database/prisma.service";
 import { Decimal } from "../../../../../packages/database/core/dist/generated/prisma/internal/prismaNamespace";
 import { TRANSACTION_INCLUDE } from "./transactions.mapper";
+import { Prisma } from "@nexous-accounting/database-core";
 
 @Injectable()
 export class TransactionsService {
@@ -30,9 +35,46 @@ export class TransactionsService {
 
   async listTransaction(query: GetTransactionListQueryDto) {
     console.log({ query });
-    return this.db.transaction.findMany({
-      include: TRANSACTION_INCLUDE,
+
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 100;
+
+    const skip = (page - 1) * limit;
+    const take = limit;
+
+    const orderBy: Prisma.TransactionOrderByWithRelationInput = query.sortBy
+      ? { [query.sortBy]: query.sortOrder }
+      : { updatedAt: "desc" };
+
+    const where: Prisma.TransactionWhereInput = {};
+
+    if (query.search) {
+      where.OR = [
+        { journalCode: { contains: query.search, mode: "insensitive" } },
+        { description: { contains: query.search, mode: "insensitive" } },
+      ];
+    }
+
+    where.journalCode = query.journalCode;
+
+    const [items, totalCount] = await this.db.$transaction(async (tx) => {
+      const items = await tx.transaction.findMany({
+        where,
+        orderBy,
+        skip,
+        take,
+        include: TRANSACTION_INCLUDE,
+      });
+      const totalCount = await tx.transaction.count();
+      return [items, totalCount];
     });
+
+    return {
+      items,
+      totalCount,
+      page,
+      limit,
+    };
   }
 
   async getTransaction(id: string) {
