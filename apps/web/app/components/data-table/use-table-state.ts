@@ -1,6 +1,6 @@
 import type { PaginationState, SortingState } from "@tanstack/react-table";
 import { useCallback, useEffect, useState } from "react";
-import type { ITableQueryParams } from "~/types/table";
+import type { IApiListQueryParams } from "@nexous-accounting/types";
 
 interface UseTableStateOptions {
   initialPageIndex?: number;
@@ -44,7 +44,7 @@ export function useTableState(options: UseTableStateOptions = {}) {
     [],
   );
 
-  const apiParams: ITableQueryParams = {
+  const apiParams: IApiListQueryParams = {
     search: debouncedSearch,
     limit: pagination.pageSize,
     page: pagination.pageIndex + 1,
