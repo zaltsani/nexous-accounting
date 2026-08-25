@@ -9,5 +9,5 @@ export const MonthlyCashFlow = ({ className }: MonthlyCashFlowProps) => {
     <div className={cn("", className)}>
       <h1 className="text-xl sm:text-2xl">Monthly Cash Flow</h1>
     </div>
-  )
-}
+  );
+};
