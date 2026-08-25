@@ -5,10 +5,10 @@ import { accountColumns } from "../components/account-columns";
 import { useGetAccountList } from "../data/use-get-account-list";
 
 export default function () {
-  const { setSearch, debouncedSearch, pagination, sorting, setPagination, setSorting } =
+  const { setSearch, debouncedSearch, pagination, sorting, setPagination, setSorting, apiParams } =
     useTableState();
 
-  const { data } = useGetAccountList();
+  const { data } = useGetAccountList(apiParams);
 
   const { table } = useDataTable({
     data: data?.items ?? [],
