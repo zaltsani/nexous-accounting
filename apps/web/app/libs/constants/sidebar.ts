@@ -1,8 +1,11 @@
 import {
-  HandCoinsIcon,
-  LayoutDashboardIcon,
-  NotebookTabsIcon,
-  WalletCardsIcon,
+  BanknoteIcon,
+  FileBarChartIcon,
+  LandmarkIcon,
+  LayoutGridIcon,
+  NetworkIcon,
+  ReceiptTextIcon,
+  ShoppingCartIcon,
   type LucideIcon,
 } from "lucide-react";
 
@@ -20,42 +23,42 @@ export const SidebarData: ISidebarData[] = [
   {
     items: [
       {
-        icon: LayoutDashboardIcon,
+        icon: LayoutGridIcon,
         title: "Dashboard",
         url: "/",
       },
       {
-        icon: WalletCardsIcon,
+        icon: NetworkIcon,
         title: "Akun",
         url: "/accounts",
       },
-      // {
-      //   icon: ScaleIcon,
-      //   title: "Neraca",
-      //   url: "/neraca"
-      // },
+      {
+        icon: FileBarChartIcon,
+        title: "Report Neraca",
+        url: "/report",
+      },
     ],
   },
   {
     title: "Transaksi",
     items: [
       {
-        icon: NotebookTabsIcon,
+        icon: LandmarkIcon,
         title: "Jurnal Umum",
         url: "/general-ledger",
       },
       {
-        icon: HandCoinsIcon,
+        icon: ReceiptTextIcon,
         title: "Penjualan",
         url: "/sales",
       },
       {
-        icon: HandCoinsIcon,
+        icon: ShoppingCartIcon,
         title: "Pembelian",
         url: "/purchases",
       },
       {
-        icon: HandCoinsIcon,
+        icon: BanknoteIcon,
         title: "Pembayaran",
         url: "/payments",
       },
