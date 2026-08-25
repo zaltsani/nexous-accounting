@@ -22,6 +22,6 @@ export const accountColumns: ColumnDef<IAccount>[] = [
   {
     accessorKey: "balance",
     header: "Saldo",
-    cell: ({ row }) => formatIndonesiaCurrency(row.original.balance)
+    cell: ({ row }) => formatIndonesiaCurrency(row.original.balance),
   },
 ];
