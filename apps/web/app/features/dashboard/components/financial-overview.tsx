@@ -1,5 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@nexous-accounting/ui";
-import { ReceiptIcon, TrendingDownIcon, TrendingUpIcon, WalletIcon, type LucideIcon } from "lucide-react";
+import {
+  ReceiptIcon,
+  TrendingDownIcon,
+  TrendingUpIcon,
+  WalletIcon,
+  type LucideIcon,
+} from "lucide-react";
 import { formatIndonesiaCurrency } from "~/libs/utils/format-indonesia-currency";
 
 export const FinancialOverview = () => {
@@ -15,36 +21,30 @@ export const FinancialOverview = () => {
         value={formatIndonesiaCurrency(18000000)}
         icon={TrendingDownIcon}
       />
-      <OverviewCard
-        title="NET PROFIT"
-        value={formatIndonesiaCurrency(4200000)}
-        icon={WalletIcon}
-      />
+      <OverviewCard title="NET PROFIT" value={formatIndonesiaCurrency(4200000)} icon={WalletIcon} />
       <OverviewCard
         title="ACCOUNT RECEIVABLE"
         value={formatIndonesiaCurrency(3250000)}
         icon={ReceiptIcon}
       />
     </div>
-  )
-}
+  );
+};
 
 const OverviewCard = ({
   title,
   icon: Icon,
   value,
 }: {
-  title: string,
-  value: string,
-  icon: LucideIcon,
+  title: string;
+  value: string;
+  icon: LucideIcon;
 }) => (
   <Card>
     <CardHeader className="flex items-center justify-between">
       <CardTitle>{title}</CardTitle>
       <Icon size={16} />
     </CardHeader>
-    <CardContent className="text-2xl font-semibold">
-      {value}
-    </CardContent>
+    <CardContent className="text-2xl font-semibold">{value}</CardContent>
   </Card>
-)
+);
