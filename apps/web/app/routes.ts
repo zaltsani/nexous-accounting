@@ -9,27 +9,27 @@ export default [
       ...prefix("accounts", [index("features/accounts/pages/index.tsx")]),
 
       // ===== General Ledger =====
-      ...prefix("ledger", [
-        index("features/ledger/pages/index.tsx"),
-        route("create", "features/ledger/pages/create.tsx"),
+      ...prefix("general-ledger", [
+        index("features/transactions/general-ledger/pages/index.tsx"),
+        route("create", "features/transactions/general-ledger/pages/create.tsx"),
       ]),
 
       // ===== Sales =====
       ...prefix("sales", [
-        index("features/sales/pages/index.tsx"),
-        route("create", "features/sales/pages/create.tsx"),
+        index("features/transactions/sales/pages/index.tsx"),
+        route("create", "features/transactions/sales/pages/create.tsx"),
       ]),
 
       // ===== Purchases =====
       ...prefix("purchases", [
-        index("features/purchases/pages/index.tsx"),
-        route("create", "features/purchases/pages/create.tsx"),
+        index("features/transactions/purchases/pages/index.tsx"),
+        route("create", "features/transactions/purchases/pages/create.tsx"),
       ]),
 
       // ===== Payments =====
       ...prefix("payments", [
-        index("features/payments/pages/index.tsx"),
-        route("create", "features/payments/pages/create.tsx"),
+        index("features/transactions/payments/pages/index.tsx"),
+        route("create", "features/transactions/payments/pages/create.tsx"),
       ]),
     ]),
   ]),

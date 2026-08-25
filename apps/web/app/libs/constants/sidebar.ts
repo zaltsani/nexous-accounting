@@ -29,10 +29,20 @@ export const SidebarData: ISidebarData[] = [
         title: "Akun",
         url: "/accounts",
       },
+      // {
+      //   icon: ScaleIcon,
+      //   title: "Neraca",
+      //   url: "/neraca"
+      // },
+    ],
+  },
+  {
+    title: "Transaksi",
+    items: [
       {
         icon: NotebookTabsIcon,
         title: "Jurnal Umum",
-        url: "/ledger",
+        url: "/general-ledger",
       },
       {
         icon: HandCoinsIcon,
@@ -49,11 +59,6 @@ export const SidebarData: ISidebarData[] = [
         title: "Pembayaran",
         url: "/payments",
       },
-      // {
-      //   icon: ScaleIcon,
-      //   title: "Neraca",
-      //   url: "/neraca"
-      // },
     ],
   },
 ];

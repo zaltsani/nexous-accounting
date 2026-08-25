@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createTransaction } from "~/api/transactions/create-transaction";
+import { createTransaction } from "~/features/transactions/api/transactions/create-transaction";
 import type { ILedgerEditor } from "../types/ledger.type";
 import { entriesMapperToTransactionData } from "../utils/mapper-to-transaction-editor";
 
