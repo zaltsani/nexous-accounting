@@ -30,15 +30,14 @@ export const createTransactionDtoSchema = createTransactionSchema.extend({
   date: z.string(),
 });
 
-export const getTransactionListQuerySchema = apiListQueryParamsSchema
-  .extend({
-    journalCode: z.string().optional(),
-    accountId: z.string().optional(),
-    accountCode: z.string().optional(),
-    description: z.string().optional(),
-    startDate: z.string().datetime().optional(),
-    endDate: z.string().datetime().optional(),
-  });
+export const getTransactionListQuerySchema = apiListQueryParamsSchema.extend({
+  journalCode: z.string().optional(),
+  accountId: z.string().optional(),
+  accountCode: z.string().optional(),
+  description: z.string().optional(),
+  startDate: z.string().datetime().optional(),
+  endDate: z.string().datetime().optional(),
+});
 
 export type IBaseTransaction = z.infer<typeof baseTransactionSchema>;
 export type ITransaction = z.infer<typeof transactionSchema>;
