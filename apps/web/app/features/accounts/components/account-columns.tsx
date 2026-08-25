@@ -1,5 +1,6 @@
 import type { IAccount } from "@nexous-accounting/types";
 import type { ColumnDef } from "@tanstack/react-table";
+import { formatIndonesiaCurrency } from "~/libs/utils/format-indonesia-currency";
 
 export const accountColumns: ColumnDef<IAccount>[] = [
   {
@@ -21,5 +22,6 @@ export const accountColumns: ColumnDef<IAccount>[] = [
   {
     accessorKey: "balance",
     header: "Saldo",
+    cell: ({ row }) => formatIndonesiaCurrency(row.original.balance)
   },
 ];
