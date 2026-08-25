@@ -20,7 +20,10 @@ interface LedgerTransactionsTableProps<TData extends RowData> {
   verticalAlign?: "top" | "bottom" | "middle";
 }
 
-const verticalAlignClasses: Record<NonNullable<LedgerTransactionsTableProps<any>["verticalAlign"]>, string> = {
+const verticalAlignClasses: Record<
+  NonNullable<LedgerTransactionsTableProps<any>["verticalAlign"]>,
+  string
+> = {
   top: "!align-top",
   middle: "!align-middle",
   bottom: "!align-bottom",

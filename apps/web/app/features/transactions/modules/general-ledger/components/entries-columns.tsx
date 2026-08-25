@@ -22,15 +22,13 @@ export const entryColumns: ColumnDef<IEntry>[] = [
   {
     accessorKey: "debit",
     header: "Debit",
-    cell: ({ row }) => row.original.amount > 0
-      ? formatIndonesiaCurrency(Math.abs(row.original.amount))
-      : ""
+    cell: ({ row }) =>
+      row.original.amount > 0 ? formatIndonesiaCurrency(Math.abs(row.original.amount)) : "",
   },
   {
     accessorKey: "credit",
     header: "Kredit",
-    cell: ({ row }) => row.original.amount < 0
-      ? formatIndonesiaCurrency(Math.abs(row.original.amount))
-      : ""
+    cell: ({ row }) =>
+      row.original.amount < 0 ? formatIndonesiaCurrency(Math.abs(row.original.amount)) : "",
   },
 ];
