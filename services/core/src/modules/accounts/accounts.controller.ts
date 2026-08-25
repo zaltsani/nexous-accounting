@@ -1,6 +1,10 @@
 import { Controller } from "@nestjs/common";
 import { MessagePattern, Payload } from "@nestjs/microservices";
-import { CreateAccountDto, UpdateAccountDto } from "@nexous-accounting/common";
+import {
+  CreateAccountDto,
+  GetAccountListQueryDto,
+  UpdateAccountDto,
+} from "@nexous-accounting/common";
 import { ACCOUNT_MESSAGE_PATTERNS } from "@nexous-accounting/types";
 import { AccountsService } from "./accounts.service";
 
@@ -19,8 +23,8 @@ export class AccountsController {
   }
 
   @MessagePattern(ACCOUNT_MESSAGE_PATTERNS.LIST_ACCOUNT)
-  listAccount() {
-    return this.accountsService.listAccount();
+  listAccount(@Payload() payload: { query: GetAccountListQueryDto }) {
+    return this.accountsService.listAccount(payload.query);
   }
 
   @MessagePattern(ACCOUNT_MESSAGE_PATTERNS.GET_ACCOUNT_BY_ID)
