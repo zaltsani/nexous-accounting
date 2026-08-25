@@ -18,4 +18,8 @@ export const accountColumns: ColumnDef<IAccount>[] = [
     accessorKey: "normalBalance",
     header: "Saldo Normal",
   },
+  {
+    accessorKey: "balance",
+    header: "Saldo",
+  },
 ];
