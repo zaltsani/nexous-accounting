@@ -1,5 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { CreateAccountDto, UpdateAccountDto } from "@nexous-accounting/common";
+import {
+  CreateAccountDto,
+  GetAccountListQueryDto,
+  UpdateAccountDto,
+} from "@nexous-accounting/common";
+import { Prisma } from "@nexous-accounting/database-core";
 import { PrismaService } from "src/database/prisma.service";
 
 @Injectable()
@@ -12,9 +17,35 @@ export class AccountsService {
     });
   }
 
-  async listAccount() {
+  async listAccount(query: GetAccountListQueryDto) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 100;
+
+    const skip = (page - 1) * limit;
+    const take = limit;
+
+    const orderBy: Prisma.AccountOrderByWithRelationInput = query.sortBy
+      ? { [query.sortBy]: query.sortOrder }
+      : { updatedAt: "desc" };
+
+    const where: Prisma.AccountWhereInput = {};
+
+    if (query.search) {
+      where.OR = [
+        { code: { contains: query.search, mode: "insensitive" } },
+        { name: { contains: query.search, mode: "insensitive" } },
+      ];
+    }
+
+    where.type = query.type;
+
     const [items, totalCount] = await this.db.$transaction(async (tx) => {
-      const items = await tx.account.findMany();
+      const items = await tx.account.findMany({
+        where,
+        orderBy,
+        skip,
+        take,
+      });
       const totalCount = await tx.account.count();
       return [items, totalCount];
     });
@@ -22,8 +53,8 @@ export class AccountsService {
     return {
       items,
       totalCount,
-      page: 1,
-      limit: 10,
+      page,
+      limit,
     };
   }
 
