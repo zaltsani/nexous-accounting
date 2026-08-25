@@ -1,12 +1,11 @@
 import z from "zod";
+import { baseAccountSchema } from "./account.js";
+import { baseEntrySchema, baseTransactionSchema } from "./base-schemas.js";
 
-export const baseEntrySchema = z.object({
-  transactionId: z.string(),
-  accountId: z.string(),
-  amount: z.coerce.number(),
+export const entrySchema = baseEntrySchema.extend({
+  account: baseAccountSchema,
+  transaction: baseTransactionSchema.optional(),
 });
-
-export const entrySchema = baseEntrySchema;
 export const entriesSchema = baseEntrySchema.array();
 export const entryWithoutTransactionIdSchema = baseEntrySchema.omit({
   transactionId: true,
