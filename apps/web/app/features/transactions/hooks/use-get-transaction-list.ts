@@ -5,11 +5,7 @@ import { getTransactionList } from "~/features/transactions/api/transactions/get
 export function useGetTransactionList(params?: IGetTransactionListQuery) {
   return useQuery({
     queryKey: ["transaction", params],
-    queryFn: () =>
-      getTransactionList({
-        ...params,
-        journalCode: "JU",
-      }),
+    queryFn: () => getTransactionList(params),
     select: (res) => res?.data,
     placeholderData: (previousData) => previousData,
     staleTime: 1000 * 60 * 5,
