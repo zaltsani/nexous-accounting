@@ -1,3 +1,4 @@
+export * from "./base-schemas.js";
 export * from "./account.js";
 export * from "./journal.js";
 export * from "./entry.js";
