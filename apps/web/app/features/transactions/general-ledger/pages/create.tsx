@@ -36,7 +36,7 @@ export default function () {
             type: "error",
             description: err.entries.root.message,
             priority: "high",
-          })
+          });
         }
       },
     )();
