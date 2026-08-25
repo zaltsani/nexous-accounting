@@ -7,11 +7,16 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UsePipes,
 } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { ACCOUNT_MESSAGE_PATTERNS } from "@nexous-accounting/types";
-import { CreateAccountDto, UpdateAccountDto } from "@nexous-accounting/common";
+import {
+  CreateAccountDto,
+  GetAccountListQueryDto,
+  UpdateAccountDto,
+} from "@nexous-accounting/common";
 import { ZodValidationPipe } from "nestjs-zod";
 
 @Controller("accounts")
@@ -30,8 +35,8 @@ export class AccountsGatewayController {
   }
 
   @Get()
-  async list() {
-    return this.natsClient.send(ACCOUNT_MESSAGE_PATTERNS.LIST_ACCOUNT, {});
+  async list(@Query() query: GetAccountListQueryDto) {
+    return this.natsClient.send(ACCOUNT_MESSAGE_PATTERNS.LIST_ACCOUNT, { query });
   }
 
   @Get(":id")
