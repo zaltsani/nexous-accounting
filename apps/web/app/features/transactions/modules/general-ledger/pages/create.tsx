@@ -25,7 +25,7 @@ export default function () {
       (values) => {
         createMutation.mutate(values, {
           onSuccess: () => {
-            navigate(href("/ledger"));
+            navigate(href("/general-ledger"));
           },
         });
       },
