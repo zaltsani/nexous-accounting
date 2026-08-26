@@ -37,3 +37,7 @@ export * from "./ui/table";
 export * from "./ui/tabs";
 export * from "./ui/textarea";
 export * from "./ui/tooltip";
+
+// Components
+export * from "./ui/dialog-modal";
+export * from "./ui/sheet-modal";
