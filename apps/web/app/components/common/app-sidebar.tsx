@@ -1,6 +1,7 @@
 import {
   Button,
   cn,
+  Input,
   Separator,
   Sidebar,
   SidebarContent,
@@ -18,6 +19,7 @@ import {
   BellIcon,
   BoxesIcon,
   PlusIcon,
+  SearchIcon,
   SquareArrowLeftIcon,
   SquareArrowRightIcon,
   XIcon,
@@ -33,28 +35,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const isCollapsed = state === "collapsed";
   const isMobile = useIsMobile();
 
-  // const [search, setSearch] = React.useState<string>("");
+  const [search, setSearch] = React.useState<string>("");
 
-  // const data = React.useMemo(() => {
-  //   return SidebarData.map((group) => {
-  //     const filteredItems = group.items.filter((item) => {
-  //       const matchesSearch = item.title.toLowerCase().includes(search.toLowerCase());
+  const data = React.useMemo(() => {
+    return SidebarData.map((group) => {
+      const filteredItems = group.items.filter((item) => {
+        const matchesSearch = item.title.toLowerCase().includes(search.toLowerCase());
 
-  //       return matchesSearch;
-  //     });
+        return matchesSearch;
+      });
 
-  //     return {
-  //       ...group,
-  //       items: filteredItems,
-  //     };
-  //   }).filter((group) => group.items.length > 0);
-  // }, [search]);
-
-  const data = SidebarData;
+      return {
+        ...group,
+        items: filteredItems,
+      };
+    }).filter((group) => group.items.length > 0);
+  }, [search]);
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className="relative border-b h-16 bg-white">
+      <SidebarHeader className="relative h-16 bg-sidebar">
         <div className="flex justify-between items-center h-full">
           <div className="peer/menu-button group/menu-button flex w-full h-full items-center gap-2 overflow-hidden rounded-md text-left text-sm ">
             <div
@@ -89,7 +89,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        {/* <SidebarGroup>
+        <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -112,7 +112,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
-        </SidebarGroup> */}
+        </SidebarGroup>
         {data.map((item, index) => (
           <SidebarGroup key={index} className="pt-0">
             {item.title && (
@@ -131,7 +131,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       : item.url === "/";
 
                   return (
-                    <SidebarMenuItem key={index} className="relative group/btn">
+                    <SidebarMenuItem key={index} className="relative group/btn py-0.5">
                       <SidebarMenuButton
                         isActive={isChildActive}
                         render={<Link to={item.url} />}

@@ -11,7 +11,7 @@ import { UpdateAccount } from "../components/update-account";
 
 export default function () {
   const { setSearch, debouncedSearch, pagination, sorting, setPagination, setSorting, apiParams } =
-    useTableState();
+    useTableState({ initialPageSize: 50 });
 
   const { data } = useGetAccountList(apiParams);
 
