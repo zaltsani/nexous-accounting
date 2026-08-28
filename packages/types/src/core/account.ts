@@ -21,6 +21,7 @@ export const accountSchema = baseAccountSchema.extend({
 
 export const createAccountSchema = baseAccountSchema;
 export const updateAccountSchema = createAccountSchema.partial();
+export const editorAccountSchema = createAccountSchema;
 
 export const getAccountListQuerySchema = apiListQueryParamsSchema.extend({
   normalBalance: normalBalanceSchema.optional(),
@@ -33,6 +34,7 @@ export type IBaseAccountSchema = z.infer<typeof baseAccountSchema>;
 export type IAccount = z.infer<typeof accountSchema>;
 export type ICreateAccount = z.infer<typeof createAccountSchema>;
 export type IUpdateAccount = z.infer<typeof updateAccountSchema>;
+export type IEditorAccount = z.infer<typeof editorAccountSchema>;
 export type IGetAccountListQuery = z.infer<typeof getAccountListQuerySchema>;
 
 export const normalBalanceLabels: Record<INormalBalance, string> = {

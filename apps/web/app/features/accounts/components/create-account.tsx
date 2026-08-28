@@ -3,7 +3,7 @@ import { createAccountSchema, type ICreateAccount } from "@nexous-accounting/typ
 import { SheetModal, type SheetModalFooterAction } from "@nexous-accounting/ui";
 import { useForm } from "react-hook-form";
 import { toast } from "~/components/ui/toast";
-import { CreateAccountForm } from "~/features/accounts/components/create-account.form";
+import { EditorAccountForm } from "~/features/accounts/components/account-editor.form";
 import { useCreateAccount } from "~/features/accounts/data/use-create-account";
 import { getFormErrorMessage } from "~/libs/utils/form-errors";
 
@@ -56,7 +56,7 @@ export const CreateAccount = ({ open, onOpenChange }: CreateAccountProps) => {
       actions={createAccountModalActions}
       footerClassName="grid grid-cols-2"
     >
-      <CreateAccountForm form={form} />
+      <EditorAccountForm form={form} />
     </SheetModal>
   );
 };

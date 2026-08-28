@@ -8,6 +8,10 @@ declare module "@tanstack/react-table" {
   }
 
   interface TableMeta<TData extends RowData> {
+    updateRow?: (updatedData: TData) => void;
+    deleteRow?: (deletedData: TData) => void;
+    getRowData?: (rowData: TData) => void;
+
     _unusedTData?: TData;
   }
 }

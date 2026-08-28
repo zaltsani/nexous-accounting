@@ -2,7 +2,7 @@ import {
   accountTypeLabels,
   accountTypeSchema,
   normalBalanceAccountTypeMap,
-  type ICreateAccount,
+  type IEditorAccount,
 } from "@nexous-accounting/types";
 import {
   cn,
@@ -18,12 +18,12 @@ import {
 } from "@nexous-accounting/ui";
 import { Controller, type UseFormReturn } from "react-hook-form";
 
-interface CreateAccountFormProps {
-  form: UseFormReturn<ICreateAccount>;
+interface EditorAccountFormProps {
+  form: UseFormReturn<IEditorAccount>;
   className?: string;
 }
 
-export const CreateAccountForm = ({ form, className }: CreateAccountFormProps) => {
+export const EditorAccountForm = ({ form, className }: EditorAccountFormProps) => {
   return (
     <form className={cn("space-y-3 sm:space-y-4", className)}>
       {/* Type */}

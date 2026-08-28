@@ -6,12 +6,19 @@ import { useTableState } from "~/components/data-table/use-table-state";
 import { CreateAccount } from "~/features/accounts/components/create-account";
 import { accountColumns } from "../components/account-columns";
 import { useGetAccountList } from "../data/use-get-account-list";
+import type { IAccount } from "@nexous-accounting/types";
+import { UpdateAccount } from "../components/update-account";
 
 export default function () {
   const { setSearch, debouncedSearch, pagination, sorting, setPagination, setSorting, apiParams } =
     useTableState();
 
   const { data } = useGetAccountList(apiParams);
+
+  const [selectedData, setSelectedData] = useState<undefined | IAccount>(undefined);
+
+  const [createAccountModalOpen, setCreateAccountModalOpen] = useState<boolean>(false);
+  const [updateAccountModalOpen, setUpdateAccountModalOpen] = useState<boolean>(false);
 
   const { table } = useDataTable({
     data: data?.items ?? [],
@@ -23,9 +30,13 @@ export default function () {
     onSortingChange: setSorting,
     search: debouncedSearch,
     onSearchChange: setSearch,
+    meta: {
+      updateRow: (rowData) => {
+        setSelectedData(rowData);
+        setTimeout(() => setUpdateAccountModalOpen(true), 300);
+      },
+    },
   });
-
-  const [createAccountModalOpen, setCreateAccountModalOpen] = useState<boolean>(false);
 
   return (
     <div className="space-y-3">
@@ -41,6 +52,14 @@ export default function () {
       <DataTable table={table} />
 
       <CreateAccount open={createAccountModalOpen} onOpenChange={setCreateAccountModalOpen} />
+      {selectedData && (
+        <UpdateAccount
+          key={selectedData.id}
+          data={selectedData}
+          open={updateAccountModalOpen}
+          onOpenChange={setUpdateAccountModalOpen}
+        />
+      )}
     </div>
   );
 }
