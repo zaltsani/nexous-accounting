@@ -1,7 +1,7 @@
 import type { IAccount } from "@nexous-accounting/types";
 import { Button } from "@nexous-accounting/ui";
 import type { ColumnDef } from "@tanstack/react-table";
-import { EllipsisVertical, PenLineIcon } from "lucide-react";
+import { EllipsisVertical, PenLineIcon, Trash2Icon } from "lucide-react";
 import {
   DataTableActions,
   type DataTableRowAction,
@@ -40,6 +40,12 @@ export const accountColumns: ColumnDef<IAccount>[] = [
           label: "Edit Akun",
           icon: <PenLineIcon />,
           onClick: (data) => table.options.meta?.updateRow?.(data),
+        },
+        {
+          label: "Hapus Akun",
+          variant: "destructive",
+          icon: <Trash2Icon />,
+          onClick: (data) => table.options.meta?.deleteRow?.(data),
         },
       ];
 

@@ -1,3 +1,4 @@
+import type { IAccount } from "@nexous-accounting/types";
 import { Button } from "@nexous-accounting/ui";
 import { useState } from "react";
 import { DataTable } from "~/components/data-table/data-table";
@@ -5,9 +6,9 @@ import { useDataTable } from "~/components/data-table/use-data-table";
 import { useTableState } from "~/components/data-table/use-table-state";
 import { CreateAccount } from "~/features/accounts/components/create-account";
 import { accountColumns } from "../components/account-columns";
-import { useGetAccountList } from "../data/use-get-account-list";
-import type { IAccount } from "@nexous-accounting/types";
+import { DeleteAccount } from "../components/delete-account";
 import { UpdateAccount } from "../components/update-account";
+import { useGetAccountList } from "../data/use-get-account-list";
 
 export default function () {
   const { setSearch, debouncedSearch, pagination, sorting, setPagination, setSorting, apiParams } =
@@ -19,6 +20,7 @@ export default function () {
 
   const [createAccountModalOpen, setCreateAccountModalOpen] = useState<boolean>(false);
   const [updateAccountModalOpen, setUpdateAccountModalOpen] = useState<boolean>(false);
+  const [deleteAccountModalOpen, setDeleteAccountModalOpen] = useState<boolean>(false);
 
   const { table } = useDataTable({
     data: data?.items ?? [],
@@ -34,6 +36,10 @@ export default function () {
       updateRow: (rowData) => {
         setSelectedData(rowData);
         setTimeout(() => setUpdateAccountModalOpen(true), 300);
+      },
+      deleteRow: (rowData) => {
+        setSelectedData(rowData);
+        setTimeout(() => setDeleteAccountModalOpen(true), 300);
       },
     },
   });
@@ -58,6 +64,14 @@ export default function () {
           data={selectedData}
           open={updateAccountModalOpen}
           onOpenChange={setUpdateAccountModalOpen}
+        />
+      )}
+      {selectedData && (
+        <DeleteAccount
+          key={selectedData.id}
+          data={selectedData}
+          open={deleteAccountModalOpen}
+          onOpenChange={setDeleteAccountModalOpen}
         />
       )}
     </div>
