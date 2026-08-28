@@ -34,3 +34,24 @@ export type IAccount = z.infer<typeof accountSchema>;
 export type ICreateAccount = z.infer<typeof createAccountSchema>;
 export type IUpdateAccount = z.infer<typeof updateAccountSchema>;
 export type IGetAccountListQuery = z.infer<typeof getAccountListQuerySchema>;
+
+export const normalBalanceLabels: Record<INormalBalance, string> = {
+  DEBIT: "Debit",
+  CREDIT: "Kredit",
+};
+
+export const accountTypeLabels: Record<IAccountType, string> = {
+  ASSET: "Aset",
+  LIABILITY: "Liabilitas",
+  EQUITY: "Ekuitas",
+  REVENUE: "Pendapatan",
+  EXPENSE: "Beban",
+};
+
+export const normalBalanceAccountTypeMap: Record<IAccountType, INormalBalance> = {
+  ASSET: "DEBIT",
+  LIABILITY: "CREDIT",
+  EQUITY: "CREDIT",
+  REVENUE: "CREDIT",
+  EXPENSE: "DEBIT",
+} as const;
