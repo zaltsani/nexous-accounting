@@ -1,5 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, DatePicker, Field, FieldError, FieldLabel, Textarea } from "@nexous-accounting/ui";
+import {
+  Button,
+  Card,
+  CardContent,
+  DatePicker,
+  Field,
+  FieldError,
+  FieldLabel,
+  Textarea,
+} from "@nexous-accounting/ui";
 import { Controller, useForm } from "react-hook-form";
 import { href, useNavigate } from "react-router";
 import { toast } from "~/components/ui/toast";
@@ -44,7 +53,7 @@ export default function () {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-3">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Buat Jurnal Umum</h1>
         <Button onClick={handleCreateSubmit}>Simpan Data</Button>
       </div>
@@ -72,6 +81,7 @@ export default function () {
               <FieldLabel>Deskripsi</FieldLabel>
               <Textarea
                 {...field}
+                placeholder="Deskripsi transaksi"
                 aria-invalid={fieldState.invalid}
                 value={field.value ?? ""}
                 onChange={field.onChange}
@@ -82,7 +92,11 @@ export default function () {
         />
 
         {/* Entries */}
-        <DetailItemEntryForm form={form} />
+        <Card>
+          <CardContent>
+            <DetailItemEntryForm form={form} />
+          </CardContent>
+        </Card>
       </form>
     </div>
   );

@@ -1,18 +1,19 @@
 import type { IAccount } from "@nexous-accounting/types";
 import { Button, Field, FieldError } from "@nexous-accounting/ui";
 import { getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table";
+import { Trash2Icon } from "lucide-react";
 import {
   Controller,
   useFieldArray,
   type FieldArrayWithId,
   type UseFormReturn,
 } from "react-hook-form";
+import { CurrencyInput } from "~/components/common/currency-input";
 import { GenericAsyncCombobox } from "~/components/common/generic-async-combobox";
 import { DataTable } from "~/components/data-table/data-table";
 import { getAccountById } from "~/features/accounts/api/get-account-by-id";
 import { getAccountList } from "~/features/accounts/api/get-account-list";
 import type { ILedgerEditor } from "../types/ledger.type";
-import { CurrencyInput } from "~/components/common/currency-input";
 
 interface DetailItemEntryFormProps {
   form: UseFormReturn<ILedgerEditor>;
@@ -22,8 +23,6 @@ export const DetailItemEntryForm = ({ form }: DetailItemEntryFormProps) => {
     control: form.control,
     name: "entries",
   });
-
-  console.log({ fields });
 
   const columns: ColumnDef<FieldArrayWithId<ILedgerEditor, "entries">>[] = [
     {
@@ -37,7 +36,7 @@ export const DetailItemEntryForm = ({ form }: DetailItemEntryFormProps) => {
             <Field data-invalid={fieldState.error}>
               <div className="relative min-w-30">
                 <GenericAsyncCombobox<IAccount>
-                  value={field.value}
+                  value={field.value ?? ""}
                   onChange={field.onChange}
                   onItemSelect={(account) => console.log({ account })}
                   queryKey="account"
@@ -56,6 +55,7 @@ export const DetailItemEntryForm = ({ form }: DetailItemEntryFormProps) => {
     },
     {
       id: "debit",
+      meta: { className: "min-w-35" },
       header: "Debit",
       cell: ({ row }) => (
         <Controller
@@ -73,6 +73,7 @@ export const DetailItemEntryForm = ({ form }: DetailItemEntryFormProps) => {
     {
       id: "credit",
       header: "Kredit",
+      meta: { className: "min-w-35" },
       cell: ({ row }) => (
         <Controller
           control={form.control}
@@ -84,6 +85,16 @@ export const DetailItemEntryForm = ({ form }: DetailItemEntryFormProps) => {
             </Field>
           )}
         />
+      ),
+    },
+    {
+      id: "action",
+      meta: { align: "center", className: "max-w-content" },
+      header: "Action",
+      cell: ({ row }) => (
+        <Button variant="destructive" onClick={() => remove(row.index)}>
+          <Trash2Icon />
+        </Button>
       ),
     },
   ];
@@ -98,9 +109,11 @@ export const DetailItemEntryForm = ({ form }: DetailItemEntryFormProps) => {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h1 className="sm:text-lg md:text-xl font-semibold">Entri Data</h1>
-        <Button onClick={() => append({})}>Tambah Entri</Button>
       </div>
       <DataTable table={table} showToolbar={false} showPagination={false} verticalAlign="top" />
+      <Button variant="black" onClick={() => append({})} className="w-full">
+        Tambah Entri
+      </Button>
     </div>
   );
 };
