@@ -1,6 +1,7 @@
-import type { IAccount } from "@nexous-accounting/types";
+import { accountTypeLabels, type IAccount } from "@nexous-accounting/types";
 import { Button } from "@nexous-accounting/ui";
 import type { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
 import { EllipsisVertical, PenLineIcon, Trash2Icon } from "lucide-react";
 import {
   DataTableActions,
@@ -20,15 +21,17 @@ export const accountColumns: ColumnDef<IAccount>[] = [
   {
     accessorKey: "type",
     header: "Tipe Akun",
-  },
-  {
-    accessorKey: "normalBalance",
-    header: "Saldo Normal",
+    cell: ({ row }) => accountTypeLabels[row.original.type],
   },
   {
     accessorKey: "balance",
     header: "Saldo",
     cell: ({ row }) => formatIndonesiaCurrency(row.original.balance),
+  },
+  {
+    accessorKey: "updatedAt",
+    header: "Last Updated",
+    cell: ({ row }) => format(row.original.updatedAt, "dd MMMM yyyy HH:mm")
   },
   {
     id: "action",
