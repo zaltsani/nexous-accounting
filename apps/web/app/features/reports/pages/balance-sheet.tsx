@@ -25,8 +25,8 @@ export default function BalanceSheetPage() {
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         {/* Search Account */}
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+        <div className="relative flex flex-1 items-center">
+          <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
             placeholder="Cari berdasarkan nama akun atau kode COA..."
