@@ -30,12 +30,22 @@ export const getAccountListQuerySchema = apiListQueryParamsSchema.extend({
 
 export type INormalBalance = z.infer<typeof normalBalanceSchema>;
 export type IAccountType = z.infer<typeof accountTypeSchema>;
-export type IBaseAccountSchema = z.infer<typeof baseAccountSchema>;
+export type IBaseAccount = z.infer<typeof baseAccountSchema>;
 export type IAccount = z.infer<typeof accountSchema>;
 export type ICreateAccount = z.infer<typeof createAccountSchema>;
 export type IUpdateAccount = z.infer<typeof updateAccountSchema>;
 export type IEditorAccount = z.infer<typeof editorAccountSchema>;
 export type IGetAccountListQuery = z.infer<typeof getAccountListQuerySchema>;
+
+export type IAccountBase = z.infer<typeof accountSchema>;
+
+export interface IAccountNode extends IAccountBase {
+  children: IAccountNode[];
+}
+
+export const accountNodeSchema: z.ZodType<IAccountNode> = accountSchema.extend({
+  children: z.lazy(() => accountNodeSchema.array()),
+});
 
 export const normalBalanceLabels: Record<INormalBalance, string> = {
   DEBIT: "Debit",
