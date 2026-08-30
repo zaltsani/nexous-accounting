@@ -31,7 +31,7 @@ export const accountColumns: ColumnDef<IAccount>[] = [
   {
     accessorKey: "updatedAt",
     header: "Last Updated",
-    cell: ({ row }) => format(row.original.updatedAt, "dd MMMM yyyy HH:mm")
+    cell: ({ row }) => format(row.original.updatedAt, "dd MMMM yyyy HH:mm"),
   },
   {
     id: "action",

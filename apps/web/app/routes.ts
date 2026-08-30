@@ -4,6 +4,7 @@ export default [
   layout("providers/app-provider.tsx", [
     layout("components/layouts/app-layout.tsx", [
       index("features/dashboard/pages/index.tsx"),
+      route("report", "features/reports/pages/balance-sheet.tsx"),
 
       // ===== Chart of Accounts =====
       ...prefix("accounts", [index("features/accounts/pages/index.tsx")]),

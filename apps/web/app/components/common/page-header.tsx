@@ -5,10 +5,16 @@ import { useNavigate } from "react-router";
 
 interface PageHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   title: string;
+  description?: string;
   showBack?: boolean;
 }
 
-export default function PageHeader({ title, showBack = false, ...props }: PageHeaderProps) {
+export default function PageHeader({
+  title,
+  description,
+  showBack = false,
+  ...props
+}: PageHeaderProps) {
   const navigate = useNavigate();
 
   return (
@@ -25,7 +31,10 @@ export default function PageHeader({ title, showBack = false, ...props }: PageHe
             <ArrowLeftIcon className="size-6" />
           </Button>
         )}
-        <h1 className="text-xl font-semibold">{title}</h1>
+        <div>
+          <h1 className="text-xl font-semibold">{title}</h1>
+          {description && <h2>{description}</h2>}
+        </div>
       </div>
       {props.children}
     </div>
