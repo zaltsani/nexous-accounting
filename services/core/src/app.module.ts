@@ -4,9 +4,17 @@ import { DatabaseModule } from "./database/database.module";
 import { AccountsModule } from "./modules/accounts/accounts.module";
 import { JournalsModule } from "./modules/journals/journals.module";
 import { TransactionsModule } from "./modules/transactions/transactions.module";
+import { ReportsModule } from "./modules/reports/reports.module";
 
 @Module({
-  imports: [NatsClientModule, DatabaseModule, AccountsModule, JournalsModule, TransactionsModule],
+  imports: [
+    NatsClientModule,
+    DatabaseModule,
+    AccountsModule,
+    JournalsModule,
+    TransactionsModule,
+    ReportsModule,
+  ],
   controllers: [],
   providers: [],
 })

@@ -11,6 +11,7 @@ import { ZodValidationPipe } from "nestjs-zod";
 import { AccountsGatewayController } from "./accounts-gateway.controller";
 import { JournalsGatewayController } from "./journals-gateway.controller";
 import { TransactionsGatewayController } from "./transactions-gateway.controller";
+import { ReportsGatewayController } from "./reports-gateway.controller";
 
 @Module({
   imports: [NatsClientModule],
@@ -18,6 +19,7 @@ import { TransactionsGatewayController } from "./transactions-gateway.controller
     AccountsGatewayController,
     JournalsGatewayController,
     TransactionsGatewayController,
+    ReportsGatewayController,
   ],
   providers: [
     {

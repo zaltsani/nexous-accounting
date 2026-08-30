@@ -1,7 +1,6 @@
 import {
   baseTransactionSchema,
   createTransactionDtoSchema,
-  createTransactionSchema,
   updateTransactionSchema,
   getTransactionListQuerySchema,
   transactionSchema,
