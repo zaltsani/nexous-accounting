@@ -11,12 +11,14 @@ import {
   UsePipes,
 } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
-import { ACCOUNT_MESSAGE_PATTERNS } from "@nexous-accounting/types";
 import {
+  ApiListQueryParamsDto,
   CreateAccountDto,
   GetAccountListQueryDto,
+  GetAccountSummaryQueryDto,
   UpdateAccountDto,
 } from "@nexous-accounting/common";
+import { ACCOUNT_MESSAGE_PATTERNS } from "@nexous-accounting/types";
 import { ZodValidationPipe } from "nestjs-zod";
 
 @Controller("accounts")
@@ -47,5 +49,15 @@ export class AccountsGatewayController {
   @Delete(":id")
   async deleteById(@Param("id") id: string) {
     return this.natsClient.send(ACCOUNT_MESSAGE_PATTERNS.DELETE_ACCOUNT, id);
+  }
+
+  @Get(":id/entries")
+  async getAccountEntries(@Param("id") id: string, @Query() query: ApiListQueryParamsDto) {
+    return this.natsClient.send(ACCOUNT_MESSAGE_PATTERNS.GET_ACCOUNT_ENTRIES, { id, query });
+  }
+
+  @Get(":id/summary")
+  async getAccountSummary(@Param("id") id: string, @Query() query: GetAccountSummaryQueryDto) {
+    return this.natsClient.send(ACCOUNT_MESSAGE_PATTERNS.GET_ACCOUNT_SUMMARY, { id, query });
   }
 }
