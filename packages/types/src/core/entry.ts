@@ -3,7 +3,7 @@ import { baseAccountSchema } from "./account.js";
 import { baseEntrySchema, baseTransactionSchema } from "./base-schemas.js";
 
 export const entrySchema = baseEntrySchema.extend({
-  account: baseAccountSchema,
+  account: baseAccountSchema.optional(),
   transaction: baseTransactionSchema.optional(),
 });
 export const entriesSchema = baseEntrySchema.array();

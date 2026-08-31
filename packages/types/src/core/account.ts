@@ -23,9 +23,22 @@ export const createAccountSchema = baseAccountSchema;
 export const updateAccountSchema = createAccountSchema.partial();
 export const editorAccountSchema = createAccountSchema;
 
+export const accountSummarySchema = z.object({
+  summary: z.object({
+    totalDebit: z.number(),
+    totalCredit: z.number(),
+    netMutation: z.number(),
+  }),
+});
+
 export const getAccountListQuerySchema = apiListQueryParamsSchema.extend({
   normalBalance: normalBalanceSchema.optional(),
   type: accountTypeSchema.optional(),
+});
+
+export const getAccountSummaryQuerySchema = z.object({
+  startDate: z.string().datetime().optional(),
+  endDate: z.string().datetime().optional(),
 });
 
 export type INormalBalance = z.infer<typeof normalBalanceSchema>;
@@ -35,7 +48,10 @@ export type IAccount = z.infer<typeof accountSchema>;
 export type ICreateAccount = z.infer<typeof createAccountSchema>;
 export type IUpdateAccount = z.infer<typeof updateAccountSchema>;
 export type IEditorAccount = z.infer<typeof editorAccountSchema>;
+export type IAccountSummary = z.infer<typeof accountSummarySchema>;
+
 export type IGetAccountListQuery = z.infer<typeof getAccountListQuerySchema>;
+export type IGetAccountSummaryQuery = z.infer<typeof getAccountSummaryQuerySchema>;
 
 export type IAccountBase = z.infer<typeof accountSchema>;
 

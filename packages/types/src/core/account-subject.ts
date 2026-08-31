@@ -5,4 +5,6 @@ export const ACCOUNT_MESSAGE_PATTERNS = {
   LIST_ACCOUNT: "accounts.list",
   GET_ACCOUNT_BY_ID: "accounts.get_by_id",
   GET_ACCOUNT_BY_CODE: "accounts.get_by_code",
+  GET_ACCOUNT_ENTRIES: "accounts.get_account_entries",
+  GET_ACCOUNT_SUMMARY: "accounts.get_account_summary",
 } as const;
