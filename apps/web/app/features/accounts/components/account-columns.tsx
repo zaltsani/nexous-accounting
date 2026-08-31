@@ -2,7 +2,8 @@ import { accountTypeLabels, type IAccount } from "@nexous-accounting/types";
 import { Button } from "@nexous-accounting/ui";
 import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { EllipsisVertical, PenLineIcon, Trash2Icon } from "lucide-react";
+import { EllipsisVertical, EyeIcon, PenLineIcon, Trash2Icon } from "lucide-react";
+import { href, useNavigate } from "react-router";
 import {
   DataTableActions,
   type DataTableRowAction,
@@ -38,7 +39,14 @@ export const accountColumns: ColumnDef<IAccount>[] = [
     meta: { align: "center", className: "max-w-content" },
     header: "Actions",
     cell: ({ row, table }) => {
+      const navigate = useNavigate();
+
       const actions: DataTableRowAction<IAccount>[] = [
+        {
+          label: "Detail Akun",
+          icon: <EyeIcon />,
+          onClick: () => navigate(href("/accounts/:id", { id: row.original.id })),
+        },
         {
           label: "Edit Akun",
           icon: <PenLineIcon />,

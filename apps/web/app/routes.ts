@@ -7,7 +7,10 @@ export default [
       route("report", "features/reports/pages/balance-sheet.tsx"),
 
       // ===== Chart of Accounts =====
-      ...prefix("accounts", [index("features/accounts/pages/index.tsx")]),
+      ...prefix("accounts", [
+        index("features/accounts/pages/index.tsx"),
+        route(":id", "features/accounts/pages/detail.tsx"),
+      ]),
 
       // ===== General Ledger =====
       ...prefix("general-ledger", [

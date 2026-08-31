@@ -10,6 +10,7 @@ import { cn } from "@nexous/ui";
 
 interface DataTableProps<TData extends RowData> {
   table: TanStackTable<TData>;
+  tableFooter?: React.ReactNode;
   loading?: boolean;
   error?: string | null;
   placeholder?: string;
@@ -29,6 +30,7 @@ const verticalAlignClasses: Record<NonNullable<DataTableProps<any>["verticalAlig
 
 export function DataTable<TData extends RowData>({
   table,
+  tableFooter,
   loading = false,
   error = null,
   placeholder,
@@ -142,6 +144,7 @@ export function DataTable<TData extends RowData>({
               ))}
             </TableBody>
           )}
+          {tableFooter}
         </Table>
       </div>
 
