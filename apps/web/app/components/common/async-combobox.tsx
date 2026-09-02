@@ -109,6 +109,7 @@ export function AsyncCombobox<T extends Option>({
       <ComboboxInput
         placeholder={placeholder}
         disabled={disabled}
+        showClear
         value={inputValue}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           setInputValue(e.target.value);

@@ -35,6 +35,7 @@ export interface SheetModalProps extends React.ComponentPropsWithoutRef<typeof S
   description?: string;
   contentProps?: React.ComponentPropsWithoutRef<typeof SheetContent>;
   contentClassName?: string;
+  overlayClassName?: string;
   footerProps?: React.ComponentPropsWithoutRef<typeof SheetFooter>;
   footerClassName?: string;
   children: React.ReactNode;
@@ -49,6 +50,7 @@ export function SheetModal({
   children,
   contentProps,
   contentClassName,
+  overlayClassName,
   footerProps,
   footerClassName,
   actions = [],
@@ -59,7 +61,11 @@ export function SheetModal({
   if (!isMobile)
     return (
       <Sheet open={open} onOpenChange={onOpenChange} {...props}>
-        <SheetContent {...contentProps} className={cn(contentClassName)}>
+        <SheetContent
+          {...contentProps}
+          className={cn(contentClassName)}
+          overlayClassName={overlayClassName}
+        >
           {(title || description) && (
             <SheetHeader>
               {title && <SheetTitle>{title}</SheetTitle>}
@@ -97,13 +103,13 @@ export function SheetModal({
       <DrawerContent className={cn(contentClassName)}>
         <div className="mx-auto w-full max-w-sm"></div>
         {(title || description) && (
-          <DrawerHeader>
+          <DrawerHeader className="mb-6">
             {title && <DrawerTitle>{title}</DrawerTitle>}
             {description && <DrawerDescription>{description}</DrawerDescription>}
           </DrawerHeader>
         )}
-        <div className="no-scrollbar overflow-y-auto px-4 py-6">{children}</div>
-        <DrawerFooter className={cn(footerClassName)}>
+        <div className="no-scrollbar overflow-y-auto px-4">{children}</div>
+        <DrawerFooter className={cn("mt-6", footerClassName)}>
           {actions.length > 0 ? (
             actions.map((action, index) => {
               const defaultVariant = index === 0 ? "outline" : "default";
