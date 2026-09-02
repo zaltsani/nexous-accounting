@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import {
   CreateAccountDto,
   GetAccountListQueryDto,
@@ -6,7 +6,11 @@ import {
   UpdateAccountDto,
 } from "@nexous-accounting/common";
 import { NormalBalance, Prisma } from "@nexous-accounting/database-core";
-import { IApiListQueryParams } from "@nexous-accounting/types";
+import {
+  IApiListQueryParams,
+  SYSTEM_ROOT_ACCOUNTS,
+  SYSTEM_SUB_HEADER_ACCOUNTS,
+} from "@nexous-accounting/types";
 import { PrismaService } from "src/database/prisma.service";
 import { Decimal } from "../../../../../packages/database/core/dist/generated/prisma/internal/prismaNamespace";
 
@@ -81,6 +85,27 @@ export class AccountsService {
   }
 
   async deleteAccount(id: string) {
+    const account = await this.db.account.findUniqueOrThrow({
+      where: { id },
+    });
+
+    const systemAccountCodes = [
+      ...SYSTEM_ROOT_ACCOUNTS.map((a) => a.code),
+      ...SYSTEM_SUB_HEADER_ACCOUNTS.map((a) => a.code),
+    ];
+
+    if (systemAccountCodes.includes(account.code as any)) {
+      throw new BadRequestException(
+        `Akun sistem dengan kode '${account.code}' tidak dapat dihapus.`,
+      );
+    }
+
+    if (Number(account.balance) !== 0) {
+      throw new BadRequestException(
+        `Akun '${account.name}' (${account.code}) tidak dapat dihapus karena masih memiliki saldo sebesar ${account.balance}.`,
+      );
+    }
+
     return this.db.account.delete({
       where: { id },
     });
