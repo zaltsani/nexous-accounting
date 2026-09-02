@@ -29,7 +29,7 @@ export class AccountsService {
 
     const orderBy: Prisma.AccountOrderByWithRelationInput = query.sortBy
       ? { [query.sortBy]: query.sortOrder }
-      : { updatedAt: "desc" };
+      : { code: "asc" };
 
     const where: Prisma.AccountWhereInput = {};
 
