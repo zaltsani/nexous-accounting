@@ -30,6 +30,13 @@ export const UpdateAccount = ({ data, open, onOpenChange }: UpdateAccountProps) 
             onSuccess: () => {
               onOpenChange(false);
             },
+            onError: (err) => {
+              toast.add({
+                type: "error",
+                description: err.message,
+                priority: "high",
+              });
+            },
           },
         );
       },

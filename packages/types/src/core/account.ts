@@ -2,13 +2,18 @@ import z from "zod";
 import { apiListQueryParamsSchema } from "../common/api-list-query-params.js";
 
 export const normalBalanceSchema = z.enum(["DEBIT", "CREDIT"]);
-export const accountTypeSchema = z.enum(["ASSET", "LIABILITY", "EQUITY", "REVENUE", "EXPENSE"]);
+export const accountTypeSchema = z.enum(
+  ["ASSET", "LIABILITY", "EQUITY", "REVENUE", "EXPENSE"],
+  "Pilih tipe akun untuk melanjutkan",
+);
 
 export const baseAccountSchema = z.object({
   normalBalance: normalBalanceSchema,
   type: accountTypeSchema,
-  code: z.string(),
-  name: z.string(),
+  code: z.string("Kode akun wajib diisi").nonempty("Kode akun wajib diisi").regex(/^\d+$/, {
+    message: "Kode akun hanya boleh terdiri dari angka",
+  }),
+  name: z.string("Nama akun wajib diisi").nonempty("Nama akun wajib diisi"),
   parentId: z.string().nullish(),
 });
 
@@ -83,3 +88,11 @@ export const normalBalanceAccountTypeMap: Record<IAccountType, INormalBalance> =
   REVENUE: "CREDIT",
   EXPENSE: "DEBIT",
 } as const;
+
+export const ACCOUNT_TYPE_PREFIX_MAP: Record<IAccountType, string> = {
+  ASSET: "1",
+  LIABILITY: "2",
+  EQUITY: "3",
+  REVENUE: "4",
+  EXPENSE: "5",
+};

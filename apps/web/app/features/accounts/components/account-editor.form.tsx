@@ -1,12 +1,15 @@
 import {
+  ACCOUNT_TYPE_PREFIX_MAP,
   accountTypeLabels,
   accountTypeSchema,
   normalBalanceAccountTypeMap,
+  type IAccount,
   type IEditorAccount,
 } from "@nexous-accounting/types";
 import {
   cn,
   Field,
+  FieldDescription,
   FieldError,
   FieldLabel,
   Input,
@@ -17,6 +20,9 @@ import {
   SelectValue,
 } from "@nexous-accounting/ui";
 import { Controller, type UseFormReturn } from "react-hook-form";
+import { GenericAsyncCombobox } from "~/components/common/generic-async-combobox";
+import { getAccountList } from "../api/get-account-list";
+import { getAccountById } from "../api/get-account-by-id";
 
 interface EditorAccountFormProps {
   form: UseFormReturn<IEditorAccount>;
@@ -24,8 +30,65 @@ interface EditorAccountFormProps {
 }
 
 export const EditorAccountForm = ({ form, className }: EditorAccountFormProps) => {
+  const parentAccountId = form.watch("parentId");
+  const currentType = form.watch("type");
+
+  const getSuggestedPrefix = (): string | null => {
+    if (parentAccountId) {
+      const parentCode = form.getValues("_parentCode" as any);
+      if (parentCode) {
+        return parentCode.length >= 5 && !parentCode.endsWith("0")
+          ? parentCode
+          : parentCode.replace(/0+$/, "");
+      }
+    }
+    if (currentType && ACCOUNT_TYPE_PREFIX_MAP[currentType]) {
+      return ACCOUNT_TYPE_PREFIX_MAP[currentType];
+    }
+    return null;
+  };
+
+  const suggestedPrefix = getSuggestedPrefix();
+
   return (
-    <form className={cn("space-y-3 sm:space-y-4", className)}>
+    <form className={cn("space-y-4", className)}>
+      {/* Parent Account */}
+      <Controller
+        control={form.control}
+        name="parentId"
+        render={({ field, fieldState }) => (
+          <Field>
+            <FieldLabel>Akun Induk</FieldLabel>
+            <GenericAsyncCombobox<IAccount>
+              value={field.value ?? ""}
+              onChange={(val) => {
+                field.onChange(val);
+                if (!val) {
+                  form.setValue("normalBalance", null as any);
+                  form.setValue("type", null as any);
+                  form.setValue("_parentCode" as any, null as any);
+                }
+              }}
+              onItemSelect={(account) => {
+                form.setValue("normalBalance", account.normalBalance);
+                form.setValue("type", account.type);
+                form.setValue("_parentCode" as any, account.code);
+              }}
+              queryKey="account"
+              placeholder="Pilih Akun Induk (Opsional)"
+              fetchListFn={getAccountList}
+              fetchByIdFn={getAccountById}
+              getOptionValue={(d) => d.id}
+              getOptionLabel={(d) => `${d.code} - ${d.name}`}
+            />
+            <FieldDescription>
+              Pilih akun utama jika akun ini merupakan bagian dari kelompok tertentu.
+            </FieldDescription>
+            <FieldError errors={[fieldState.error]} />
+          </Field>
+        )}
+      />
+
       {/* Type */}
       <Controller
         control={form.control}
@@ -41,6 +104,7 @@ export const EditorAccountForm = ({ form, className }: EditorAccountFormProps) =
               }}
               items={accountTypeLabels}
               modal={false}
+              disabled={Boolean(parentAccountId)}
             >
               <SelectTrigger aria-invalid={fieldState.invalid}>
                 <SelectValue placeholder="Pilih tipe akun" />
@@ -53,6 +117,7 @@ export const EditorAccountForm = ({ form, className }: EditorAccountFormProps) =
                 ))}
               </SelectContent>
             </Select>
+            <FieldDescription>Menentukan posisi akun dalam Laporan Keuangan.</FieldDescription>
             <FieldError errors={[fieldState.error]} />
           </Field>
         )}
@@ -65,7 +130,20 @@ export const EditorAccountForm = ({ form, className }: EditorAccountFormProps) =
         render={({ field, fieldState }) => (
           <Field>
             <FieldLabel>Kode Akun</FieldLabel>
-            <Input {...field} placeholder="e.g. 1001" />
+            <Input
+              {...field}
+              placeholder={
+                suggestedPrefix
+                  ? `Contoh: ${suggestedPrefix.padEnd(5, "0").slice(0, 4)}1`
+                  : "Contoh: 21001"
+              }
+              aria-invalid={fieldState.invalid}
+            />
+            <FieldDescription>
+              {suggestedPrefix
+                ? `Disarankan menggunakan awalan kode ${suggestedPrefix}`
+                : "Gunakan kode angka unik sebagai pengenal akun."}
+            </FieldDescription>
             <FieldError errors={[fieldState.error]} />
           </Field>
         )}
@@ -78,7 +156,14 @@ export const EditorAccountForm = ({ form, className }: EditorAccountFormProps) =
         render={({ field, fieldState }) => (
           <Field>
             <FieldLabel>Nama Akun</FieldLabel>
-            <Input {...field} placeholder="e.g. Gaji Karyawan" />
+            <Input
+              {...field}
+              placeholder="Contoh: Gaji Karyawan"
+              aria-invalid={fieldState.invalid}
+            />
+            <FieldDescription>
+              Masukkan nama akun yang spesifik dan mudah diidentifikasi.
+            </FieldDescription>
             <FieldError errors={[fieldState.error]} />
           </Field>
         )}

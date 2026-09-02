@@ -18,6 +18,7 @@ export function useCreateAccount() {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["account"] });
+      queryClient.invalidateQueries({ queryKey: ["report"] });
     },
     onError: (err) => {
       console.error({ err });
