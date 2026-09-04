@@ -12,14 +12,19 @@ import { AccountsGatewayController } from "./accounts-gateway.controller";
 import { JournalsGatewayController } from "./journals-gateway.controller";
 import { TransactionsGatewayController } from "./transactions-gateway.controller";
 import { ReportsGatewayController } from "./reports-gateway.controller";
+import { SalesGatewayController } from "./sales-gateway.controller";
 
 @Module({
   imports: [NatsClientModule],
   controllers: [
+    // Core
     AccountsGatewayController,
     JournalsGatewayController,
     TransactionsGatewayController,
     ReportsGatewayController,
+
+    // Financial Operations
+    SalesGatewayController,
   ],
   providers: [
     {
