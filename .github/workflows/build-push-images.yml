@@ -29,6 +29,9 @@ jobs:
           - name: services-core
             dockerfile: services/core/Dockerfile
             image_suffix: services_core
+          - name: services-finops
+            dockerfile: services/finops/Dockerfile
+            image_suffix: services_finops
 
     steps:
       - name: Checkout repository
