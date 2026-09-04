@@ -1,0 +1,92 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
+}
+
+generator clientCjs {
+  provider     = "prisma-client-js"
+  output       = "../src/generated/prisma-cjs"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum SalesType {
+  CREDIT_SALE
+  CASH_SALE
+  DOWN_PAYMENT
+}
+
+enum InvoiceStatus {
+  DRAFT
+  UNPAID
+  PARTIAL
+  PAID
+  VOID
+}
+
+model SalesInvoice {
+  id            String        @id @default(uuid())
+  invoiceNumber String        @unique @map("invoice_number")
+  customerName  String        @map("customer_name")
+  type          SalesType     @default(CREDIT_SALE)
+  status        InvoiceStatus @default(DRAFT)
+
+  issueDate     DateTime      @default(now()) @map("issue_date")
+  dueDate       DateTime?     @map("due_date")
+
+  totalAmount   Decimal       @db.Decimal(18, 4) @map("total_amount")
+  unpaidAmount  Decimal       @db.Decimal(18, 4) @map("unpaid_amount")
+
+  accountId         String? @map("account_id")
+  transactionId     String? @map("transaction_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt
+
+  items SalesItem[]
+  settlements SalesSettlement[]
+
+  @@index([type, status])
+  @@map("sales_invoices")
+}
+
+model SalesItem {
+  id             String       @id @default(uuid())
+  salesInvoiceId String       @map("sales_invoice_id")
+  
+  itemName       String       @map("item_name")
+  quantity       Decimal      @db.Decimal(18, 4)
+  unitPrice      Decimal      @db.Decimal(18, 4) @map("unit_price")
+  subtotal       Decimal      @db.Decimal(18, 4)
+
+  revenueAccountId String     @map("revenue_account_id")
+
+  salesInvoice   SalesInvoice @relation(fields: [salesInvoiceId], references: [id], onDelete: Cascade)
+
+  @@index([salesInvoiceId])
+  @@map("sales_items")
+}
+
+model SalesSettlement {
+  id             String       @id @default(uuid())
+  salesInvoiceId String       @map("sales_invoice_id")
+  
+  amount         Decimal      @db.Decimal(18, 4)
+  settlementDate DateTime     @default(now()) @map("settlement_date")
+  notes          String?
+
+  accountId      String       @map("account_id")
+  transactionId  String?      @map("transaction_id")
+
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+
+  salesInvoice   SalesInvoice @relation(fields: [salesInvoiceId], references: [id], onDelete: Cascade)
+
+  @@index([salesInvoiceId])
+  @@map("sales_settlements")
+}
