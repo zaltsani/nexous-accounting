@@ -1,15 +1,15 @@
-import { Body, Controller, Param } from "@nestjs/common";
+import { Body, Controller } from "@nestjs/common";
+import { MessagePattern } from "@nestjs/microservices";
+import { CreateInvoiceDto } from "@nexous-accounting/common";
+import { SALES_MESSAGE_PATTERNS } from "@nexous-accounting/types";
 import { SalesService } from "./sales.service";
 
 @Controller("sales")
 export class SalesController {
   constructor(private readonly salesService: SalesService) {}
 
-  async checkout(@Body() dto: any) {
-    return this.salesService.checkout(dto);
-  }
-
-  async getOrder(@Param("id") id: string) {
-    return this.salesService.getOrderById(id);
+  @MessagePattern(SALES_MESSAGE_PATTERNS.CREATE_SALES_INVOICE)
+  async createInvoice(@Body() dto: CreateInvoiceDto) {
+    return this.salesService.createInvoice(dto);
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "services-pos",
+  "name": "services-finops",
   "version": "0.0.1",
   "private": true,
   "description": "",
@@ -7,6 +7,7 @@
   "author": "",
   "scripts": {
     "build": "nest build",
+    "docker:build": "docker build -f services/finops/Dockerfile -t services-finops .",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "dev": "nest start --watch",
@@ -26,6 +27,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.4.7",
     "@nexous-accounting/common": "*",
+    "@nexous-accounting/database-finops": "*",
     "@nexous-accounting/types": "*",
     "nats": "^2.29.3",
     "nestjs-zod": "^5.5.0",
