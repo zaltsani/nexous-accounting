@@ -9,7 +9,7 @@ export async function syncSystemData(prisma: PrismaClient) {
   console.log("[SYSTEM INIT] Syncing minimal system journals & root COA structure...");
 
   // System Journals
-  for (const journal of SYSTEM_JOURNALS) {
+  for (const journal of Object.values(SYSTEM_JOURNALS)) {
     await prisma.journal.upsert({
       where: { code: journal.code },
       update: { name: journal.name },
