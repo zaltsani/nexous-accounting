@@ -15,13 +15,18 @@
     "dev": "nx run-many -t dev",
     "test": "nx run-many -t test",
     "test:e2e": "nx run-many -t test:e2e",
+    "db:generate": "nx run-many -t db:generate",
+    "db:migrate": "nx run-many -t db:migrate",
+    "db:deploy": "nx run-many -t db:deploy",
+    "db:seed": "nx run-many -t db:seed",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "docker:build": "nx run-many -t docker:build",
     "docker:build:api-gateway": "docker build -f apps/api-gateway/Dockerfile -t api-gateway .",
-    "docker:build:services-core": "docker build -f services/core/Dockerfile -t services-core ."
+    "docker:build:services-core": "docker build -f services/core/Dockerfile -t services-core .",
+    "docker:build:services-finops": "docker build -f services/finops/Dockerfile -t services-finops ."
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
