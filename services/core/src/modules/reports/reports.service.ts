@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { GetReportBalanceSheetQueryDto } from "@nexous-accounting/common";
-import { AccountOperation, AccountType, NormalBalance } from "@nexous-accounting/database-core";
-import { IAccountNode } from "@nexous-accounting/types";
+import { AccountType, NormalBalance } from "@nexous-accounting/database-core";
+import { AccountOperation, IAccountNode, SystemAccountOperation } from "@nexous-accounting/types";
 import { PrismaService } from "src/database/prisma.service";
 import { Decimal } from "../../../../../packages/database/core/dist/generated/prisma/internal/prismaNamespace";
 
@@ -86,7 +86,7 @@ export class ReportsService {
     const netIncome = totalRevenue - totalExpense;
 
     // Map Net Income directly to CURRENT_YEAR_EARNINGS account if mapped
-    const currentYearEarningsAccountId = mappingMap.get(AccountOperation.CURRENT_YEAR_EARNINGS);
+    const currentYearEarningsAccountId = mappingMap.get(SystemAccountOperation.CURRENT_YEAR_EARNINGS);
     let mappedToNode = false;
 
     if (currentYearEarningsAccountId) {
