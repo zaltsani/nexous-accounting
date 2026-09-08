@@ -6,7 +6,12 @@ import {
   Logger,
 } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
-import { CreateInvoiceDto, CreateTransactionDto } from "@nexous-accounting/common";
+import {
+  CreateInvoiceDto,
+  CreateTransactionDto,
+  GetSalesInvoiceListQueryDto,
+} from "@nexous-accounting/common";
+import { Prisma } from "@nexous-accounting/database-finops";
 import {
   ICreateEntry,
   IInvoiceStatus,
@@ -100,6 +105,45 @@ export class SalesService {
 
       return invoice;
     });
+  }
+
+  async listInvoice(query: GetSalesInvoiceListQueryDto) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 100;
+
+    const skip = (page - 1) * limit;
+    const take = limit;
+
+    const orderBy: Prisma.SalesInvoiceOrderByWithRelationInput = query.sortBy
+      ? { [query.sortBy]: query.sortOrder }
+      : { updatedAt: "desc" };
+
+    const where: Prisma.SalesInvoiceWhereInput = {};
+
+    if (query.search) {
+      where.OR = [{ invoiceNumber: { contains: query.search, mode: "insensitive" } }];
+    }
+
+    where.type = query.type;
+    where.status = query.status;
+
+    const [items, totalCount] = await this.db.$transaction(async (tx) => {
+      const items = await tx.salesInvoice.findMany({
+        where,
+        orderBy,
+        skip,
+        take,
+      });
+      const totalCount = await tx.salesInvoice.count();
+      return [items, totalCount];
+    });
+
+    return {
+      items,
+      totalCount,
+      page,
+      limit,
+    };
   }
 
   // ---------------------------------------------------------------------------
