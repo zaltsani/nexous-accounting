@@ -36,8 +36,8 @@ export default function () {
             onSuccess: () => {
               navigate(href("/sales"));
               toast.add({
-                description: "Berhasil Membuat Data Invoice Sales"
-              })
+                description: "Berhasil Membuat Data Invoice Sales",
+              });
             },
           },
         );

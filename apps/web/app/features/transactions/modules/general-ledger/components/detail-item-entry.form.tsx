@@ -43,6 +43,7 @@ export const DetailItemEntryForm = ({ form }: DetailItemEntryFormProps) => {
                   placeholder="Pilih Akun"
                   fetchListFn={getAccountList}
                   fetchByIdFn={getAccountById}
+                  params={{ accountCategory: "child" }}
                   getOptionValue={(d) => d.id}
                   getOptionLabel={(d) => `${d.code} - ${d.name}`}
                 />

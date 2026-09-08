@@ -1,6 +1,6 @@
-import type { IAccount } from "@nexous-accounting/types";
+import type { IAccount, IAccountNode } from "@nexous-accounting/types";
 import { Button } from "@nexous-accounting/ui";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { DataTable } from "~/components/data-table/data-table";
 import { useDataTable } from "~/components/data-table/use-data-table";
 import { useTableState } from "~/components/data-table/use-table-state";
@@ -9,12 +9,17 @@ import { accountColumns } from "../components/account-columns";
 import { DeleteAccount } from "../components/delete-account";
 import { UpdateAccount } from "../components/update-account";
 import { useGetAccountList } from "../data/use-get-account-list";
+import { buildAccountTree } from "../utils/build-account-tree";
 
 export default function () {
   const { setSearch, debouncedSearch, pagination, sorting, setPagination, setSorting, apiParams } =
-    useTableState({ initialPageSize: 50 });
+    useTableState({ initialPageSize: 1000 });
 
-  const { data } = useGetAccountList(apiParams);
+  const { data, isLoading, error } = useGetAccountList(apiParams);
+
+  const treeData = useMemo(() => {
+    return buildAccountTree(data?.items ?? []);
+  }, [data?.items]);
 
   const [selectedData, setSelectedData] = useState<undefined | IAccount>(undefined);
 
@@ -22,8 +27,8 @@ export default function () {
   const [updateAccountModalOpen, setUpdateAccountModalOpen] = useState<boolean>(false);
   const [deleteAccountModalOpen, setDeleteAccountModalOpen] = useState<boolean>(false);
 
-  const { table } = useDataTable({
-    data: data?.items ?? [],
+  const { table } = useDataTable<IAccountNode>({
+    data: treeData,
     columns: accountColumns,
     rowCount: data?.totalCount ?? 0,
     pagination,
@@ -32,6 +37,9 @@ export default function () {
     onSortingChange: setSorting,
     search: debouncedSearch,
     onSearchChange: setSearch,
+    getRowId: (row) => row.id,
+    getSubRows: (row) => row.children,
+    mode: "client",
     meta: {
       updateRow: (rowData) => {
         setSelectedData(rowData);
@@ -44,6 +52,8 @@ export default function () {
     },
   });
 
+  console.log({ data, treeData });
+
   return (
     <div className="space-y-3">
       {/* Header */}
@@ -55,7 +65,13 @@ export default function () {
         <Button onClick={() => setCreateAccountModalOpen(true)}>Tambah Akun</Button>
       </div>
 
-      <DataTable table={table} />
+      <DataTable
+        table={table}
+        loading={isLoading}
+        error={error?.message}
+        showPagination={false}
+        tableClassName="font-mono"
+      />
 
       <CreateAccount open={createAccountModalOpen} onOpenChange={setCreateAccountModalOpen} />
       {selectedData && (

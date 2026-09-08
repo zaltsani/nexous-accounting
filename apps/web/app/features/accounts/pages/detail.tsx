@@ -21,7 +21,7 @@ export default function ({ params, loaderData }: Route.ComponentProps) {
   const { setSearch, debouncedSearch, pagination, sorting, setPagination, setSorting, apiParams } =
     useTableState({ initialPageSize: 20 });
 
-  const { data: entries } = useGetAccountEntries(params.id, apiParams);
+  const { data: entries, isLoading, error } = useGetAccountEntries(params.id, apiParams);
 
   const { table: entriesTable } = useDataTable({
     data: entries?.items ?? [],
@@ -55,7 +55,10 @@ export default function ({ params, loaderData }: Route.ComponentProps) {
       <AccountOverview accountData={data} />
       <DataTable
         table={entriesTable}
+        loading={isLoading}
+        error={error?.message}
         tableFooter={<AccountEntriesFooter entries={entries?.items ?? []} />}
+        tableClassName="font-mono"
       />
     </>
   );

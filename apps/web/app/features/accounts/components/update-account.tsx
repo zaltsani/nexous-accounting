@@ -68,7 +68,7 @@ export const UpdateAccount = ({ data, open, onOpenChange }: UpdateAccountProps) 
       actions={updateAccountModalActions}
       footerClassName="grid grid-cols-2"
     >
-      <EditorAccountForm form={form} />
+      <EditorAccountForm form={form} data={data} />
     </SheetModal>
   );
 };

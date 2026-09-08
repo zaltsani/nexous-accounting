@@ -1,5 +1,6 @@
 import {
   salesTypeSchema,
+  SYSTEM_SUB_HEADER_CODES,
   type IAccount,
   type IEditorInvoice,
   type ISalesType,
@@ -166,10 +167,13 @@ export const InvoiceOverviewForm = ({ form }: InvoiceOverviewFormProps) => {
                 fetchListFn={getAccountList}
                 fetchByIdFn={getAccountById}
                 params={{
-                  type:
-                    invoiceType === "CREDIT_SALE" || invoiceType === "CASH_SALE"
-                      ? "ASSET"
-                      : "LIABILITY",
+                  parentCode:
+                    invoiceType === "CREDIT_SALE"
+                      ? SYSTEM_SUB_HEADER_CODES.RECEIVABLE
+                      : invoiceType === "CASH_SALE"
+                        ? SYSTEM_SUB_HEADER_CODES.CASH_AND_EQUIVALENTS
+                        : SYSTEM_SUB_HEADER_CODES.PAYABLE,
+                  accountCategory: "child",
                 }}
                 getOptionValue={(d) => d.id}
                 getOptionLabel={(d) => `${d.code} - ${d.name}`}
@@ -207,7 +211,8 @@ export const InvoiceOverviewForm = ({ form }: InvoiceOverviewFormProps) => {
                     fetchListFn={getAccountList}
                     fetchByIdFn={getAccountById}
                     params={{
-                      type: "ASSET",
+                      parentCode: SYSTEM_SUB_HEADER_CODES.CASH_AND_EQUIVALENTS,
+                      accountCategory: "child",
                     }}
                     getOptionValue={(d) => d.id}
                     getOptionLabel={(d) => `${d.code} - ${d.name}`}

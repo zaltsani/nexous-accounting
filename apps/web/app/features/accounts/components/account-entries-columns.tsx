@@ -47,7 +47,7 @@ export const AccountEntriesFooter = ({ entries }: { entries: IEntry[] }) => {
   const totalCredit = entries
     .filter((d) => d.amount < 0)
     .reduce((acc, curr) => acc + Math.abs(curr.amount), 0);
-  const total = totalDebit - totalCredit;
+  const total = totalDebit + totalCredit;
 
   return (
     <TableFooter className="bg-gray-200">

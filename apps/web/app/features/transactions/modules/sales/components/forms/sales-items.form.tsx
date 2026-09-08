@@ -96,7 +96,7 @@ export const SalesItemsForm = ({ form }: SalesItemsFormProps) => {
                 placeholder="Pilih Akun Pendapatan"
                 fetchListFn={getAccountList}
                 fetchByIdFn={getAccountById}
-                params={{ type: "REVENUE" }}
+                params={{ type: "REVENUE", accountCategory: "child" }}
                 getOptionValue={(d) => d.id}
                 getOptionLabel={(d) => `${d.code} - ${d.name}`}
               />

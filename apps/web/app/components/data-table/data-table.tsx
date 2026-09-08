@@ -1,12 +1,19 @@
 import { flexRender, type RowData, type Table as TanStackTable } from "@tanstack/react-table";
 import { ChevronDown, ChevronsUpDown, ChevronUp } from "lucide-react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@nexous/ui";
+import {
+  cn,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@nexous-accounting/ui";
 import { DataTableEmpty } from "./data-table-empty";
 import { DataTableError } from "./data-table-error";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableSkeleton } from "./data-table-skeleton";
 import { DataTableToolbar } from "./data-table-toolbar";
-import { cn } from "@nexous/ui";
 
 interface DataTableProps<TData extends RowData> {
   table: TanStackTable<TData>;
@@ -20,6 +27,9 @@ interface DataTableProps<TData extends RowData> {
   toolbarRightActions?: React.ReactNode;
   toolbarBottomActions?: React.ReactNode;
   verticalAlign?: "top" | "bottom" | "middle";
+  className?: string;
+  containerClassName?: string;
+  tableClassName?: string;
 }
 
 const verticalAlignClasses: Record<NonNullable<DataTableProps<any>["verticalAlign"]>, string> = {
@@ -40,12 +50,15 @@ export function DataTable<TData extends RowData>({
   toolbarRightActions,
   toolbarBottomActions,
   verticalAlign = "middle",
+  className,
+  containerClassName,
+  tableClassName,
 }: DataTableProps<TData>) {
   const colSpan = table.getVisibleFlatColumns().length;
   const rows = table.getRowModel().rows;
 
   return (
-    <div className="grid gap-4">
+    <div className={cn("grid gap-4", className)}>
       {showToolbar && (
         <DataTableToolbar
           table={table}
@@ -56,27 +69,29 @@ export function DataTable<TData extends RowData>({
         />
       )}
 
-      <div className="border overflow-hidden">
-        <Table>
+      <div className={cn("overflow-hidden", containerClassName)}>
+        <Table className={tableClassName}>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
-                  const align = header.column.columnDef.meta?.align || "left";
+                  const meta = header.column.columnDef.meta as
+                    | { align?: string; className?: string }
+                    | undefined;
+                  const align = meta?.align || "left";
                   const justifyClass =
                     align === "right"
                       ? "justify-end"
                       : align === "center"
                         ? "justify-center"
                         : "justify-start";
-                  const className = header.column.columnDef.meta?.className;
 
                   return (
                     <TableHead
                       key={header.id}
                       colSpan={header.colSpan}
-                      align={align}
-                      className={className}
+                      align={align as any}
+                      className={meta?.className}
                     >
                       {header.isPlaceholder ? null : (
                         <div
@@ -125,21 +140,28 @@ export function DataTable<TData extends RowData>({
           ) : (
             <TableBody>
               {rows.map((row) => (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell
-                      key={cell.id}
-                      className={cn(
-                        verticalAlignClasses[verticalAlign],
-                        cell.column.columnDef.meta?.className,
-                      )}
-                      align={cell.column.columnDef.meta?.align || "left"}
-                    >
-                      <div className="text-wrap">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </div>
-                    </TableCell>
-                  ))}
+                <TableRow
+                  key={row.id}
+                  data-depth={row.depth}
+                  data-state={row.getIsExpanded() ? "expanded" : undefined}
+                >
+                  {row.getVisibleCells().map((cell) => {
+                    const meta = cell.column.columnDef.meta as
+                      | { align?: string; className?: string }
+                      | undefined;
+
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        className={cn(verticalAlignClasses[verticalAlign], meta?.className)}
+                        align={(meta?.align || "left") as any}
+                      >
+                        <div className="text-wrap">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </div>
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))}
             </TableBody>
