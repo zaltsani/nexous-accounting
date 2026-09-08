@@ -4,6 +4,7 @@ export * from "./journal.js";
 export * from "./entry.js";
 export * from "./transaction.js";
 export * from "./report.js";
+export * from "./account-mappings.js";
 
 export * from "./account-subject.js";
 export * from "./journal-subject.js";

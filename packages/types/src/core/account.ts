@@ -1,5 +1,6 @@
 import z from "zod";
 import { apiListQueryParamsSchema } from "../common/api-list-query-params.js";
+import { baseAccountMappingSchema } from "./account-mappings.js";
 
 export const normalBalanceSchema = z.enum(["DEBIT", "CREDIT"]);
 export const accountTypeSchema = z.enum(
@@ -22,6 +23,7 @@ export const accountSchema = baseAccountSchema.extend({
   balance: z.coerce.number(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
+  mappings: z.lazy(() => baseAccountMappingSchema.array()).nullish(),
 });
 
 export const createAccountSchema = baseAccountSchema;
@@ -39,6 +41,8 @@ export const accountSummarySchema = z.object({
 export const getAccountListQuerySchema = apiListQueryParamsSchema.extend({
   normalBalance: normalBalanceSchema.optional(),
   type: accountTypeSchema.optional(),
+  accountCategory: z.enum(["parent", "child"]).optional(),
+  parentCode: z.string().optional(),
 });
 
 export const getAccountSummaryQuerySchema = z.object({
@@ -58,11 +62,7 @@ export type IAccountSummary = z.infer<typeof accountSummarySchema>;
 export type IGetAccountListQuery = z.infer<typeof getAccountListQuerySchema>;
 export type IGetAccountSummaryQuery = z.infer<typeof getAccountSummaryQuerySchema>;
 
-export type IAccountBase = z.infer<typeof accountSchema>;
-
-export interface IAccountNode extends IAccountBase {
-  children: IAccountNode[];
-}
+export type IAccountNode = IAccount & { children?: IAccountNode[] };
 
 export const accountNodeSchema: z.ZodType<IAccountNode> = accountSchema.extend({
   children: z.lazy(() => accountNodeSchema.array()),

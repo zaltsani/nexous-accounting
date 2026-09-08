@@ -1,0 +1,33 @@
+export const SystemAccountOperation = {
+  // Math & Equity Engine
+  RETAINED_EARNINGS: "RETAINED_EARNINGS",
+  CURRENT_YEAR_EARNINGS: "CURRENT_YEAR_EARNINGS",
+  OPENING_BALANCE_EQUITY: "OPENING_BALANCE_EQUITY",
+
+  // Cash & Liquidity
+  DEFAULT_CASH: "DEFAULT_CASH",
+
+  // Receivables & Revenue
+  DEFAULT_AR: "DEFAULT_AR",
+  DEFAULT_SALES: "DEFAULT_SALES",
+
+  // Payables & Procurement
+  DEFAULT_AP: "DEFAULT_AP",
+  DEFAULT_PURCHASE: "DEFAULT_PURCHASE",
+
+  // Inventory & COGS
+  DEFAULT_INVENTORY: "DEFAULT_INVENTORY",
+  DEFAULT_COGS: "DEFAULT_COGS",
+
+  // Taxes
+  DEFAULT_SALES_TAX: "DEFAULT_SALES_TAX",
+  DEFAULT_PURCHASE_TAX: "DEFAULT_PURCHASE_TAX",
+
+  // Fixed Assets
+  DEFAULT_DEPRECIATION_EXPENSE: "DEFAULT_DEPRECIATION_EXPENSE",
+  DEFAULT_ACCUMULATED_DEPRECIATION: "DEFAULT_ACCUMULATED_DEPRECIATION",
+} as const;
+
+export type AccountOperation =
+  | (typeof SystemAccountOperation)[keyof typeof SystemAccountOperation]
+  | (string & {});

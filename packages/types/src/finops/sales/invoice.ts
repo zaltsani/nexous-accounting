@@ -1,4 +1,5 @@
 import z from "zod";
+import { apiListQueryParamsSchema } from "../../common/api-list-query-params.js";
 import { baseSalesItemSchema, salesItemSchema } from "./item.js";
 import { salesSettlementSchema } from "./settlement.js";
 
@@ -10,8 +11,8 @@ export const baseInvoiceSchema = z.object({
   invoiceNumber: z.string(),
   customerName: z.string(),
   type: salesTypeSchema,
-  issueDate: z.string().datetime().optional(),
-  dueDate: z.string().datetime().optional(),
+  issueDate: z.string().datetime().nullish(),
+  dueDate: z.string().datetime().nullish(),
   accountId: z.string(),
 });
 
@@ -19,17 +20,16 @@ export const invoiceSchema = baseInvoiceSchema.extend({
   id: z.string(),
 
   status: invoiceStatusSchema,
-  totalAmount: z.number(),
-  unpaidAmount: z.number(),
+  totalAmount: z.coerce.number(),
+  unpaidAmount: z.coerce.number(),
 
   transactionId: z.string().nullish(),
-  reversalTransId: z.string().nullish(),
 
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 
-  items: salesItemSchema.array(),
-  settlements: salesSettlementSchema.array(),
+  items: salesItemSchema.array().optional(),
+  settlements: salesSettlementSchema.array().optional(),
 });
 
 export const createInvoiceSchema = baseInvoiceSchema.extend({
@@ -57,6 +57,15 @@ export const editorInvoiceSchema = createInvoiceSchema.refine(
   },
 );
 
+export const getSalesInvoiceListQuerySchema = apiListQueryParamsSchema.extend({
+  type: salesTypeSchema.optional(),
+  status: invoiceStatusSchema.optional(),
+  startIssueDate: z.string().datetime().optional(),
+  endIssueDate: z.string().datetime().optional(),
+  startDueDate: z.string().datetime().optional(),
+  endDueDate: z.string().datetime().optional(),
+});
+
 export type ISalesType = z.infer<typeof salesTypeSchema>;
 export type IInvoiceStatus = z.infer<typeof invoiceStatusSchema>;
 export type IInvoiceActionStatus = z.infer<typeof invoiceActionStatusSchema>;
@@ -66,3 +75,5 @@ export type IInvoice = z.infer<typeof invoiceSchema>;
 export type ICreateInvoice = z.infer<typeof createInvoiceSchema>;
 export type IUpdateInvoice = z.infer<typeof updateInvoiceSchema>;
 export type IEditorInvoice = z.infer<typeof editorInvoiceSchema>;
+
+export type IGetSalesInvoiceListQuery = z.infer<typeof getSalesInvoiceListQuerySchema>;
