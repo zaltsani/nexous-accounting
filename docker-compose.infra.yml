@@ -1,0 +1,129 @@
+name: ${COMPOSE_PROJECT_NAME:-nexous-accounting}
+
+networks:
+  nexous-network:
+    driver: bridge
+    name: nexous-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+services:
+  # ----------------------------------------------------------------------------
+  # INFRASTRUCTURES
+  # ----------------------------------------------------------------------------
+  nats:
+    image: nats
+    container_name: nats
+    restart: always
+    ports:
+      - "${NATS_PORT:-4222}:4222"
+      - "${NATS_MONITORING_PORT:-8222}:8222"
+    command: ["-m", "8222"]
+    networks:
+      - nexous-network
+
+  db:
+    image: postgres:15-alpine
+    container_name: nexous_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-nexous_accounting}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-nexous_accounting}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - nexous-network
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - nexous-network
+
+  # ----------------------------------------------------------------------------
+  # ERROR TRACKING
+  # ----------------------------------------------------------------------------
+  glitchtip-db-setup:
+    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    restart: "no"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      POSTGRES_DB: ${POSTGRES_DATABASE:-nexous_accounting}
+      POSTGRES_USER: ${POSTGRES_USER:-nexous_accounting}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      GLITCHTIP_DB_USERNAME: ${GLITCHTIP_DB_USERNAME}
+      GLITCHTIP_DB_PASSWORD: ${GLITCHTIP_DB_PASSWORD}
+    volumes:
+      - ./infra/glitchtip/init-glitchtip.sh:/init-glitchtip.sh:ro
+    entrypoint: ["/bin/bash", "/init-glitchtip.sh"]
+    networks:
+      - nexous-network
+
+  glitchtip-migrate:
+    image: glitchtip/glitchtip:latest
+    command: ./manage.py migrate
+    depends_on:
+      db:
+        condition: service_healthy
+      glitchtip-db-setup:
+        condition: service_completed_successfully
+    environment:
+      DATABASE_URL: postgres://${GLITCHTIP_DB_USERNAME:-glitchtip}:${GLITCHTIP_DB_PASSWORD}@db:5432/nexous_accounting
+    networks:
+      - nexous-network
+
+  glitchtip-create-superuser:
+    image: glitchtip/glitchtip:latest
+    restart: "no"
+    entrypoint: ["/bin/sh", "-c"]
+    command: "./manage.py createsuperuser --noinput || true"
+    depends_on:
+      glitchtip-migrate:
+        condition: service_completed_successfully
+    environment:
+      DATABASE_URL: postgres://${GLITCHTIP_DB_USERNAME:-glitchtip}:${GLITCHTIP_DB_PASSWORD:-password}@db:5432/${POSTGRES_DATABASE:-nexous_accounting}
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL:-admin@admin.com}
+      DJANGO_SUPERUSER_PASSWORD: ${DJANGO_SUPERUSER_PASSWORD:-adminpassword123}
+    networks:
+      - nexous-network
+
+  glitchtip-seed:
+    image: glitchtip/glitchtip:latest
+    restart: "no"
+    working_dir: /code
+    command: python /seed.py
+    depends_on:
+      glitchtip-create-superuser:
+        condition: service_completed_successfully
+    environment:
+      DATABASE_URL: postgres://${GLITCHTIP_DB_USERNAME:-glitchtip}:${GLITCHTIP_DB_PASSWORD:-password}@db:5432/${POSTGRES_DATABASE:-nexous_accounting}
+      DJANGO_SUPERUSER_EMAIL: ${DJANGO_SUPERUSER_EMAIL:-admin@admin.com}
+      GLITCHTIP_SEED_ORG: ${GLITCHTIP_SEED_ORG:-org}
+      GLITCHTIP_SEED_TEAM: ${GLITCHTIP_SEED_TEAM:-backend-team}
+      GLITCHTIP_SEED_PROJECT: ${GLITCHTIP_SEED_PROJECT:-backend}
+    volumes:
+      - ./infra/glitchtip/seed.py:/seed.py:ro
+    networks:
+      - nexous-network

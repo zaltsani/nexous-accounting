@@ -1,6 +1,13 @@
 name: ${COMPOSE_PROJECT_NAME:-nexous-accounting}
 
+networks:
+  nexous-network:
+    name: nexous-network
+
 services:
+  # ----------------------------------------------------------------------------
+  # APPS
+  # ----------------------------------------------------------------------------
   api-gateway:
     image: ${API_GATEWAY_IMAGE:-ghcr.io/zaltsani/nexous-accounting/api_gateway:latest}
     build:
@@ -13,9 +20,6 @@ services:
     environment:
       - NATS_URL=nats://nats:4222
       - PORT=3000
-    depends_on:
-      nats:
-        condition: service_started
     networks:
       - nexous-network
 
@@ -33,10 +37,13 @@ services:
       - VITE_MAINTENANCE_MODE=${VITE_MAINTENANCE_MODE:-false}
       - VITE_SITE_DOMAIN=${VITE_SITE_DOMAIN:-}
     depends_on:
-      - api
+      - api-gateway
     networks:
       - nexous-network
 
+  # ----------------------------------------------------------------------------
+  # SERVICES
+  # ----------------------------------------------------------------------------
   service-core:
     image: ${SERVICES_CORE_IMAGE:-ghcr.io/zaltsani/nexous-accounting/services_core:latest}
     build:
@@ -47,55 +54,44 @@ services:
     environment:
       - NATS_URL=nats://nats:4222
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-nexous_accounting}?schema=core
-    volumes:
-      - .:/app
-      - /app/node_modules
-    depends_on:
-      db:
-        condition: service_healthy
-      nats:
-        condition: service_started
     networks:
       - nexous-network
 
-  nats:
-    image: nats
-    container_name: nats
-    restart: always
-    ports:
-      - "${NATS_PORT:-4222}:4222"
-      - "${NATS_MONITORING_PORT:-8222}:8222"
-    command: ["-m", "8222"]
-    networks:
-      - nexous-network
-
-  db:
-    image: postgres:15-alpine
-    container_name: nexous_postgres
+  service-finops:
+    image: ${SERVICES_FINOPS_IMAGE:-ghcr.io/zaltsani/nexous-accounting/services_finops:latest}
+    build:
+      context: .
+      dockerfile: services/finops/Dockerfile
+    container_name: services-finops
     restart: always
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-nexous_accounting}
-    ports:
-      - "${POSTGRES_PORT:-5432}:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-nexous_accounting}",
-        ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      - NATS_URL=nats://nats:4222
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-nexous_accounting}?schema=finops
     networks:
       - nexous-network
 
-networks:
-  nexous-network:
-    driver: bridge
+  # ----------------------------------------------------------------------------
+  # ERROR TRACKING
+  # ----------------------------------------------------------------------------
+  glitchtip-worker:
+    image: glitchtip/glitchtip:latest
+    restart: unless-stopped
+    command: ./bin/run-celery-with-beat.sh
+    environment:
+      DATABASE_URL: postgres://${GLITCHTIP_DB_USERNAME:-glitchtip}:${GLITCHTIP_DB_PASSWORD}@db:5432/nexous_accounting
+      REDIS_URL: redis://redis:6379/1
+      SECRET_KEY: super-secret-development-key
+    networks:
+      - nexous-network
 
-volumes:
-  postgres_data:
+  glitchtip:
+    image: glitchtip/glitchtip
+    environment:
+      DATABASE_URL: postgres://${GLITCHTIP_DB_USERNAME:-glitchtip}:${GLITCHTIP_DB_PASSWORD}@db:5432/nexous_accounting
+      REDIS_URL: redis://redis:6379/1
+      SECRET_KEY: ${GLITCHTIP_SECRET_KEY:-change_me_to_something_random} # best to run openssl rand -hex 32
+      GLITCHTIP_DOMAIN: ${GLITCHTIP_DOMAIN}
+    ports:
+      - "${GLITCHTIP_PORT:-8000}:8000"
+    networks:
+      - nexous-network
