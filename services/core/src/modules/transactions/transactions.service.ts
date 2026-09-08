@@ -17,9 +17,10 @@ export class TransactionsService {
   async create(data: CreateTransactionDto) {
     const { entries, ...transaction } = data;
 
-    await this.validateEntries(entries);
-
     return this.db.$transaction(async (tx) => {
+      // Validate total = 0 AND only leaf accounts are used
+      await this.validateEntries(tx, entries);
+
       // Apply new entry balances
       await this.adjustAccountBalances(tx, entries, "APPLY");
 
@@ -34,8 +35,6 @@ export class TransactionsService {
   }
 
   async listTransaction(query: GetTransactionListQueryDto) {
-    console.log({ query });
-
     const page = query.page ?? 1;
     const limit = query.limit ?? 100;
 
@@ -94,7 +93,7 @@ export class TransactionsService {
 
     return this.db.$transaction(async (tx) => {
       if (entries && entries.length > 0) {
-        await this.validateEntries(entries);
+        await this.validateEntries(tx, entries);
 
         // Revert old balances
         await this.adjustAccountBalances(tx, existingTransaction.entries, "REVERT");
@@ -136,11 +135,32 @@ export class TransactionsService {
     });
   }
 
-  private async validateEntries(entries: IEntriesWithoutTransactionId) {
+  private async validateEntries(
+    tx: Prisma.TransactionClient,
+    entries: IEntriesWithoutTransactionId,
+  ) {
+    // Check 1: Balanced entry sum
     const total = entries.reduce((sum, entry) => sum + entry.amount, 0);
     if (Math.abs(total) > 0) {
       throw new BadRequestException(
         `Transaction is unbalanced. Sum of entries must be 0, received sum: ${total}`,
+      );
+    }
+
+    // Check 2: Reject non-leaf accounts (accounts with sub-accounts)
+    const accountIds = Array.from(new Set(entries.map((e) => e.accountId)));
+    const parentAccounts = await tx.account.findMany({
+      where: {
+        id: { in: accountIds },
+        children: { some: {} },
+      },
+      select: { code: true, name: true },
+    });
+
+    if (parentAccounts.length > 0) {
+      const invalidList = parentAccounts.map((a) => `'${a.name}' (${a.code})`).join(", ");
+      throw new BadRequestException(
+        `Transaksi tidak dapat dicatat pada akun induk: ${invalidList}. Pilih akun sub/leaf account paling bawah.`,
       );
     }
   }
@@ -152,33 +172,74 @@ export class TransactionsService {
   ) {
     if (!entries || entries.length === 0) return;
 
-    const accountIds = Array.from(new Set(entries.map((e) => e.accountId)));
-    const accounts = await tx.account.findMany({
-      where: { id: { in: accountIds } },
-      select: { id: true, normalBalance: true },
-    });
+    const leafIds = Array.from(new Set(entries.map((e) => e.accountId)));
 
-    const accountMap = new Map(accounts.map((a) => [a.id, a.normalBalance]));
+    // Fetch target leaf accounts and recursively fetch their parent chains
+    const accountMap = new Map<
+      string,
+      { id: string; parentId: string | null; normalBalance: string }
+    >();
+    let idsToFetch = leafIds;
+
+    while (idsToFetch.length > 0) {
+      const fetchedAccounts = await tx.account.findMany({
+        where: { id: { in: idsToFetch } },
+        select: { id: true, parentId: true, normalBalance: true },
+      });
+
+      const nextParentIds: string[] = [];
+      for (const acc of fetchedAccounts) {
+        accountMap.set(acc.id, acc);
+        if (acc.parentId && !accountMap.has(acc.parentId)) {
+          nextParentIds.push(acc.parentId);
+        }
+      }
+
+      // Prepare next iteration with unfetched parent IDs
+      idsToFetch = Array.from(new Set(nextParentIds));
+    }
 
     const multiplier = mode === "REVERT" ? -1 : 1;
 
-    await Promise.all(
-      entries.map((entry) => {
-        const normalBalance = accountMap.get(entry.accountId);
+    for (const entry of entries) {
+      const targetAccount = accountMap.get(entry.accountId);
+      if (!targetAccount) continue;
 
-        // Normalize Decimal or number to a standard JS number
-        const numericAmount =
-          typeof entry.amount === "number" ? entry.amount : entry.amount.toNumber();
+      const numericAmount =
+        typeof entry.amount === "number" ? entry.amount : entry.amount.toNumber();
 
-        // DEBIT account: +amount increases balance
-        // CREDIT account: -amount increases balance
-        const applyAdjustment = normalBalance === "CREDIT" ? -numericAmount : numericAmount;
+      // DEBIT account: +amount increases balance
+      // CREDIT account: -amount increases balance
+      const applyAdjustment =
+        targetAccount.normalBalance === "CREDIT" ? -numericAmount : numericAmount;
+      const finalDelta = applyAdjustment * multiplier;
 
-        return tx.account.update({
-          where: { id: entry.accountId },
-          data: { balance: { increment: applyAdjustment * multiplier } },
-        });
-      }),
-    );
+      // Resolve ancestor hierarchy IDs (target account + all parent ancestors)
+      const targetAndAncestorIds = this.getAccountAndAncestorIds(entry.accountId, accountMap);
+
+      // 2. Increment/Decrement balance on leaf account AND parent hierarchy
+      await tx.account.updateMany({
+        where: { id: { in: targetAndAncestorIds } },
+        data: {
+          balance: { increment: finalDelta },
+        },
+      });
+    }
+  }
+
+  private getAccountAndAncestorIds(
+    accountId: string,
+    accountMap: Map<string, { id: string; parentId: string | null }>,
+  ): string[] {
+    const ids: string[] = [];
+    let currentId: string | null = accountId;
+
+    while (currentId) {
+      ids.push(currentId);
+      const acc = accountMap.get(currentId);
+      currentId = acc?.parentId ?? null;
+    }
+
+    return ids;
   }
 }

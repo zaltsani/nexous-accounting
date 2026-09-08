@@ -6,11 +6,7 @@ import {
   UpdateAccountDto,
 } from "@nexous-accounting/common";
 import { NormalBalance, Prisma } from "@nexous-accounting/database-core";
-import {
-  IApiListQueryParams,
-  SYSTEM_ROOT_ACCOUNTS,
-  SYSTEM_SUB_HEADER_ACCOUNTS,
-} from "@nexous-accounting/types";
+import { IApiListQueryParams, NON_DELETABLE_ACCOUNT_CODES } from "@nexous-accounting/types";
 import { PrismaService } from "src/database/prisma.service";
 import { Decimal } from "../../../../../packages/database/core/dist/generated/prisma/internal/prismaNamespace";
 
@@ -19,6 +15,18 @@ export class AccountsService {
   constructor(private readonly db: PrismaService) {}
 
   async create(data: CreateAccountDto) {
+    if (data.parentId) {
+      const parentHasEntries = await this.db.entry.findFirst({
+        where: { accountId: data.parentId },
+      });
+
+      if (parentHasEntries) {
+        throw new BadRequestException(
+          `Tidak dapat menambahkan sub-akun. Akun induk sudah memiliki entri transaksi langsung.`,
+        );
+      }
+    }
+
     return this.db.account.create({
       data,
     });
@@ -46,12 +54,21 @@ export class AccountsService {
 
     where.type = query.type;
 
+    if (query.accountCategory === "parent") where.children = { some: {} };
+    if (query.accountCategory === "child") where.children = { none: {} };
+
+    if (query.parentCode) {
+      const descendantIds = await this.getDescendantIds(query.parentCode);
+      where.id = { in: descendantIds };
+    }
+
     const [items, totalCount] = await this.db.$transaction(async (tx) => {
       const items = await tx.account.findMany({
         where,
         orderBy,
         skip,
         take,
+        include: { mappings: true },
       });
       const totalCount = await tx.account.count();
       return [items, totalCount];
@@ -87,22 +104,42 @@ export class AccountsService {
   async deleteAccount(id: string) {
     const account = await this.db.account.findUniqueOrThrow({
       where: { id },
+      include: {
+        _count: {
+          select: {
+            children: true,
+            entries: true,
+            mappings: true,
+          },
+        },
+      },
     });
 
-    const systemAccountCodes = [
-      ...SYSTEM_ROOT_ACCOUNTS.map((a) => a.code),
-      ...SYSTEM_SUB_HEADER_ACCOUNTS.map((a) => a.code),
-    ];
-
-    if (systemAccountCodes.includes(account.code as any)) {
+    // Guard 1: Protect Root & System Engine Accounts by Code
+    if (NON_DELETABLE_ACCOUNT_CODES.has(account.code)) {
       throw new BadRequestException(
-        `Akun sistem dengan kode '${account.code}' tidak dapat dihapus.`,
+        `Akun sistem '${account.name}' (${account.code}) adalah struktur dasar sistem dan tidak dapat dihapus.`,
       );
     }
 
-    if (Number(account.balance) !== 0) {
+    // Protect Parent Accounts with Sub-Accounts
+    if (account._count.children > 0) {
       throw new BadRequestException(
-        `Akun '${account.name}' (${account.code}) tidak dapat dihapus karena masih memiliki saldo sebesar ${account.balance}.`,
+        `Akun '${account.name}' (${account.code}) tidak dapat dihapus karena memiliki sub-akun. Hapus atau pindahkan sub-akun terlebih dahulu.`,
+      );
+    }
+
+    // Protect Mapped Operations
+    if (account._count.mappings > 0) {
+      throw new BadRequestException(
+        `Akun '${account.name}' (${account.code}) terhubung dengan pemetaan operasi sistem (AccountMapping). Ubah pemetaan akun di pengaturan sebelum menghapus.`,
+      );
+    }
+
+    // Protect Accounts with Entries or Balance
+    if (account._count.entries > 0 || Number(account.balance) !== 0) {
+      throw new BadRequestException(
+        `Akun '${account.name}' (${account.code}) tidak dapat dihapus karena memiliki riwayat entri transaksi atau saldo sebesar ${account.balance}.`,
       );
     }
 
@@ -130,7 +167,8 @@ export class AccountsService {
       ];
     }
 
-    where.accountId = id;
+    const targetAccountIds = await this.getAllSubAccountIds(id);
+    where.accountId = { in: targetAccountIds };
 
     const [items, totalCount] = await this.db.$transaction(async (tx) => {
       const items = await tx.entry.findMany({
@@ -254,5 +292,49 @@ export class AccountsService {
       },
       trend,
     };
+  }
+
+  private async getAllSubAccountIds(rootAccountId: string): Promise<string[]> {
+    const allAccounts = await this.db.account.findMany({
+      select: { id: true, parentId: true },
+    });
+
+    const resultIds = new Set<string>([rootAccountId]);
+    let addedNew = true;
+
+    while (addedNew) {
+      addedNew = false;
+      for (const acc of allAccounts) {
+        if (acc.parentId && resultIds.has(acc.parentId) && !resultIds.has(acc.id)) {
+          resultIds.add(acc.id);
+          addedNew = true;
+        }
+      }
+    }
+
+    return Array.from(resultIds);
+  }
+
+  /**
+   * Private helper to fetch all descendant IDs recursively using PostgreSQL CTE
+   */
+  private async getDescendantIds(parentCode: string): Promise<string[]> {
+    const descendants = await this.db.$queryRaw<{ id: string }[]>`
+      WITH RECURSIVE account_tree AS (
+        SELECT id, code, parent_id
+        FROM core.accounts
+        WHERE code = ${parentCode}
+
+        UNION ALL
+
+        SELECT a.id, a.code, a.parent_id
+        FROM core.accounts a
+        INNER JOIN account_tree at ON a."parent_id" = at.id
+      )
+      SELECT id FROM account_tree 
+      WHERE code != ${parentCode};
+    `;
+
+    return descendants.map((row) => row.id);
   }
 }

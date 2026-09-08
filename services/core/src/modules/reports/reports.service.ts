@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { GetReportBalanceSheetQueryDto } from "@nexous-accounting/common";
-import { AccountType, NormalBalance } from "@nexous-accounting/database-core";
+import { AccountOperation, AccountType, NormalBalance } from "@nexous-accounting/database-core";
 import { IAccountNode } from "@nexous-accounting/types";
 import { PrismaService } from "src/database/prisma.service";
 import { Decimal } from "../../../../../packages/database/core/dist/generated/prisma/internal/prismaNamespace";
@@ -13,22 +13,28 @@ export class ReportsService {
     const asOfDate = query.asOfDate ? new Date(query.asOfDate) : new Date();
     asOfDate.setHours(23, 59, 59, 999);
 
-    const accounts = await this.db.account.findMany({
-      where: {
-        type: {
-          in: [
-            AccountType.ASSET,
-            AccountType.LIABILITY,
-            AccountType.EQUITY,
-            AccountType.REVENUE,
-            AccountType.EXPENSE,
-          ],
+    const [accounts, mappings] = await Promise.all([
+      this.db.account.findMany({
+        where: {
+          type: {
+            in: [
+              AccountType.ASSET,
+              AccountType.LIABILITY,
+              AccountType.EQUITY,
+              AccountType.REVENUE,
+              AccountType.EXPENSE,
+            ],
+          },
         },
-      },
-      orderBy: { code: "asc" },
-    });
+        orderBy: { code: "asc" },
+      }),
+      this.db.accountMapping.findMany(),
+    ]);
 
-    // Agregasi entri transaksi dari awal hingga asOfDate
+    const mappingMap = new Map<AccountOperation, string>();
+    mappings.forEach((m) => mappingMap.set(m.operation, m.accountId));
+
+    // Aggregate ledger entries up to asOfDate
     const entryAggregations = await this.db.entry.groupBy({
       by: ["accountId"],
       _sum: {
@@ -48,11 +54,10 @@ export class ReportsService {
       entryMap.set(item.accountId, item._sum.amount || new Decimal(0));
     });
 
-    // Hitung saldo MURNI dari net entries transaksi hingga asOfDate
+    // Compute raw balances per node
     const accountNodes: IAccountNode[] = accounts.map((acc) => {
       const netEntries = entryMap.get(acc.id) || new Decimal(0);
 
-      // Hitung posisi saldo berdasarkan Normal Balance (DEBIT vs CREDIT)
       let calculatedBalance = netEntries;
       if (acc.normalBalance === NormalBalance.CREDIT) {
         calculatedBalance = netEntries.negated();
@@ -72,23 +77,37 @@ export class ReportsService {
       };
     });
 
-    // Build Tree & Agregasi Saldo ke Parent Account
-    const assets = this.buildTreeAndAggregate(accountNodes, AccountType.ASSET);
-    const liabilities = this.buildTreeAndAggregate(accountNodes, AccountType.LIABILITY);
-    const equity = this.buildTreeAndAggregate(accountNodes, AccountType.EQUITY);
+    // Calculate interim revenue & expense trees to derive Net Income
     const revenues = this.buildTreeAndAggregate(accountNodes, AccountType.REVENUE);
     const expenses = this.buildTreeAndAggregate(accountNodes, AccountType.EXPENSE);
 
-    // Hitung Ringkasan Posisi Keuangan
+    const totalRevenue = revenues.reduce((sum, item) => sum + item.balance, 0);
+    const totalExpense = expenses.reduce((sum, item) => sum + item.balance, 0);
+    const netIncome = totalRevenue - totalExpense;
+
+    // Map Net Income directly to CURRENT_YEAR_EARNINGS account if mapped
+    const currentYearEarningsAccountId = mappingMap.get(AccountOperation.CURRENT_YEAR_EARNINGS);
+    let mappedToNode = false;
+
+    if (currentYearEarningsAccountId) {
+      const cyeNode = accountNodes.find((n) => n.id === currentYearEarningsAccountId);
+      if (cyeNode) {
+        cyeNode.balance += netIncome;
+        mappedToNode = true;
+      }
+    }
+
+    // Build Balance Sheet trees
+    const assets = this.buildTreeAndAggregate(accountNodes, AccountType.ASSET);
+    const liabilities = this.buildTreeAndAggregate(accountNodes, AccountType.LIABILITY);
+    const equity = this.buildTreeAndAggregate(accountNodes, AccountType.EQUITY);
+
     const totalAssets = assets.reduce((sum, item) => sum + item.balance, 0);
     const totalLiabilities = liabilities.reduce((sum, item) => sum + item.balance, 0);
     const totalEquityAccounts = equity.reduce((sum, item) => sum + item.balance, 0);
 
-    const totalRevenue = revenues.reduce((sum, item) => sum + item.balance, 0);
-    const totalExpense = expenses.reduce((sum, item) => sum + item.balance, 0);
-
-    const netIncome = totalRevenue - totalExpense;
-    const totalEquities = totalEquityAccounts + netIncome;
+    // If netIncome was injected into the node, totalEquityAccounts already includes it
+    const totalEquities = mappedToNode ? totalEquityAccounts : totalEquityAccounts + netIncome;
 
     const isBalanced = Math.abs(totalAssets - (totalLiabilities + totalEquities)) < 0.0001;
 
@@ -120,8 +139,10 @@ export class ReportsService {
     const roots: IAccountNode[] = [];
 
     nodeMap.forEach((node) => {
-      if (node.parentId && nodeMap.has(node.parentId)) {
-        nodeMap.get(node.parentId)!.children.push(node);
+      const parentNode = node.parentId ? nodeMap.get(node.parentId) : undefined;
+
+      if (parentNode) {
+        (parentNode.children ??= []).push(node);
       } else {
         roots.push(node);
       }
