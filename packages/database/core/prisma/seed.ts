@@ -1,7 +1,7 @@
 import { PrismaClient } from "@nexous-accounting/database-core";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { syncSystemData } from "./system-init";
-import { seedOperationalAccounts } from "./seeds/accounts.seed";
+import { seedAccounts } from "./seeds/accounts.seed";
+import { seedJournals } from "./seeds/journals.seed";
 import { seedTransactions } from "./seeds/transactions.seed";
 
 async function main() {
@@ -15,9 +15,8 @@ async function main() {
   });
 
   try {
-    await syncSystemData(prisma);
-
-    await seedOperationalAccounts(prisma);
+    await seedAccounts(prisma);
+    await seedJournals(prisma);
     await seedTransactions(prisma);
 
     console.log("\nAll seed scripts executed successfully.");

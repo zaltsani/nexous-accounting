@@ -45,6 +45,7 @@ model Account {
   // Inverse Relations
   children Account[] @relation("AccountToParent")
   entries  Entry[]
+  mappings AccountMapping[]
 
   @@index([parentId])
   @@map("accounts")
@@ -96,4 +97,18 @@ model Entry {
   account Account @relation(fields: [accountId], references: [id])
 
   @@map("entries")
+}
+
+model AccountMapping {
+  id        String @id @default(uuid())
+  operation String @unique
+  accountId String @map("account_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("account_mappings")
 }

@@ -1,4 +1,5 @@
 import { PrismaClient } from "@nexous-accounting/database-core";
+import { TransactionsService } from "../../../../../services/core/src/modules/transactions/transactions.service";
 
 export const SAMPLE_TRANSACTIONS = [
   {
@@ -7,24 +8,24 @@ export const SAMPLE_TRANSACTIONS = [
     description: "Setoran modal awal pemilik",
     entries: [
       { accountCode: "11101", amount: 10000.0 }, // Kas Utama
-      { accountCode: "30101", amount: -10000.0 }, // Modal Pemilik
+      { accountCode: "31101", amount: -10000.0 }, // Modal Pemilik (Fixed: was 30101)
     ],
   },
   {
     journalCode: "JP",
     date: new Date("2026-01-05"),
-    description: "Penjualan jasa secara kredit",
+    description: "Penjualan barang/jasa secara kredit",
     entries: [
       { accountCode: "11201", amount: 4000.0 }, // Piutang Usaha
-      { accountCode: "40101", amount: -4000.0 }, // Pendapatan Jasa
+      { accountCode: "41101", amount: -4000.0 }, // Pendapatan Penjualan (Fixed: was 40101)
     ],
   },
   {
     journalCode: "JB",
     date: new Date("2026-01-10"),
-    description: "Beban sewa kantor terutang",
+    description: "Beban pokok penjualan terutang",
     entries: [
-      { accountCode: "50101", amount: 1200.0 }, // Beban Sewa
+      { accountCode: "51101", amount: 1200.0 }, // Harga Pokok Penjualan (Fixed: was 50101)
       { accountCode: "21101", amount: -1200.0 }, // Utang Usaha
     ],
   },
@@ -51,6 +52,19 @@ export const SAMPLE_TRANSACTIONS = [
 export async function seedTransactions(prisma: PrismaClient) {
   console.log("Seeding sample transactions & updating account balances...");
 
+  const transactionsService = new TransactionsService(prisma as any);
+
+  const accountCodes = Array.from(
+    new Set(SAMPLE_TRANSACTIONS.flatMap((tx) => tx.entries.map((e) => e.accountCode))),
+  );
+
+  const accounts = await prisma.account.findMany({
+    where: { code: { in: accountCodes } },
+    select: { id: true, code: true },
+  });
+
+  const accountIdMap = new Map(accounts.map((a) => [a.code, a.id]));
+
   for (const tx of SAMPLE_TRANSACTIONS) {
     const existingTx = await prisma.transaction.findFirst({
       where: {
@@ -61,41 +75,27 @@ export async function seedTransactions(prisma: PrismaClient) {
     });
 
     if (!existingTx) {
-      const accountCodes = tx.entries.map((e) => e.accountCode);
-      const accounts = await prisma.account.findMany({
-        where: { code: { in: accountCodes } },
-        select: { id: true, code: true, normalBalance: true },
+      const entries = tx.entries.map((entry) => {
+        const accountId = accountIdMap.get(entry.accountCode);
+        if (!accountId) {
+          throw new Error(
+            `Account code '${entry.accountCode}' not found during transaction seeding. Ensure seedAccounts has executed first.`,
+          );
+        }
+        return {
+          accountId,
+          amount: entry.amount,
+        };
       });
 
-      const accountDetailsMap = new Map(
-        accounts.map((a) => [a.code, { id: a.id, normalBalance: a.normalBalance }]),
-      );
-
-      await prisma.transaction.create({
-        data: {
-          journalCode: tx.journalCode,
-          date: tx.date,
-          description: tx.description,
-          entries: {
-            create: tx.entries.map((e) => ({
-              accountId: accountDetailsMap.get(e.accountCode)!.id,
-              amount: e.amount,
-            })),
-          },
-        },
+      await transactionsService.create({
+        journalCode: tx.journalCode,
+        date: tx.date.toISOString(),
+        description: tx.description,
+        entries,
       });
-
-      await Promise.all(
-        tx.entries.map((entry) => {
-          const account = accountDetailsMap.get(entry.accountCode);
-          const adjustment = account?.normalBalance === "CREDIT" ? -entry.amount : entry.amount;
-
-          return prisma.account.update({
-            where: { code: entry.accountCode },
-            data: { balance: { increment: adjustment } },
-          });
-        }),
-      );
     }
   }
+
+  console.log("Sample transactions seeded successfully!");
 }
