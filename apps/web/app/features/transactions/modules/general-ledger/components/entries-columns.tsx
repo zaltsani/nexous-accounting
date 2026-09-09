@@ -17,7 +17,7 @@ export const entryColumns: ColumnDef<IEntry>[] = [
   {
     accessorKey: "account.code",
     header: "Akun",
-    cell: ({ row }) => `${row.original.account.code} - ${row.original.account.name}`,
+    cell: ({ row }) => `${row.original.account?.code} - ${row.original.account?.name}`,
   },
   {
     accessorKey: "debit",
