@@ -18,12 +18,16 @@ export const baseAccountSchema = z.object({
   parentId: z.string().nullish(),
 });
 
-export const accountSchema = baseAccountSchema.extend({
+export const accountBaseSchema = baseAccountSchema.extend({
   id: z.string(),
   balance: z.coerce.number(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
   mappings: z.lazy(() => baseAccountMappingSchema.array()).nullish(),
+});
+
+export const accountSchema = accountBaseSchema.extend({
+  parent: z.lazy(() => accountBaseSchema.nullish()),
 });
 
 export const createAccountSchema = baseAccountSchema;
