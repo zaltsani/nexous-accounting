@@ -39,7 +39,6 @@ export default function () {
     onSearchChange: setSearch,
     getRowId: (row) => row.id,
     getSubRows: (row) => row.children,
-    mode: "client",
     meta: {
       updateRow: (rowData) => {
         setSelectedData(rowData);
