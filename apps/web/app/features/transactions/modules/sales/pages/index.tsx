@@ -27,11 +27,7 @@ export default function () {
   return (
     <>
       <PageHeader showBack title="Sales">
-        <Button
-          render={<Link to={href("/sales/create")} />}
-        >
-          Buat Invoice
-        </Button>
+        <Button render={<Link to={href("/sales/create")} />}>Buat Invoice</Button>
       </PageHeader>
       <DataTable table={table} />
     </>
