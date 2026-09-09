@@ -34,6 +34,7 @@ export const accountColumns: ColumnDef<IAccountNode>[] = [
     header: "Nama Akun",
     cell: ({ row, getValue }) => {
       const canExpand = row.getCanExpand();
+      console.log({ original: row.original, subRows: row.subRows });
 
       return (
         <div className="flex items-center gap-1.5" style={{ paddingLeft: `${row.depth * 1.5}rem` }}>
