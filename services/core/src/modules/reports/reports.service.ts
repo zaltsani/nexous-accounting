@@ -86,7 +86,9 @@ export class ReportsService {
     const netIncome = totalRevenue - totalExpense;
 
     // Map Net Income directly to CURRENT_YEAR_EARNINGS account if mapped
-    const currentYearEarningsAccountId = mappingMap.get(SystemAccountOperation.CURRENT_YEAR_EARNINGS);
+    const currentYearEarningsAccountId = mappingMap.get(
+      SystemAccountOperation.CURRENT_YEAR_EARNINGS,
+    );
     let mappedToNode = false;
 
     if (currentYearEarningsAccountId) {
