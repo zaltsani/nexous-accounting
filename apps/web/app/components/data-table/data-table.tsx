@@ -30,6 +30,11 @@ interface DataTableProps<TData extends RowData> {
   className?: string;
   containerClassName?: string;
   tableClassName?: string;
+  tableHeaderClassName?: string;
+  tableHeaderRowClassName?: string;
+  tableHeadClassName?: string;
+  tableBodyClassName?: string;
+  tableBodyRowClassName?: string;
 }
 
 const verticalAlignClasses: Record<NonNullable<DataTableProps<any>["verticalAlign"]>, string> = {
@@ -53,6 +58,11 @@ export function DataTable<TData extends RowData>({
   className,
   containerClassName,
   tableClassName,
+  tableHeaderClassName,
+  tableHeaderRowClassName,
+  tableHeadClassName,
+  tableBodyClassName,
+  tableBodyRowClassName,
 }: DataTableProps<TData>) {
   const colSpan = table.getVisibleFlatColumns().length;
   const rows = table.getRowModel().rows;
@@ -71,9 +81,9 @@ export function DataTable<TData extends RowData>({
 
       <div className={cn("overflow-hidden", containerClassName)}>
         <Table className={tableClassName}>
-          <TableHeader>
+          <TableHeader className={tableHeaderClassName}>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className={tableHeaderRowClassName}>
                 {headerGroup.headers.map((header) => {
                   const meta = header.column.columnDef.meta as
                     | { align?: string; className?: string }
@@ -91,7 +101,7 @@ export function DataTable<TData extends RowData>({
                       key={header.id}
                       colSpan={header.colSpan}
                       align={align as any}
-                      className={meta?.className}
+                      className={cn(tableHeadClassName, meta?.className)}
                     >
                       {header.isPlaceholder ? null : (
                         <div
@@ -138,12 +148,13 @@ export function DataTable<TData extends RowData>({
           ) : rows.length === 0 ? (
             <DataTableEmpty colSpan={colSpan} />
           ) : (
-            <TableBody>
+            <TableBody className={tableBodyClassName}>
               {rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-depth={row.depth}
                   data-state={row.getIsExpanded() ? "expanded" : undefined}
+                  className={tableBodyRowClassName}
                 >
                   {row.getVisibleCells().map((cell) => {
                     const meta = cell.column.columnDef.meta as
