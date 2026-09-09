@@ -80,7 +80,7 @@ export function useDataTable<TData>({
     getRowId: getRowId ?? ((row: any) => row.id),
     getSubRows: getSubRows ?? ((row: any) => row.children),
 
-    paginateExpandedRows: false,
+    paginateExpandedRows: isServer ? true : false,
     autoResetExpanded: false,
 
     meta,
@@ -95,9 +95,9 @@ export function useDataTable<TData>({
     getCoreRowModel: getCoreRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
 
-    getPaginationRowModel: isServer ? undefined : getPaginationRowModel(),
-    getFilteredRowModel: isServer ? undefined : getFilteredRowModel(),
-    getSortedRowModel: isServer ? undefined : getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
   });
 
   return { table };
