@@ -64,7 +64,7 @@ export class TransactionsService {
         take,
         include: TRANSACTION_INCLUDE,
       });
-      const totalCount = await tx.transaction.count();
+      const totalCount = await tx.transaction.count({ where });
       return [items, totalCount];
     });
 
