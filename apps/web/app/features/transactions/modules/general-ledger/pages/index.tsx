@@ -42,7 +42,7 @@ export default function () {
         table={table}
         loading={isLoading}
         error={error && "Error"}
-        tableRowClassName="border-b-0"
+        tableBodyRowClassName="border-b-0"
       />
     </>
   );
