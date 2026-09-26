@@ -43,6 +43,7 @@ export const accountSummarySchema = z.object({
 });
 
 export const getAccountListQuerySchema = apiListQueryParamsSchema.extend({
+  ids: z.array(z.string()).optional(),
   normalBalance: normalBalanceSchema.optional(),
   type: accountTypeSchema.optional(),
   accountCategory: z.enum(["parent", "child"]).optional(),

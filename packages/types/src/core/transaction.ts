@@ -17,7 +17,7 @@ export const createEntrySchema = baseEntrySchema.omit({
 });
 
 export const createTransactionSchema = baseTransactionSchema.extend({
-  date: z.date(),
+  date: z.string().datetime(),
   entries: createEntrySchema.array().min(2),
 });
 

@@ -3,7 +3,12 @@ import { apiListQueryParamsSchema } from "../../common/api-list-query-params.js"
 import { baseSalesItemSchema, salesItemSchema } from "./item.js";
 import { salesSettlementSchema } from "./settlement.js";
 
-export const salesTypeSchema = z.enum(["CREDIT_SALE", "CASH_SALE", "DOWN_PAYMENT"]);
+export const salesTypeSchema = z.enum([
+  "CREDIT_SALE",
+  "CASH_SALE",
+  "DOWN_PAYMENT",
+  "DEFERRED_SERVICE",
+]);
 export const invoiceStatusSchema = z.enum(["DRAFT", "UNPAID", "PARTIAL", "PAID", "VOID"]);
 export const invoiceActionStatusSchema = z.enum(["DRAFT", "POST"], "Pilih status invoice");
 
@@ -59,7 +64,11 @@ export const editorInvoiceSchema = createInvoiceSchema.refine(
 
 export const getSalesInvoiceListQuerySchema = apiListQueryParamsSchema.extend({
   type: salesTypeSchema.optional(),
-  status: invoiceStatusSchema.optional(),
+  status: z
+    .union([z.array(invoiceStatusSchema), invoiceStatusSchema, z.string()])
+    .transform((val) => (typeof val === "string" ? val.split(",").map((item) => item.trim()) : val))
+    .pipe(z.array(invoiceStatusSchema))
+    .optional(),
   startIssueDate: z.string().datetime().optional(),
   endIssueDate: z.string().datetime().optional(),
   startDueDate: z.string().datetime().optional(),
