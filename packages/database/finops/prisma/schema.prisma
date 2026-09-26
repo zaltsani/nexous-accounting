@@ -18,6 +18,7 @@ enum SalesType {
   CREDIT_SALE
   CASH_SALE
   DOWN_PAYMENT
+  DEFERRED_SERVICE
 }
 
 enum InvoiceStatus {
