@@ -7,7 +7,7 @@ import { useGetBalanceSheet } from "../hooks/use-get-balance-sheet";
 import { format } from "date-fns";
 
 export default function BalanceSheetPage() {
-  const [asOfDate, setAsOfDate] = useState<Date | undefined>(new Date());
+  const [asOfDate, setAsOfDate] = useState<string | undefined>(new Date().toISOString());
   const { data, isLoading } = useGetBalanceSheet({
     asOfDate: asOfDate && format(asOfDate, "yyyy-MM-dd"),
   });

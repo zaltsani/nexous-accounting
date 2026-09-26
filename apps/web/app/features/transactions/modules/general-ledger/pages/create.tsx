@@ -22,7 +22,7 @@ export default function () {
   const form = useForm<ILedgerEditor>({
     resolver: zodResolver(ledgerEditorSchema),
     defaultValues: {
-      date: new Date(),
+      date: new Date().toISOString(),
       entries: Array.from({ length: 5 }).map(() => ({})),
     },
   });

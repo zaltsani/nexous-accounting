@@ -24,6 +24,12 @@ export default [
         route("create", "features/transactions/modules/sales/pages/create.tsx"),
       ]),
 
+      // ===== Settlements =====
+      ...prefix("settlements", [
+        index("features/transactions/modules/settlements/pages/index.tsx"),
+        route("create", "features/transactions/modules/settlements/pages/create.tsx"),
+      ]),
+
       // ===== Purchases =====
       ...prefix("purchases", [
         index("features/transactions/modules/purchases/pages/index.tsx"),

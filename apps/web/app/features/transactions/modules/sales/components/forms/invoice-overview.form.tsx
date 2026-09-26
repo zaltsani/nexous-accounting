@@ -17,7 +17,13 @@ import {
   FieldLabel,
   Input,
 } from "@nexous-accounting/ui";
-import { CalculatorIcon, ClockIcon, FileTextIcon, type LucideIcon } from "lucide-react";
+import {
+  CalculatorIcon,
+  ClockIcon,
+  FileTextIcon,
+  HourglassIcon,
+  type LucideIcon,
+} from "lucide-react";
 import { Controller, type UseFormReturn } from "react-hook-form";
 import { CurrencyInput } from "~/components/common/currency-input";
 import { GenericAsyncCombobox } from "~/components/common/generic-async-combobox";
@@ -46,6 +52,12 @@ const SalesTypeLabels: Record<ISalesType, ISalesTypeLabel> = {
     description: "Penerimaan pembayaran di muka atau deposit sebelum barang/jasa diserahkan.",
     icon: FileTextIcon,
   },
+  DEFERRED_SERVICE: {
+    title: "Jasa Ditangguhkan",
+    description:
+      "Pembayaran diterima di awal, namun penyerahan jasa ditahan/dilakukan kemudian dicatat ke Pendapatan Diterima Dimuka (Liabilitas).",
+    icon: HourglassIcon,
+  },
 };
 
 interface InvoiceOverviewFormProps {
@@ -67,6 +79,8 @@ export const InvoiceOverviewForm = ({ form }: InvoiceOverviewFormProps) => {
               <FieldLabel>Tipe Penjualan</FieldLabel>
               <div className="grid md:grid-cols-3 gap-3">
                 {salesTypeSchema.options.map((type) => {
+                  if (type === "CREDIT_SALE") return;
+
                   const item = SalesTypeLabels[type];
                   const Icon = item.icon;
                   const isSelected = field.value === type;
@@ -120,8 +134,8 @@ export const InvoiceOverviewForm = ({ form }: InvoiceOverviewFormProps) => {
           <Field aria-invalid={fieldState.invalid}>
             <FieldLabel>Issue Date</FieldLabel>
             <DatePicker
-              date={field.value ? new Date(field.value) : undefined}
-              setDate={(val) => val && field.onChange(val.toISOString())}
+              date={field.value ?? undefined}
+              setDate={(val) => val && field.onChange(val)}
             />
             <FieldError errors={[fieldState.error]} />
           </Field>
@@ -154,16 +168,22 @@ export const InvoiceOverviewForm = ({ form }: InvoiceOverviewFormProps) => {
             <Field aria-invalid={fieldState.invalid}>
               <FieldLabel required>
                 {invoiceType === "CREDIT_SALE"
-                  ? "Accounts Receivable (AR) Account"
+                  ? "Akun Piutang Usaha (AR)"
                   : invoiceType === "CASH_SALE"
-                    ? "Destination Cash / Bank Account"
-                    : "Accounts Receivable / Deposit Liability Account"}
+                    ? "Akun Kas / Bank Penerima"
+                    : invoiceType === "DEFERRED_SERVICE"
+                      ? "Akun Liabilitas (Pendapatan Diterima Dimuka)"
+                      : "Akun Liabilitas Uang Muka Penjualan"}
               </FieldLabel>
               <GenericAsyncCombobox<IAccount>
                 value={field.value ?? ""}
                 onChange={field.onChange}
                 queryKey="account"
-                placeholder="Pilih Akun Pendapatan"
+                placeholder={
+                  invoiceType === "DEFERRED_SERVICE"
+                    ? "Pilih Akun Pendapatan Diterima Dimuka"
+                    : "Pilih Akun Pendapatan"
+                }
                 fetchListFn={getAccountList}
                 fetchByIdFn={getAccountById}
                 params={{
@@ -184,10 +204,14 @@ export const InvoiceOverviewForm = ({ form }: InvoiceOverviewFormProps) => {
         />
       )}
 
-      {/* Down Payment */}
-      {invoiceType === "DOWN_PAYMENT" && (
+      {/* Down Payment & Deferred Service Settlement Account */}
+      {(invoiceType === "DOWN_PAYMENT" || invoiceType === "DEFERRED_SERVICE") && (
         <Field>
-          <FieldLabel>Down Payment</FieldLabel>
+          <FieldLabel>
+            {invoiceType === "DOWN_PAYMENT"
+              ? "Rincian Setoran Uang Muka (DP)"
+              : "Rincian Penerimaan Kas / Bank"}
+          </FieldLabel>
           <div className="grid sm:grid-cols-2 gap-3">
             <Controller
               control={form.control}
@@ -207,7 +231,7 @@ export const InvoiceOverviewForm = ({ form }: InvoiceOverviewFormProps) => {
                     value={field.value ?? ""}
                     onChange={field.onChange}
                     queryKey="account"
-                    placeholder="Pilih Akun Pendapatan"
+                    placeholder="Pilih Akun Kas / Bank Target"
                     fetchListFn={getAccountList}
                     fetchByIdFn={getAccountById}
                     params={{
@@ -224,40 +248,6 @@ export const InvoiceOverviewForm = ({ form }: InvoiceOverviewFormProps) => {
           </div>
         </Field>
       )}
-
-      {/* Action Status */}
-      {/* <Controller
-        control={form.control}
-        name="action"
-        render={({ field, fieldState }) => (
-          <Field
-            aria-invalid={fieldState.invalid}
-            orientation={isMobile ? "vertical" : "horizontal"}
-            className="w-fit gap-3 sm:gap-4"
-          >
-            <FieldLabel>Invoice Status</FieldLabel>
-            <div className="flex items-center gap-1 p-1 border rounded-md">
-              {invoiceActionStatusSchema.options.map((status) => {
-                const item = InvoiceActionStatusLabels[status];
-                const Icon = item.icon;
-                const isSelected = field.value === status;
-
-                return (
-                  <Button
-                    key={status}
-                    variant={isSelected ? "default" : "outline"}
-                    onClick={() => field.onChange(status)}
-                  >
-                    <Icon />
-                    {item.title}
-                  </Button>
-                );
-              })}
-            </div>
-            <FieldError errors={[fieldState.error]} />
-          </Field>
-        )}
-      /> */}
     </form>
   );
 };

@@ -4,6 +4,7 @@ import {
   LandmarkIcon,
   LayoutGridIcon,
   NetworkIcon,
+  NotebookIcon,
   ReceiptTextIcon,
   ShoppingCartIcon,
   type LucideIcon,
@@ -51,6 +52,11 @@ export const SidebarData: ISidebarData[] = [
         icon: ReceiptTextIcon,
         title: "Penjualan",
         url: "/sales",
+      },
+      {
+        icon: NotebookIcon,
+        title: "Penerimaan",
+        url: "/settlements",
       },
       {
         icon: ShoppingCartIcon,
