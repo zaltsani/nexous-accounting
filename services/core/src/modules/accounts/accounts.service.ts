@@ -45,6 +45,10 @@ export class AccountsService {
 
     const where: Prisma.AccountWhereInput = {};
 
+    if (query.ids && query.ids.length > 0) {
+      where.id = { in: query.ids };
+    }
+
     if (query.search) {
       where.OR = [
         { code: { contains: query.search, mode: "insensitive" } },
@@ -70,7 +74,7 @@ export class AccountsService {
         take,
         include: { mappings: true },
       });
-      const totalCount = await tx.account.count();
+      const totalCount = await tx.account.count({ where });
       return [items, totalCount];
     });
 
