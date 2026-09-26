@@ -4,6 +4,7 @@ import {
   createInvoiceSchema,
   createSalesSettlementSchema,
   getSalesInvoiceListQuerySchema,
+  getSettlementListQuerySchema,
   invoiceSchema,
   salesItemSchema,
 } from "@nexous-accounting/types";
@@ -19,3 +20,4 @@ export class BaseSalesSettlementDto extends createZodDto(baseSalesSettlementSche
 export class CreateSalesSettlementDto extends createZodDto(createSalesSettlementSchema) {}
 
 export class GetSalesInvoiceListQueryDto extends createZodDto(getSalesInvoiceListQuerySchema) {}
+export class GetSalesSettlementListQueryDto extends createZodDto(getSettlementListQuerySchema) {}
