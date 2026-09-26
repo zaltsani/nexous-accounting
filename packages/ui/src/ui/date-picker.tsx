@@ -6,8 +6,8 @@ import { Calendar } from "./calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 
 type DatePickerProps = {
-  date: Date | undefined;
-  setDate: (date: Date | undefined) => void;
+  date: string | undefined;
+  setDate: (date: string | undefined) => void;
   placeholder?: string;
 };
 
@@ -18,17 +18,17 @@ export function DatePicker({ date, setDate, placeholder }: DatePickerProps) {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger>
         <Button variant="outline" id="date" className="w-full justify-between font-normal">
-          {date ? date.toLocaleDateString() : (placeholder ?? "Select date")}
+          {date ? new Date(date).toLocaleDateString() : (placeholder ?? "Select date")}
           <CalendarIcon />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto overflow-hidden p-0" align="start">
         <Calendar
           mode="single"
-          selected={date}
+          selected={date ? new Date(date) : undefined}
           captionLayout="dropdown"
           onSelect={(date) => {
-            setDate(date);
+            setDate(date ? date.toISOString() : undefined);
             setOpen(false);
           }}
         />
