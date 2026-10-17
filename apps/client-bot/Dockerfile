@@ -39,4 +39,4 @@ COPY --from=base /app/apps/client-bot/dist/ ./apps/client-bot/dist/
 
 EXPOSE 3000
 
-CMD ["node", "apps/client-bot/dist/main"]
+CMD ["node", "apps/client-bot/dist/index"]
