@@ -1,9 +1,6 @@
-import {
-  createAccountSchema,
-  getAccountListQuerySchema
-} from "@nexous-accounting/types";
+import { createAccountSchema, getAccountListQuerySchema } from "@nexous-accounting/types";
 import { tool } from "ai";
-import { buildQueryString } from "src/utils/build-query-string";
+import { buildQueryString } from "../../utils/build-query-string";
 import z from "zod";
 import { gatewayFetch } from "../api-client";
 
@@ -20,7 +17,7 @@ export const accountTools = {
   listAccounts: tool({
     description: "Fetch list of accounts or search accounts by code/name",
     inputSchema: z.object({
-      query: getAccountListQuerySchema
+      query: getAccountListQuerySchema,
     }),
     execute: async ({ query }) => {
       const params = buildQueryString(query);

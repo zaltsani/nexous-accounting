@@ -32,6 +32,9 @@ jobs:
           - name: services-finops
             dockerfile: services/finops/Dockerfile
             image_suffix: services_finops
+          - name: client-bot
+            dockerfile: apps/client-bot/Dockerfile
+            image_suffix: client_bot
 
     steps:
       - name: Checkout repository

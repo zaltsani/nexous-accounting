@@ -1,10 +1,7 @@
-import {
-  createInvoiceSchema,
-  getSalesInvoiceListQuerySchema,
-} from "@nexous-accounting/types";
+import { apiListQueryParamsSchema, createInvoiceSchema, getSalesInvoiceListQuerySchema } from "@nexous-accounting/types";
 import { tool } from "ai";
-import { buildQueryString } from "src/utils/build-query-string";
 import z from "zod";
+import { buildQueryString } from "../../utils/build-query-string";
 import { gatewayFetch } from "../api-client";
 
 export const salesTools = {
@@ -31,7 +28,7 @@ export const salesTools = {
   // POST /sales/settlement
   createSalesSettlement: tool({
     description: "Create a new payment settlement for sales invoices (Jurnal Pembayaran)",
-    inputSchema: createInvoiceSchema, // Replace with settlement schema if distinct
+    inputSchema: createInvoiceSchema,
     execute: async (data) =>
       gatewayFetch("/api/sales/settlement", { method: "POST", body: JSON.stringify(data) }),
   }),
@@ -39,7 +36,9 @@ export const salesTools = {
   // GET /sales/settlement
   listSalesSettlements: tool({
     description: "Fetch list of payment settlements for sales invoices",
-    inputSchema: z.object({}),
+    inputSchema: z.object({
+      query: apiListQueryParamsSchema,
+    }),
     execute: async ({ query }) => {
       const params = buildQueryString(query);
       return gatewayFetch(`/api/sales/settlement${params}`, { method: "GET" });

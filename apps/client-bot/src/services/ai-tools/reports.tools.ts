@@ -1,6 +1,6 @@
 import { getReportBalanceSheetQuerySchema } from "@nexous-accounting/types";
 import { tool } from "ai";
-import { buildQueryString } from "src/utils/build-query-string";
+import { buildQueryString } from "../../utils/build-query-string";
 import z from "zod";
 import { gatewayFetch } from "../api-client";
 

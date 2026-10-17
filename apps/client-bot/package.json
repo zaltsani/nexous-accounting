@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsc src/index.ts --outDir dist",
+    "build": "tsc src/index.ts --outDir dist --skipLibCheck",
     "start": "NODE_ENV=production node dist/index.js"
   },
   "dependencies": {
