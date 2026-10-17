@@ -1,0 +1,24 @@
+{
+  "name": "client-bot",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc src/index.ts --outDir dist",
+    "start": "NODE_ENV=production node dist/index.js"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^4.0.96",
+    "@elysiajs/node": "1",
+    "@nexous-accounting/types": "*",
+    "ai": "^7.0.143",
+    "dotenv": "^18.0.8",
+    "elysia": "1",
+    "grammy": "^1.46.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "tsx": "4",
+    "typescript": "5"
+  }
+}
