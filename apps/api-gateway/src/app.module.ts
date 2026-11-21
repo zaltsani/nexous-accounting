@@ -1,5 +1,5 @@
 import { Module } from "@nestjs/common";
-import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from "@nestjs/core";
 import {
   DebugZodSerializerInterceptor,
   HttpExceptionFilter,
@@ -7,16 +7,32 @@ import {
   ZodValidationExceptionFilter,
 } from "@nexous-accounting/common";
 import { ZodValidationPipe } from "nestjs-zod";
+import { JwtModule } from "@nestjs/jwt";
 
-import { AccountsGatewayController } from "./accounts-gateway.controller";
-import { JournalsGatewayController } from "./journals-gateway.controller";
-import { TransactionsGatewayController } from "./transactions-gateway.controller";
-import { ReportsGatewayController } from "./reports-gateway.controller";
-import { SalesGatewayController } from "./sales-gateway.controller";
+import { JwtAuthGuard } from "./platforms/auth/jwt-auth.guard";
+import { TenantRequiredGuard } from "./platforms/auth/tenant-required.guard";
+import { AuthTenantContextInterceptor } from "./platforms/auth/auth-tenant-context.interceptor";
+
+import { AuthGatewayController } from "./platforms/auth/auth-gateway.controller";
+import { TenantsGatewayController } from "./platforms/tenants-gateway.controller";
+
+import { AccountsGatewayController } from "./core/accounts-gateway.controller";
+import { JournalsGatewayController } from "./core/journals-gateway.controller";
+import { TransactionsGatewayController } from "./finops/transactions-gateway.controller";
+import { ReportsGatewayController } from "./core/reports-gateway.controller";
+
+import { SalesGatewayController } from "./finops/sales-gateway.controller";
 
 @Module({
-  imports: [NatsClientModule],
+  imports: [
+    NatsClientModule,
+    JwtModule.register({})
+  ],
   controllers: [
+    // Platforms
+    AuthGatewayController,
+    TenantsGatewayController,
+
     // Core
     AccountsGatewayController,
     JournalsGatewayController,
@@ -43,6 +59,9 @@ import { SalesGatewayController } from "./sales-gateway.controller";
       provide: APP_FILTER,
       useClass: ZodValidationExceptionFilter,
     },
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_GUARD, useClass: TenantRequiredGuard },
+    { provide: APP_INTERCEPTOR, useClass: AuthTenantContextInterceptor },
   ],
 })
 export class AppModule {}

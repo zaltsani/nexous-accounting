@@ -16,6 +16,7 @@ async function bootstrap() {
     .setTitle("Nexous Accounting")
     .setDescription("Nexous Accounting")
     .setVersion("1.0")
+    .addBearerAuth()
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api", app, documentFactory);
