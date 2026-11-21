@@ -11,6 +11,7 @@ import {
   UsePipes,
 } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
+import { ApiBearerAuth } from "@nestjs/swagger";
 import {
   ApiListQueryParamsDto,
   CreateAccountDto,
@@ -21,6 +22,7 @@ import {
 import { ACCOUNT_MESSAGE_PATTERNS } from "@nexous-accounting/types";
 import { ZodValidationPipe } from "nestjs-zod";
 
+@ApiBearerAuth()
 @Controller("accounts")
 @UsePipes(ZodValidationPipe)
 export class AccountsGatewayController {

@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Inject, Post, Query } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
+import { ApiBearerAuth } from "@nestjs/swagger";
 import {
   CreateInvoiceDto,
   GetSalesInvoiceListQueryDto,
@@ -7,6 +8,7 @@ import {
 } from "@nexous-accounting/common";
 import { SALES_MESSAGE_PATTERNS } from "@nexous-accounting/types";
 
+@ApiBearerAuth()
 @Controller("sales")
 export class SalesGatewayController {
   constructor(@Inject("NATS_SERVICE") private readonly natsClient: ClientProxy) {}

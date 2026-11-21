@@ -1,8 +1,10 @@
 import { Controller, Get, Inject, Query } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
+import { ApiBearerAuth } from "@nestjs/swagger";
 import { GetReportBalanceSheetQueryDto } from "@nexous-accounting/common";
 import { REPORT_MESSAGE_PATTERNS } from "@nexous-accounting/types";
 
+@ApiBearerAuth()
 @Controller("reports")
 export class ReportsGatewayController {
   constructor(@Inject("NATS_SERVICE") private readonly natsClient: ClientProxy) {}

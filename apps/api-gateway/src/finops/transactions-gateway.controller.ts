@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, Query } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
+import { ApiBearerAuth } from "@nestjs/swagger";
 import {
   CreateTransactionDto,
   GetTransactionListQueryDto,
@@ -10,6 +11,7 @@ import { TRANSACTION_MESSAGE_PATTERNS } from "@nexous-accounting/types";
 import { ZodResponse } from "nestjs-zod";
 import { firstValueFrom } from "rxjs";
 
+@ApiBearerAuth()
 @Controller("transactions")
 export class TransactionsGatewayController {
   constructor(@Inject("NATS_SERVICE") private readonly natsClient: ClientProxy) {}
