@@ -44,6 +44,19 @@ services:
   # ----------------------------------------------------------------------------
   # SERVICES
   # ----------------------------------------------------------------------------
+  service-platform:
+    image: ${SERVICES_CORE_IMAGE:-ghcr.io/zaltsani/nexous-accounting/services_platform:latest}
+    build:
+      context: .
+      dockerfile: services/platform/Dockerfile
+    container_name: services-platform
+    restart: always
+    environment:
+      - NATS_URL=nats://nats:4222
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-nexous_accounting}?schema=core
+    networks:
+      - nexous-network
+
   service-core:
     image: ${SERVICES_CORE_IMAGE:-ghcr.io/zaltsani/nexous-accounting/services_core:latest}
     build:
@@ -53,7 +66,7 @@ services:
     restart: always
     environment:
       - NATS_URL=nats://nats:4222
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-nexous_accounting}?schema=core
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432
     networks:
       - nexous-network
 
@@ -66,32 +79,6 @@ services:
     restart: always
     environment:
       - NATS_URL=nats://nats:4222
-      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-nexous_accounting}?schema=finops
-    networks:
-      - nexous-network
-
-  # ----------------------------------------------------------------------------
-  # ERROR TRACKING
-  # ----------------------------------------------------------------------------
-  glitchtip-worker:
-    image: glitchtip/glitchtip:latest
-    restart: unless-stopped
-    command: ./bin/run-celery-with-beat.sh
-    environment:
-      DATABASE_URL: postgres://${GLITCHTIP_DB_USERNAME:-glitchtip}:${GLITCHTIP_DB_PASSWORD}@db:5432/nexous_accounting
-      REDIS_URL: redis://redis:6379/1
-      SECRET_KEY: super-secret-development-key
-    networks:
-      - nexous-network
-
-  glitchtip:
-    image: glitchtip/glitchtip
-    environment:
-      DATABASE_URL: postgres://${GLITCHTIP_DB_USERNAME:-glitchtip}:${GLITCHTIP_DB_PASSWORD}@db:5432/nexous_accounting
-      REDIS_URL: redis://redis:6379/1
-      SECRET_KEY: ${GLITCHTIP_SECRET_KEY:-change_me_to_something_random} # best to run openssl rand -hex 32
-      GLITCHTIP_DOMAIN: ${GLITCHTIP_DOMAIN}
-    ports:
-      - "${GLITCHTIP_PORT:-8000}:8000"
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432
     networks:
       - nexous-network
