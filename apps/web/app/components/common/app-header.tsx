@@ -1,7 +1,7 @@
 import { Button, Separator, SidebarTrigger, useIsMobile } from "@nexous/ui";
 import { BellIcon, BoxesIcon } from "lucide-react";
 import { useMatches } from "react-router";
-// import { UserDropdownMenu } from "./user-dropdown-menu";
+import { UserDropdownMenu } from "./user-dropdown-menu";
 
 interface RouteHandleProps {
   title?: string;
@@ -42,11 +42,8 @@ export function AppHeader() {
             <h2 className="text-xs">{description}</h2>
           </div>
           <div className="flex items-center gap-3">
-            <Button size="icon" variant="outline" className="rounded-full">
-              <BellIcon />
-            </Button>
             <Separator orientation="vertical" className="h-8 my-auto" />
-            {/* <UserDropdownMenu /> */}
+            <UserDropdownMenu />
           </div>
         </div>
       )}
