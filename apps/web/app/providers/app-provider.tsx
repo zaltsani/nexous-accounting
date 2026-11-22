@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router";
 import { QueryProvider } from "./query-provider";
+import AuthProvider from "./auth-provider";
 
 export default function AppProvider() {
   const navigate = useNavigate();
@@ -19,7 +20,9 @@ export default function AppProvider() {
 
   return (
     <QueryProvider>
-      <Outlet />
+      <AuthProvider>
+        <Outlet />
+      </AuthProvider>
     </QueryProvider>
   );
 }
