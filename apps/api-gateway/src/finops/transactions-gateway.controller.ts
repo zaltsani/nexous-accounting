@@ -4,11 +4,9 @@ import { ApiBearerAuth } from "@nestjs/swagger";
 import {
   CreateTransactionDto,
   GetTransactionListQueryDto,
-  TransactionDto,
   UpdateTransactionDto,
 } from "@nexous-accounting/common";
 import { TRANSACTION_MESSAGE_PATTERNS } from "@nexous-accounting/types";
-import { ZodResponse } from "nestjs-zod";
 import { firstValueFrom } from "rxjs";
 
 @ApiBearerAuth()
@@ -17,7 +15,6 @@ export class TransactionsGatewayController {
   constructor(@Inject("NATS_SERVICE") private readonly natsClient: ClientProxy) {}
 
   @Post()
-  // @ZodResponse({ status: 201, type: TransactionDto })
   async create(@Body() dto: CreateTransactionDto) {
     return await firstValueFrom(
       this.natsClient.send(TRANSACTION_MESSAGE_PATTERNS.CREATE_TRANSACTION, dto),

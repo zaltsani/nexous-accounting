@@ -31,9 +31,7 @@ export function UserDropdownMenu() {
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
               <p className="text-sm font-medium leading-none text-foreground">{user?.name}</p>
-              <p className="text-xs leading-none text-muted-foreground">
-                {user?.email}
-              </p>
+              <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
             </div>
           </DropdownMenuLabel>
 
@@ -50,7 +48,11 @@ export function UserDropdownMenu() {
 
           <DropdownMenuItem
             render={(props) => (
-              <Link to={href("/select-tenant")} className="cursor-pointer w-full flex items-center" {...props}>
+              <Link
+                to={href("/select-tenant")}
+                className="cursor-pointer w-full flex items-center"
+                {...props}
+              >
                 <User className="mr-2 h-4 w-4" />
                 <span>Ganti Organizations</span>
               </Link>
@@ -58,11 +60,7 @@ export function UserDropdownMenu() {
           />
 
           <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={handleLogout}
-            variant="destructive"
-            className="cursor-pointer"
-          >
+          <DropdownMenuItem onClick={handleLogout} variant="destructive" className="cursor-pointer">
             <LogOut className="mr-2 h-4 w-4" />
             <span>Log out</span>
           </DropdownMenuItem>

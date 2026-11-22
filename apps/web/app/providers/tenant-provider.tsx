@@ -5,13 +5,13 @@ import { useAuth } from "~/features/auth/stores/use-auth";
 export default function TenantProvider() {
   const { tenant } = useAuth();
   const navigate = useNavigate();
-  console.log({ tenant })
+  console.log({ tenant });
 
   useEffect(() => {
     if (!tenant) {
-      navigate(href("/select-tenant"))
+      navigate(href("/select-tenant"));
     }
-  }, [tenant])
+  }, [tenant]);
 
-  return <Outlet />
+  return <Outlet />;
 }

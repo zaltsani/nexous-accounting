@@ -1,6 +1,12 @@
-import type { IAuthToken, ILoginResult, ISelectTenantResponse, ITenant, IUser } from "@nexous-accounting/types";
+import type {
+  IAuthToken,
+  ILoginResult,
+  ISelectTenantResponse,
+  ITenant,
+  IUser,
+} from "@nexous-accounting/types";
 import { create } from "zustand";
-import { persist } from 'zustand/middleware';
+import { persist } from "zustand/middleware";
 
 type AuthState = {
   user: IUser | null;
@@ -56,7 +62,7 @@ export const useAuth = create<AuthState>()(
       },
     }),
     {
-      name: 'auth',
+      name: "auth",
       partialize: (state) => ({
         user: state.user,
         tenant: state.tenant,
@@ -66,6 +72,6 @@ export const useAuth = create<AuthState>()(
       onRehydrateStorage: () => (state) => {
         state?.setHydrated(true);
       },
-    }
-  )
+    },
+  ),
 );

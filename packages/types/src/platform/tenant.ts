@@ -1,6 +1,6 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-export const TENANT_ROLES = ['SUPERDAMIN', 'OWNER', 'ADMIN', 'ACCOUNTANT', 'VIEWER'] as const;
+export const TENANT_ROLES = ["SUPERDAMIN", "OWNER", "ADMIN", "ACCOUNTANT", "VIEWER"] as const;
 export const tenantRoleSchema = z.enum(TENANT_ROLES);
 
 export const baseTenantSchema = z.object({
@@ -11,7 +11,7 @@ export const baseTenantSchema = z.object({
     .toLowerCase()
     .min(3)
     .max(48)
-    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, 'lowercase letters, numbers and dashes only'),
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "lowercase letters, numbers and dashes only"),
 });
 
 export const tenantSchema = baseTenantSchema.extend({

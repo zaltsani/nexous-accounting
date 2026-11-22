@@ -1,4 +1,9 @@
-import { addTenantMemberSchema, createTenantSchema, tenantMembershipSchema, tenantSchema } from "@nexous-accounting/types";
+import {
+  addTenantMemberSchema,
+  createTenantSchema,
+  tenantMembershipSchema,
+  tenantSchema,
+} from "@nexous-accounting/types";
 import { createZodDto } from "nestjs-zod";
 
 export class TenantDto extends createZodDto(tenantSchema) {}

@@ -6,7 +6,7 @@ export function setupInterceptors() {
   api.interceptors.request.use(async (config) => {
     const auth = useAuth.getState();
     if (auth.authToken) {
-      config.headers.Authorization = `Bearer ${auth.authToken.accessToken}`
+      config.headers.Authorization = `Bearer ${auth.authToken.accessToken}`;
     }
     return config;
   });

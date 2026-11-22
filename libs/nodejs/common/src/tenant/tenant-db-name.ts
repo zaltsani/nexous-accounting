@@ -1,14 +1,14 @@
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-export const TENANT_DB_PREFIX = 'tenant_';
+export const TENANT_DB_PREFIX = "tenant_";
 
 export function isTenantId(value: unknown): value is string {
-  return typeof value === 'string' && UUID_RE.test(value);
+  return typeof value === "string" && UUID_RE.test(value);
 }
 
 export function assertTenantId(value: unknown): asserts value is string {
   if (!isTenantId(value)) {
-    throw new Error('Invalid tenant id');
+    throw new Error("Invalid tenant id");
   }
 }
 

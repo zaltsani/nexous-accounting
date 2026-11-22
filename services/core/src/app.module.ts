@@ -12,7 +12,7 @@ import { createCoreClient, PrismaClient } from "@nexous-accounting/database-core
     NatsClientModule,
     TenantDatabaseModule.forRoot<PrismaClient>({
       baseUrl: process.env.TENANT_DATABASE_BASE_URL!,
-      schema: 'core',
+      schema: "core",
       createClient: createCoreClient,
     }),
     DatabaseModule,

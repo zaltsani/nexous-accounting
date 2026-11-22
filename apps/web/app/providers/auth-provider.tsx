@@ -10,11 +10,11 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!isHydrated) return;
     if (!isAuthenticated) {
-      if (pathname.includes("auth")) return
-      navigate(href("/login"))
+      if (pathname.includes("auth")) return;
+      navigate(href("/login"));
     }
-    if (isAuthenticated && pathname.startsWith("/login")) navigate(href("/"))
-  }, [isAuthenticated, isHydrated])
+    if (isAuthenticated && pathname.startsWith("/login")) navigate(href("/"));
+  }, [isAuthenticated, isHydrated]);
 
-  return children
+  return children;
 }

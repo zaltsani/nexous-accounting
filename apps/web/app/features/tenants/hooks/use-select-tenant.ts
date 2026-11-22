@@ -9,7 +9,7 @@ export function useSelectTenant() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationKey: ['select-tenant'],
+    mutationKey: ["select-tenant"],
     mutationFn: (tenantId: string) => selectTenant(tenantId),
     onSuccess: (res) => {
       selectTenantStore(res.data);
@@ -17,4 +17,4 @@ export function useSelectTenant() {
       queryClient.removeQueries();
     },
   });
-};
+}

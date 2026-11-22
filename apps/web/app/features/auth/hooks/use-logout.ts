@@ -17,14 +17,13 @@ export function useLogout() {
     } finally {
       navigate("/login", { replace: true });
       logoutStore();
-      
+
       queryClient.clear();
 
       toast.add({
-        description: 'Berhasil keluar dari sistem'
+        description: "Berhasil keluar dari sistem",
       });
     }
-
   };
 
   return handleLogout;

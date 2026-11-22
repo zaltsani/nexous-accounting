@@ -24,10 +24,7 @@ import { ReportsGatewayController } from "./core/reports-gateway.controller";
 import { SalesGatewayController } from "./finops/sales-gateway.controller";
 
 @Module({
-  imports: [
-    NatsClientModule,
-    JwtModule.register({})
-  ],
+  imports: [NatsClientModule, JwtModule.register({})],
   controllers: [
     // Platforms
     AuthGatewayController,

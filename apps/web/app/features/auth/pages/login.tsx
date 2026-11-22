@@ -7,17 +7,14 @@ import { LoginForm } from "../components/login-form";
 import { useLogin } from "../hooks/use-login";
 
 export function meta() {
-  return [
-    { title: "Login" },
-    { name: "description", content: "Sign in to your account." },
-  ];
+  return [{ title: "Login" }, { name: "description", content: "Sign in to your account." }];
 }
 
 export default function () {
   const navigate = useNavigate();
 
   const form = useForm<ILogin>({
-    resolver: zodResolver(loginSchema)
+    resolver: zodResolver(loginSchema),
   });
 
   const loginMutation = useLogin();
@@ -25,17 +22,17 @@ export default function () {
   const handleSubmit = (values: ILogin) => {
     loginMutation.mutate(values, {
       onSuccess: (res) => {
-        navigate(href('/'));
+        navigate(href("/"));
         toast.add({
           description: res.message || "Berhasil masuk ke sistem",
-        })
+        });
       },
       onError: (err: unknown) => {
         toast.add({
           type: "error",
           description: err instanceof Error && err.message,
-        })
-      }
+        });
+      },
     });
   };
 
@@ -43,12 +40,11 @@ export default function () {
     <div className="grid gap-8 py-8 px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
       <div className="grid gap-4 md:gap-3">
         <h1 className="text-2xl md:text-3xl font-semibold">Masuk</h1>
-        <p className="text-sm text-accent-foreground tracking-tight">Masuk menggunakan akun anda untuk melanjutkan.</p>
+        <p className="text-sm text-accent-foreground tracking-tight">
+          Masuk menggunakan akun anda untuk melanjutkan.
+        </p>
       </div>
-      <LoginForm
-        form={form}
-        onSubmit={handleSubmit}
-      />
+      <LoginForm form={form} onSubmit={handleSubmit} />
     </div>
-  )
+  );
 }

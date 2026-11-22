@@ -1,7 +1,4 @@
-import {
-  createApiResponseSchema,
-  tenantMembershipSchema
-} from "@nexous-accounting/types";
+import { createApiResponseSchema, tenantMembershipSchema } from "@nexous-accounting/types";
 import { apiClient } from "~/libs/api/client";
 
 export function getListTenants() {

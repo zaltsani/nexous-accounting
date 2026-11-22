@@ -1,8 +1,8 @@
-import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
-import { TenantContext } from './tenant-context.js';
-import { assertTenantId, buildTenantConnectionString } from './tenant-db-name.js';
+import { Inject, Injectable, Logger, OnModuleDestroy } from "@nestjs/common";
+import { TenantContext } from "./tenant-context.js";
+import { assertTenantId, buildTenantConnectionString } from "./tenant-db-name.js";
 
-export const TENANT_DATABASE_OPTIONS = Symbol('TENANT_DATABASE_OPTIONS');
+export const TENANT_DATABASE_OPTIONS = Symbol("TENANT_DATABASE_OPTIONS");
 
 /** Anything with $disconnect() works, so every service can bring its own PrismaClient. */
 export interface TenantDisconnectable {
@@ -36,7 +36,7 @@ export class TenantDatabaseManager<T extends TenantDisconnectable> implements On
 
   constructor(
     @Inject(TENANT_DATABASE_OPTIONS)
-    private readonly options: TenantDatabaseOptions<T>
+    private readonly options: TenantDatabaseOptions<T>,
   ) {}
 
   /** Client of the tenant in the current request context (set by TenantContextInterceptor). */

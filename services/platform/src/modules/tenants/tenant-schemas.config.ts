@@ -1,5 +1,5 @@
-import { ConfigService } from '@nestjs/config';
-import * as path from 'node:path';
+import { ConfigService } from "@nestjs/config";
+import * as path from "node:path";
 
 /** One application service that owns a Postgres schema inside every tenant database. */
 export interface TenantSchemaDefinition {
@@ -15,7 +15,7 @@ export interface TenantSchemaDefinition {
   seedOnCreate: boolean;
 }
 
-export const TENANT_SCHEMAS = Symbol('TENANT_SCHEMAS');
+export const TENANT_SCHEMAS = Symbol("TENANT_SCHEMAS");
 
 /**
  * Registry of schemas created in every tenant database. ORDER MATTERS: earlier entries are
@@ -23,25 +23,25 @@ export const TENANT_SCHEMAS = Symbol('TENANT_SCHEMAS');
  */
 export function buildTenantSchemas(config: ConfigService): TenantSchemaDefinition[] {
   const root = config.get<string>(
-    'DATABASE_PACKAGES_DIR',
-    path.resolve(process.cwd(), '../../packages/database'),
+    "DATABASE_PACKAGES_DIR",
+    path.resolve(process.cwd(), "../../packages/database"),
   );
 
   return [
     {
-      service: 'core',
-      schema: 'core',
-      packageDir: path.join(root, 'core'),
-      urlEnvVar: 'DATABASE_URL',
+      service: "core",
+      schema: "core",
+      packageDir: path.join(root, "core"),
+      urlEnvVar: "DATABASE_URL",
       // System accounts / journals must exist in every tenant. Make sure prisma/seed.ts only
       // seeds those (idempotently) and not demo data like transactions.seed.ts.
       seedOnCreate: true,
     },
     {
-      service: 'finops',
-      schema: 'finops',
-      packageDir: path.join(root, 'finops'),
-      urlEnvVar: 'DATABASE_URL',
+      service: "finops",
+      schema: "finops",
+      packageDir: path.join(root, "finops"),
+      urlEnvVar: "DATABASE_URL",
       seedOnCreate: false,
     },
   ];

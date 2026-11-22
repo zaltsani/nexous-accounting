@@ -8,11 +8,11 @@ export function useLogin() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationKey: ['login'],
+    mutationKey: ["login"],
     mutationFn: (data: ILogin) => login(data),
     onSuccess: (res) => {
       loginStore(res.data);
       queryClient.removeQueries();
     },
   });
-};
+}

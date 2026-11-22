@@ -1,8 +1,8 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
-import { NatsContext } from '@nestjs/microservices';
-import { Observable } from 'rxjs';
-import { TENANT_ID_HEADER, TenantContext, USER_ID_HEADER } from './tenant-context.js';
-import { isTenantId } from './tenant-db-name.js';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
+import { NatsContext } from "@nestjs/microservices";
+import { Observable } from "rxjs";
+import { TENANT_ID_HEADER, TenantContext, USER_ID_HEADER } from "./tenant-context.js";
+import { isTenantId } from "./tenant-db-name.js";
 
 /**
  * Reads the tenant (and user) from the NATS headers and runs the handler inside TenantContext.
@@ -12,7 +12,7 @@ import { isTenantId } from './tenant-db-name.js';
 @Injectable()
 export class TenantContextInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
-    if (context.getType() !== 'rpc') return next.handle();
+    if (context.getType() !== "rpc") return next.handle();
 
     const headers = context.switchToRpc().getContext<NatsContext>().getHeaders?.();
     const tenantId = headers?.get(TENANT_ID_HEADER);

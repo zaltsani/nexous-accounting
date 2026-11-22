@@ -14,7 +14,7 @@ export class UsersController {
   }
 
   @MessagePattern(PLATFORM_PATTERNS.users.get)
-  get(@Payload('id') id: string) {
+  get(@Payload("id") id: string) {
     return this.users.getById(id);
   }
 }

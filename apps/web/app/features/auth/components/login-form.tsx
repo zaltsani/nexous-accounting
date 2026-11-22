@@ -9,16 +9,10 @@ interface LoginFormProps {
   onSubmit: SubmitHandler<ILogin>;
 }
 
-export function LoginForm({
-  form,
-  onSubmit,
-}: LoginFormProps) {
+export function LoginForm({ form, onSubmit }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   return (
-    <form
-      className="grid gap-4"
-      onSubmit={form.handleSubmit(onSubmit)}
-    >
+    <form className="grid gap-4" onSubmit={form.handleSubmit(onSubmit)}>
       {/* Email */}
       <Controller
         name="email"
@@ -26,11 +20,7 @@ export function LoginForm({
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
             <FieldLabel>Email</FieldLabel>
-            <Input
-              {...field}
-              aria-invalid={fieldState.invalid}
-              placeholder="johndoe@mail.com"
-            />
+            <Input {...field} aria-invalid={fieldState.invalid} placeholder="johndoe@mail.com" />
             <FieldError errors={[fieldState.error]} />
           </Field>
         )}
@@ -53,14 +43,11 @@ export function LoginForm({
               <Button
                 size={"icon"}
                 variant={"ghost"}
-                onClick={() => setShowPassword(prev => !prev)}
+                onClick={() => setShowPassword((prev) => !prev)}
                 className="absolute right-0"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword
-                  ? <EyeOffIcon />
-                  : <EyeIcon />
-                }
+                {showPassword ? <EyeOffIcon /> : <EyeIcon />}
               </Button>
             </div>
             <FieldError errors={[fieldState.error]} />
@@ -71,4 +58,4 @@ export function LoginForm({
       <Button type="submit">Masuk</Button>
     </form>
   );
-};
+}

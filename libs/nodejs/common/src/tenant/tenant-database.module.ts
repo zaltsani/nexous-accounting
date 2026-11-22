@@ -1,12 +1,12 @@
-import { DynamicModule, Global, Module } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { TenantContextInterceptor } from './tenant-context.interceptor.js';
+import { DynamicModule, Global, Module } from "@nestjs/common";
+import { APP_INTERCEPTOR } from "@nestjs/core";
+import { TenantContextInterceptor } from "./tenant-context.interceptor.js";
 import {
   TENANT_DATABASE_OPTIONS,
   TenantDatabaseManager,
   TenantDatabaseOptions,
   TenantDisconnectable,
-} from './tenant-database.manager.js';
+} from "./tenant-database.manager.js";
 
 @Global()
 @Module({})

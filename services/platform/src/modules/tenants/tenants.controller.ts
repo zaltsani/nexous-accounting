@@ -9,17 +9,17 @@ export class TenantsController {
   constructor(private readonly tenants: TenantsService) {}
 
   @MessagePattern(PLATFORM_PATTERNS.tenants.create)
-  create(@Payload() payload: CreateTenantDto, @Payload('userId') userId: string) {
+  create(@Payload() payload: CreateTenantDto, @Payload("userId") userId: string) {
     return this.tenants.create(payload, userId);
   }
 
   @MessagePattern(PLATFORM_PATTERNS.tenants.get)
-  get(@Payload('id') id: string) {
+  get(@Payload("id") id: string) {
     return this.tenants.getById(id);
   }
 
   @MessagePattern(PLATFORM_PATTERNS.tenants.listForUser)
-  listForUser(@Payload('userId') userId: string) {
+  listForUser(@Payload("userId") userId: string) {
     return this.tenants.listForUser(userId);
   }
 

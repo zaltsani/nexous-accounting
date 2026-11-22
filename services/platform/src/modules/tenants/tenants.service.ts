@@ -40,7 +40,7 @@ export class TenantsService {
    * If 2-4 fail, the database (if we created it) and the rows are removed again.
    */
   async create(dto: ICreateTenant, userId: string): Promise<TenantDto> {
-    const ownerUserId = dto.ownerUserId ?? userId; 
+    const ownerUserId = dto.ownerUserId ?? userId;
     const owner = await this.prisma.user.findUnique({ where: { id: ownerUserId } });
     if (!owner) throw new NotFoundException("Owner user not found");
     if (!owner.isActive) throw new BadRequestException("Owner user is not active");
@@ -91,7 +91,9 @@ export class TenantsService {
     return memberships.map((m) => ({ tenant: toDto(m.tenant), role: m.role as ITenantRole }));
   }
 
-  async addMember(data: IAddTenantMember): Promise<{ tenantId: string; userId: string; role: string }> {
+  async addMember(
+    data: IAddTenantMember,
+  ): Promise<{ tenantId: string; userId: string; role: string }> {
     const [tenant, user] = await Promise.all([
       this.prisma.tenant.findUnique({ where: { id: data.tenantId }, select: { id: true } }),
       this.prisma.user.findUnique({ where: { id: data.userId }, select: { id: true } }),

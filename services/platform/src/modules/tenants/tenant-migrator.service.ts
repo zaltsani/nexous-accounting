@@ -1,11 +1,11 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { buildTenantConnectionString, quoteIdent } from '@nexous-accounting/common';
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
-import { Client } from 'pg';
-import { PrismaService } from '../../database/prisma.service';
-import { TENANT_SCHEMAS, TenantSchemaDefinition } from './tenant-schemas.config';
+import { Inject, Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { buildTenantConnectionString, quoteIdent } from "@nexous-accounting/common";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
+import { Client } from "pg";
+import { PrismaService } from "../../database/prisma.service";
+import { TENANT_SCHEMAS, TenantSchemaDefinition } from "./tenant-schemas.config";
 
 const execFileAsync = promisify(execFile);
 const COMMAND_TIMEOUT_MS = 5 * 60 * 1000;
@@ -37,9 +37,9 @@ export class TenantMigrator {
       await this.ensureSchema(tenantId, def);
 
       const url = this.schemaUrl(tenantId, def);
-      await this.runPrisma(def, url, ['migrate', 'deploy']);
+      await this.runPrisma(def, url, ["migrate", "deploy"]);
       if (options.seed && def.seedOnCreate) {
-        await this.runPrisma(def, url, ['db', 'seed']);
+        await this.runPrisma(def, url, ["db", "seed"]);
       }
       this.logger.log(`Tenant ${tenantId}: ${def.service} ready in ${Date.now() - started}ms`);
     }
@@ -50,7 +50,7 @@ export class TenantMigrator {
     const tenants = await this.prisma.tenant.findMany({
       where: { isActive: true },
       select: { id: true },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { createdAt: "asc" },
     });
 
     const result: MigrateAllResult = { migrated: [], failed: [] };
@@ -73,15 +73,17 @@ export class TenantMigrator {
 
   /** Same credentials as the platform admin connection, pointed at the tenant database + schema. */
   private schemaUrl(tenantId: string, def: TenantSchemaDefinition): string {
-    const adminUrl = this.config.getOrThrow<string>('SYSTEM_DATABASE_URL');
+    const adminUrl = this.config.getOrThrow<string>("SYSTEM_DATABASE_URL");
     const url = new URL(buildTenantConnectionString(adminUrl, tenantId));
-    url.searchParams.set('schema', def.schema);
+    url.searchParams.set("schema", def.schema);
     return url.toString();
   }
 
   private async ensureSchema(tenantId: string, def: TenantSchemaDefinition): Promise<void> {
-    const adminUrl = this.config.getOrThrow<string>('SYSTEM_DATABASE_URL');
-    const client = new Client({ connectionString: buildTenantConnectionString(adminUrl, tenantId) });
+    const adminUrl = this.config.getOrThrow<string>("SYSTEM_DATABASE_URL");
+    const client = new Client({
+      connectionString: buildTenantConnectionString(adminUrl, tenantId),
+    });
     await client.connect();
     try {
       await client.query(`CREATE SCHEMA IF NOT EXISTS ${quoteIdent(def.schema)}`);
@@ -91,7 +93,7 @@ export class TenantMigrator {
   }
 
   private async runPrisma(def: TenantSchemaDefinition, url: string, args: string[]): Promise<void> {
-    const cli = this.config.get<string>('PRISMA_CLI_PATH') ?? this.resolvePrismaCli(def);
+    const cli = this.config.get<string>("PRISMA_CLI_PATH") ?? this.resolvePrismaCli(def);
     try {
       await execFileAsync(process.execPath, [cli, ...args], {
         cwd: def.packageDir,
@@ -101,12 +103,12 @@ export class TenantMigrator {
       });
     } catch (error) {
       const e = error as Error & { stdout?: string; stderr?: string };
-      const output = `${e.stderr ?? ''}\n${e.stdout ?? ''}`.trim().slice(-2000);
-      throw new Error(`prisma ${args.join(' ')} failed for ${def.service}: ${output || e.message}`);
+      const output = `${e.stderr ?? ""}\n${e.stdout ?? ""}`.trim().slice(-2000);
+      throw new Error(`prisma ${args.join(" ")} failed for ${def.service}: ${output || e.message}`);
     }
   }
 
   private resolvePrismaCli(def: TenantSchemaDefinition): string {
-    return require.resolve('prisma/build/index.js', { paths: [def.packageDir, process.cwd()] });
+    return require.resolve("prisma/build/index.js", { paths: [def.packageDir, process.cwd()] });
   }
 }

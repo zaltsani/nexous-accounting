@@ -1,8 +1,8 @@
-import { AsyncLocalStorage } from 'node:async_hooks';
+import { AsyncLocalStorage } from "node:async_hooks";
 
 /** NATS headers the gateway sets on every call that belongs to a tenant. */
-export const TENANT_ID_HEADER = 'x-tenant-id';
-export const USER_ID_HEADER = 'x-user-id';
+export const TENANT_ID_HEADER = "x-tenant-id";
+export const USER_ID_HEADER = "x-user-id";
 
 export interface TenantContextStore {
   tenantId: string;
@@ -11,8 +11,8 @@ export interface TenantContextStore {
 
 export class TenantContextMissingError extends Error {
   constructor() {
-    super('No tenant in the current request context');
-    this.name = 'TenantContextMissingError';
+    super("No tenant in the current request context");
+    this.name = "TenantContextMissingError";
   }
 }
 

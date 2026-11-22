@@ -1,7 +1,7 @@
-import { ClientNats, ClientProviderOptions, NatsRecord } from '@nestjs/microservices';
-import { Observable } from 'rxjs';
-import { TenantContext } from './tenant-context.js';
-import { tenantRecord } from './tenant-record.js';
+import { ClientNats, ClientProviderOptions, NatsRecord } from "@nestjs/microservices";
+import { Observable } from "rxjs";
+import { TenantContext } from "./tenant-context.js";
+import { tenantRecord } from "./tenant-record.js";
 
 /**
  * NATS client that attaches the current tenant (x-tenant-id / x-user-id headers) to every

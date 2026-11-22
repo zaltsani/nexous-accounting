@@ -37,4 +37,4 @@ bot.on("message:text", async (ctx) => {
   }
 });
 
-export const  handleTelegramWebhook = webhookCallback(bot, "std/http");
+export const handleTelegramWebhook = webhookCallback(bot, "std/http");

@@ -4,10 +4,7 @@ import { useSelectTenant } from "../hooks/use-select-tenant";
 import { Button } from "@nexous-accounting/ui";
 
 export function meta() {
-  return [
-    { title: "Tenants" },
-    { name: "description", content: "Select tenant to starts with." },
-  ];
+  return [{ title: "Tenants" }, { name: "description", content: "Select tenant to starts with." }];
 }
 
 export default function () {
@@ -18,8 +15,8 @@ export default function () {
 
   const handleSelectTenantSubmit = () => {
     if (!selectedTenantId) return;
-    selectTenantMutation.mutate(selectedTenantId)
-  }
+    selectTenantMutation.mutate(selectedTenantId);
+  };
 
   console.log({ tenantsData });
 
@@ -37,11 +34,7 @@ export default function () {
           </div>
         ))}
       </div>
-      <Button
-        onClick={handleSelectTenantSubmit}
-      >
-        Pilih Tenant
-      </Button>
+      <Button onClick={handleSelectTenantSubmit}>Pilih Tenant</Button>
     </div>
-  )
+  );
 }
