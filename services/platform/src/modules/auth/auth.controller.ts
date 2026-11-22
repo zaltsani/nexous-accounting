@@ -1,9 +1,8 @@
-import { Controller } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
-import { AuthService } from './auth.service';
-import { PLATFORM_PATTERNS } from '@nexous-accounting/types';
-import type { ILogin, IRefresh, ISelectTenant } from '@nexous-accounting/types';
-import { CurrentUserId } from '@nexous-accounting/common';
+import { Controller } from "@nestjs/common";
+import { MessagePattern, Payload } from "@nestjs/microservices";
+import type { ILogin, IRefresh } from "@nexous-accounting/types";
+import { PLATFORM_PATTERNS } from "@nexous-accounting/types";
+import { AuthService } from "./auth.service";
 
 @Controller()
 export class AuthController {
@@ -15,8 +14,8 @@ export class AuthController {
   }
 
   @MessagePattern(PLATFORM_PATTERNS.auth.selectTenant)
-  selectTenant(@Payload() payload: ISelectTenant, @CurrentUserId() userId: string) {
-    return this.auth.selectTenant(payload, userId);
+  selectTenant(@Payload("tenantId") tenantId: string, @Payload("userId") userId: string) {
+    return this.auth.selectTenant(tenantId, userId);
   }
 
   @MessagePattern(PLATFORM_PATTERNS.auth.refresh)
