@@ -7,7 +7,8 @@ import {
   ILogin,
   ILoginResult,
   IRefresh,
-  ISelectTenant,
+  ISelectTenantResponse,
+  ITenant,
   ITenantMembership,
   ITenantRole,
 } from "@nexous-accounting/types";
@@ -21,14 +22,12 @@ const REFRESH_TTL_SECONDS = 7 * 24 * 60 * 60;
 interface MembershipRow {
   tenantId: string;
   role: string;
-  tenant: { id: string; slug: string; name: string; isActive: boolean };
+  tenant: ITenant;
 }
 
 function toMembershipDto(m: MembershipRow): ITenantMembership {
   return {
-    tenant: {
-      ...m.tenant,
-    },
+    ...m,
     role: m.role as ITenantRole,
   };
 }
@@ -64,18 +63,22 @@ export class AuthService {
     return {
       user: await this.userDto(user.id),
       tenants: memberships.map(toMembershipDto),
-      tenantId: selected?.tenantId ?? null,
+      tenant: selected?.tenant ?? null,
       tokens: await this.issueTokens(user.id, selected),
     };
   }
 
-  async selectTenant(data: ISelectTenant, userId: string): Promise<IAuthToken> {
-    const { tenantId } = data;
+  async selectTenant(tenantId: string, userId: string): Promise<ISelectTenantResponse> {
     await this.assertActiveUser(userId);
 
     const membership = (await this.activeMemberships(userId)).find((m) => m.tenantId === tenantId);
     if (!membership) throw new ForbiddenException("No access to this tenant");
-    return this.issueTokens(userId, membership);
+    const authToken = await this.issueTokens(userId, membership);
+
+    return {
+      membership: toMembershipDto(membership),
+      authToken,
+    };
   }
 
   async refresh(data: IRefresh): Promise<IAuthToken> {
