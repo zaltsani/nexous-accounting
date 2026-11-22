@@ -1,6 +1,6 @@
-import { z } from 'zod';
-import { tenantMembershipSchema } from './tenant.js';
-import { userSchema } from './user.js';
+import { z } from "zod";
+import { tenantMembershipSchema, tenantSchema } from "./tenant.js";
+import { userSchema } from "./user.js";
 
 export const registerSchema = z.object({
   email: z.string().email(),
@@ -16,6 +16,7 @@ export const loginSchema = z.object({
 
 export const selectTenantSchema = z.object({
   tenantId: z.string().uuid(),
+  userId: z.string().uuid(),
 });
 
 export const refreshSchema = z.object({ refreshToken: z.string().min(1) });
@@ -29,7 +30,7 @@ export const authTokenSchema = z.object({
 export const loginResultSchema = z.object({
   user: userSchema,
   tenants: tenantMembershipSchema.array(),
-  tenantId: z.string().nullish(),
+  tenant: tenantSchema.nullish(),
   tokens: authTokenSchema,
 });
 
@@ -39,9 +40,15 @@ export const accessTokenPayloadSchema = z.object({
   role: z.string().optional(),
 });
 
+export const selectTenantResponseSchema = z.object({
+  membership: tenantMembershipSchema,
+  authToken: authTokenSchema,
+});
+
 export type ILogin = z.infer<typeof loginSchema>;
 export type ISelectTenant = z.infer<typeof selectTenantSchema>;
 export type IRefresh = z.infer<typeof refreshSchema>;
-export type IAuthToken =z.infer<typeof authTokenSchema>;
+export type IAuthToken = z.infer<typeof authTokenSchema>;
 export type ILoginResult = z.infer<typeof loginResultSchema>;
 export type IAccessTokenPayload = z.infer<typeof accessTokenPayloadSchema>;
+export type ISelectTenantResponse = z.infer<typeof selectTenantResponseSchema>;
