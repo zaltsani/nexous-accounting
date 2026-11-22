@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Inject, Param, Post, UsePipes } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { ApiBearerAuth } from "@nestjs/swagger";
-import { CreateTenantDto } from "@nexous-accounting/common";
+import { AddTenantMemberDto, CreateTenantDto } from "@nexous-accounting/common";
 import { PLATFORM_PATTERNS } from "@nexous-accounting/types";
 import { ZodValidationPipe } from "nestjs-zod";
 import { firstValueFrom, timeout } from "rxjs";
@@ -35,4 +35,18 @@ export class TenantsGatewayController {
     return this.natsClient.send(PLATFORM_PATTERNS.tenants.get, { id });
   }
 
+  @AllowNoTenant()
+  @Post(":tenantId/select")
+  selectTenant(@Auth() auth: AuthContext, @Param("tenantId") tenantId: string) {
+    return this.call(PLATFORM_PATTERNS.auth.selectTenant, {
+      userId: auth.userId,
+      tenantId: tenantId,
+    });
+  }
+
+  @AllowNoTenant()
+  @Post("memberships")
+  addMemberships(@Body() dto: AddTenantMemberDto) {
+    return this.call(PLATFORM_PATTERNS.tenants.addMember, dto);
+  }
 }
