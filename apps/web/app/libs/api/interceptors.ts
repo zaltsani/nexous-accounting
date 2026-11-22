@@ -1,8 +1,13 @@
 import { api } from "./axios";
 import { ApiError } from "./api-error";
+import { useAuth } from "~/features/auth/stores/use-auth";
 
 export function setupInterceptors() {
   api.interceptors.request.use(async (config) => {
+    const auth = useAuth.getState();
+    if (auth.authToken) {
+      config.headers.Authorization = `Bearer ${auth.authToken.accessToken}`
+    }
     return config;
   });
 
